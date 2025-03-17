@@ -1,16 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { I18nextProvider } from "react-i18next";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './src/navigation/AppNavigator';
+import { UserProvider } from './src/context/UserContext';
 import { QueryClient } from "@tanstack/react-query";
+import i18n from "./src/locales/i18n";
 
 export default function App() {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider>
-        <AppNavigator />
+        <I18nextProvider i18n={i18n}>
+          <UserProvider>
+            <AppNavigator />
+          </UserProvider>
+        </I18nextProvider>
       </PaperProvider>
     </QueryClientProvider>
   );

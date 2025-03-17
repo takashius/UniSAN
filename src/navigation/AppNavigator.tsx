@@ -14,6 +14,7 @@ import SANDetails from "../screens/SANDetails";
 import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
+import { useUser } from "../context/UserContext";
 
 // Tipos para las rutas
 type SANStackParamList = {
@@ -36,7 +37,7 @@ const Stack = createStackNavigator<SANStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
-  const user = false;
+  const { user } = useUser();
 
   const SANStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

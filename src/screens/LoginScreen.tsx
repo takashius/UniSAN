@@ -2,10 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
 import { LoginForm, RegisterForm } from "../components/auth/AuthForms";
+import { useUser } from "../context/UserContext";
 
 const LoginScreen = () => {
+  const { login } = useUser();
   const handleDemoLogin = () => {
-    Alert.alert("Demostración", "Accediste al modo de demostración.");
+    login({
+      email: "takashi.onimaru@gmail.com",
+      name: 'Usuario Ejemplo',
+      token: 'fake-token',
+    });
   };
 
   return (

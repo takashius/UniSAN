@@ -15,8 +15,8 @@ interface TabsListProps {
 
 interface TabsTriggerProps {
   value: string;
-  activeTab: string;
-  setActiveTab: (value: string) => void;
+  activeTab?: string;
+  setActiveTab?: (value: string) => void;
   children: ReactNode;
 }
 

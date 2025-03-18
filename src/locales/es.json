@@ -28,5 +28,11 @@
     "confirmPasswordLabel": "Confirmar contraseña",
     "confirmPasswordPlaceholder": "Confirmar contraseña",
     "registerButton": "Crear cuenta"
+  },
+  "SANCard": {
+    "perTurn": "por turno",
+    "participants": "{{participants}}/{{maxParticipants}} participantes",
+    "openSpot": "Disponible para unirse",
+    "details": "Ver detalles"
   }
 }

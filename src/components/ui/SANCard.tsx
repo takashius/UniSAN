@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Calendar, Users, ChevronRight } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from "react-i18next";
 
 interface SANCardProps {
   id: string;
@@ -25,6 +26,7 @@ const SANCard: React.FC<SANCardProps> = ({
   nextDate,
   hasOpenSpot = false,
 }) => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   return (
@@ -41,7 +43,7 @@ const SANCard: React.FC<SANCardProps> = ({
           </View>
           <View style={styles.headerAmount}>
             <Text style={styles.amount}>${amount}</Text>
-            <Text style={styles.perTurn}>por turno</Text>
+            <Text style={styles.perTurn}>{t("SANCard.perTurn")}</Text>
           </View>
         </View>
 
@@ -50,7 +52,10 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
             <Text style={styles.detailText}>
-              {participants}/{maxParticipants} participantes
+              {t("SANCard.participants", {
+                participants,
+                maxParticipants,
+              })}
             </Text>
           </View>
           <View style={styles.detailItem}>
@@ -63,7 +68,7 @@ const SANCard: React.FC<SANCardProps> = ({
         <View style={styles.footer}>
           {hasOpenSpot ? (
             <View style={styles.openSpot}>
-              <Text style={styles.openSpotText}>Disponible para unirse</Text>
+              <Text style={styles.openSpotText}>{t("SANCard.openSpot")}</Text>
             </View>
           ) : (
             <View style={{ height: 10 }}></View>
@@ -73,7 +78,7 @@ const SANCard: React.FC<SANCardProps> = ({
             // @ts-ignore
             navigation.navigate("Explorar", { screen: "SANDetails", params: { id: "123" } })
           }}>
-            <Text style={styles.linkText}>Ver detalles</Text>
+            <Text style={styles.linkText}>{t("SANCard.details")}</Text>
             <ChevronRight size={16} color="#ff7f50" />
           </TouchableOpacity>
         </View>

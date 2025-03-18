@@ -23,7 +23,7 @@ const InputOTP = forwardRef<TextInput, OTPInputProps>(
 
     const handleFocus = () => {
       if (hiddenInputRef.current) {
-        hiddenInputRef.current.focus(); // Establece el foco en el TextInput
+        hiddenInputRef.current.focus();
       }
     };
 
@@ -42,10 +42,9 @@ const InputOTP = forwardRef<TextInput, OTPInputProps>(
             />
           ))}
 
-          {/* TextInput oculto para capturar el texto */}
           <TextInput
             ref={(textInputRef) => {
-              hiddenInputRef.current = textInputRef; // Uso seguro de la referencia
+              hiddenInputRef.current = textInputRef;
               if (ref && typeof ref === "function") {
                 ref(textInputRef);
               } else if (ref && typeof ref === "object" && ref.current !== undefined) {
@@ -73,7 +72,7 @@ interface OTPInputSlotProps {
   char: string;
   isActive: boolean;
   style?: ViewStyle;
-  onPress: () => void; // Se añade el onPress para permitir interacción
+  onPress: () => void;
 }
 
 const InputOTPSlot: React.FC<OTPInputSlotProps> = ({ char, isActive, style, onPress }) => {

@@ -34,5 +34,19 @@
     "participants": "{{participants}}/{{maxParticipants}} participants",
     "openSpot": "Available to join",
     "details": "View details"
+  },
+  "UserLevel": {
+    "currentLevel": "Current Level",
+    "level": "Level {{level}}",
+    "level1": "Beginner",
+    "level2": "Intermediate",
+    "level3": "Advanced",
+    "points": "{{points}} points",
+    "nextLevelPoints": "{{nextLevelPoints}} points",
+    "pointsToNextLevel": "You need {{remaining}} more points to reach the next level",
+    "benefitsTitle": "Benefits of your level:",
+    "benefit1": "Access to SANs up to ${{amount}}",
+    "benefit2": "Simultaneous participation in {{count}} SANs",
+    "benefit3": "Priority in turn selection"
   }
 }

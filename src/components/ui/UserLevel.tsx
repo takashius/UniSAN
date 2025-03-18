@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface UserLevelProps {
   level: number;
@@ -9,9 +10,8 @@ interface UserLevelProps {
 }
 
 const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints }) => {
+  const { t } = useTranslation();
   const progress = (points / nextLevelPoints) * 100;
-
-  // Usando reanimated para animar el progreso
   const progressValue = useSharedValue(0);
 
   React.useEffect(() => {
@@ -22,7 +22,6 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
     width: `${progressValue.value}%`,
   }));
 
-  // Mapeo de estilos dinámicos para los niveles
   const badgeStyles: { [key: number]: any } = {
     1: styles.badgeLevel1,
     2: styles.badgeLevel2,
@@ -31,15 +30,14 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
 
   return (
     <View style={styles.container}>
-      {/* Nivel actual */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.subtitle}>Nivel actual</Text>
+          <Text style={styles.subtitle}>{t("UserLevel.currentLevel")}</Text>
           <View style={styles.levelRow}>
-            <Text style={styles.levelTitle}>Nivel {level}</Text>
+            <Text style={styles.levelTitle}>{t("UserLevel.level", { level })}</Text>
             <View style={[styles.badge, badgeStyles[level]]}>
               <Text style={styles.badgeText}>
-                {level === 1 ? "Inicial" : level === 2 ? "Intermedio" : "Avanzado"}
+                {level === 1 ? t("UserLevel.level1") : level === 2 ? t("UserLevel.level2") : t("UserLevel.level3")}
               </Text>
             </View>
           </View>
@@ -49,42 +47,45 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
         </View>
       </View>
 
-      {/* Progreso */}
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>{points} puntos</Text>
-          <Text style={styles.progressLabel}>{nextLevelPoints} puntos</Text>
+          <Text style={styles.progressLabel}>{t("UserLevel.points", { points })}</Text>
+          <Text style={styles.progressLabel}>{t("UserLevel.nextLevelPoints", { nextLevelPoints })}</Text>
         </View>
         <View style={styles.progressBarContainer}>
           <Animated.View style={[styles.progressBar, progressStyle]} />
         </View>
         <Text style={styles.progressText}>
-          Te faltan {nextLevelPoints - points} puntos para llegar al siguiente nivel
+          {t("UserLevel.pointsToNextLevel", {
+            remaining: nextLevelPoints - points,
+          })}
         </Text>
       </View>
 
-      {/* Beneficios del nivel */}
       <View style={styles.benefits}>
-        <Text style={styles.benefitsTitle}>Beneficios de tu nivel:</Text>
+        <Text style={styles.benefitsTitle}>{t("UserLevel.benefitsTitle")}</Text>
         <View style={styles.benefitItem}>
           <View style={styles.bulletPoint} />
           <Text style={styles.benefitText}>
-            Acceso a SANs de hasta $
-            {level === 1 ? "100" : level === 2 ? "300" : "1000"}
+            {t("UserLevel.benefit1", {
+              amount: level === 1 ? "100" : level === 2 ? "300" : "1000",
+            })}
           </Text>
         </View>
         {level >= 2 && (
           <View style={styles.benefitItem}>
             <View style={styles.bulletPoint} />
             <Text style={styles.benefitText}>
-              Participación simultánea en {level === 2 ? "2" : "3"} SANs
+              {t("UserLevel.benefit2", {
+                count: level === 2 ? 2 : 3,
+              })}
             </Text>
           </View>
         )}
         {level >= 3 && (
           <View style={styles.benefitItem}>
             <View style={styles.bulletPoint} />
-            <Text style={styles.benefitText}>Prioridad en la selección de turnos</Text>
+            <Text style={styles.benefitText}>{t("UserLevel.benefit3")}</Text>
           </View>
         )}
       </View>

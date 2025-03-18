@@ -97,5 +97,25 @@
     "participants": "personas",
     "recommendedDescription": "Este SAN está disponible para usuarios de nivel 2 o superior.",
     "upgradeToJoin": "Subir de nivel para unirse"
+  },
+  "SANDetails": {
+    "participants": "{{current}}/{{max}} participantes",
+    "groupChat": "Chat del grupo",
+    "description": "Este SAN permite a los participantes ahorrar y recibir fondos de manera rotativa.",
+    "descriptionTitle": "Descripción",
+    "startDate": "Fecha inicio",
+    "endDate": "Fecha fin",
+    "progressTitle": "Progreso del SAN",
+    "yourTurn": "Tu turno",
+    "turnBadge": "Turno {{current}} de {{total}}",
+    "alreadyReceived": "Ya has recibido tu turno",
+    "currentTurn": "Este es tu turno actual",
+    "turnsRemaining": "Te faltan {{remaining}} turnos para recibir el fondo",
+    "membersTitle": "Participantes y turnos",
+    "availableTurn": "Turno disponible",
+    "turn": "Turno {{turn}}",
+    "completed": "Completado",
+    "current": "Actual",
+    "join": "Unirse"
   }
 }

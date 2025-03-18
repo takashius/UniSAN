@@ -13,12 +13,13 @@ import {
   Info,
   MessageCircle,
 } from "lucide-react-native";
-import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const SANDetails: React.FC = () => {
-  const navigation = useNavigation();
-  // Datos simulados
+  const { t } = useTranslation();
+  const navigation: any = useNavigation();
   const sanDetails = {
     id: "1",
     name: "SAN Básico",
@@ -47,7 +48,6 @@ const SANDetails: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate("Explorar")}>
           <ArrowLeft size={24} color="#888" />
@@ -55,9 +55,7 @@ const SANDetails: React.FC = () => {
         <Text style={styles.headerTitle}>{sanDetails.name}</Text>
       </View>
 
-      {/* Main Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        {/* SAN Card */}
         <Animated.View entering={FadeInDown.duration(400)} style={styles.card}>
           <View style={styles.cardContent}>
             <View style={styles.cardHeader}>
@@ -71,12 +69,15 @@ const SANDetails: React.FC = () => {
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <Calendar size={16} color="#888" />
-                <Text style={styles.infoText}>Próximo pago: {sanDetails.nextDate}</Text>
+                <Text style={styles.infoText}>{sanDetails.nextDate}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Users size={16} color="#888" />
                 <Text style={styles.infoText}>
-                  {sanDetails.participants}/{sanDetails.maxParticipants} participantes
+                  {t("SANDetails.participants", {
+                    current: sanDetails.participants,
+                    max: sanDetails.maxParticipants,
+                  })}
                 </Text>
               </View>
             </View>
@@ -84,7 +85,7 @@ const SANDetails: React.FC = () => {
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.primaryButton}>
                 <MessageCircle size={16} color="#fff" />
-                <Text style={styles.buttonText}>Chat del grupo</Text>
+                <Text style={styles.buttonText}>{t("SANDetails.groupChat")}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.secondaryButton}>
                 <Info size={16} color="#888" />
@@ -93,31 +94,32 @@ const SANDetails: React.FC = () => {
           </View>
         </Animated.View>
 
-        {/* Descripción */}
         <View style={styles.descriptionCard}>
-          <Text style={styles.descriptionTitle}>Descripción</Text>
+          <Text style={styles.descriptionTitle}>{t("SANDetails.descriptionTitle")}</Text>
           <Text style={styles.descriptionText}>{sanDetails.description}</Text>
 
           <View style={styles.dateRow}>
             <View>
-              <Text style={styles.infoText}>Fecha inicio</Text>
+              <Text style={styles.infoText}>{t("SANDetails.startDate")}</Text>
               <Text style={styles.dateText}>{sanDetails.startDate}</Text>
             </View>
             <View>
-              <Text style={styles.infoText}>Fecha fin</Text>
+              <Text style={styles.infoText}>{t("SANDetails.endDate")}</Text>
               <Text style={styles.dateText}>{sanDetails.endDate}</Text>
             </View>
           </View>
         </View>
 
-        {/* Progreso del SAN */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Progreso del SAN</Text>
+          <Text style={styles.sectionTitle}>{t("SANDetails.progressTitle")}</Text>
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
-              <Text style={styles.progressTitle}>Tu turno</Text>
+              <Text style={styles.progressTitle}>{t("SANDetails.yourTurn")}</Text>
               <Text style={styles.turnBadge}>
-                Turno {sanDetails.myTurn} de {sanDetails.totalTurns}
+                {t("SANDetails.turnBadge", {
+                  current: sanDetails.myTurn,
+                  total: sanDetails.totalTurns,
+                })}
               </Text>
             </View>
             <View style={styles.progressBarBackground}>
@@ -130,17 +132,18 @@ const SANDetails: React.FC = () => {
             </View>
             <Text style={styles.progressText}>
               {sanDetails.myTurn < 3
-                ? "Ya has recibido tu turno"
+                ? t("SANDetails.alreadyReceived")
                 : sanDetails.myTurn === 3
-                  ? "Este es tu turno actual"
-                  : `Te faltan ${sanDetails.myTurn - 3} turnos para recibir el fondo`}
+                  ? t("SANDetails.currentTurn")
+                  : t("SANDetails.turnsRemaining", {
+                    remaining: sanDetails.myTurn - 3,
+                  })}
             </Text>
           </View>
         </View>
 
-        {/* Participantes */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Participantes y turnos</Text>
+          <Text style={styles.sectionTitle}>{t("SANDetails.membersTitle")}</Text>
           <View style={styles.membersCard}>
             {sanDetails.members.map((member, index) => (
               <View
@@ -155,24 +158,24 @@ const SANDetails: React.FC = () => {
                 </View>
                 <View style={styles.memberInfo}>
                   <Text style={styles.memberName}>
-                    {member.name || "Turno disponible"}
+                    {member.name || t("SANDetails.availableTurn")}
                   </Text>
-                  <Text style={styles.memberTurn}>Turno {member.turn}</Text>
+                  <Text style={styles.memberTurn}>{t("SANDetails.turn", { turn: member.turn })}</Text>
                 </View>
                 <View>
                   {member.status === "completed" && (
                     <Text style={[styles.statusBadge, styles.completedBadge]}>
-                      Completado
+                      {t("SANDetails.completed")}
                     </Text>
                   )}
                   {member.status === "current" && (
                     <Text style={[styles.statusBadge, styles.currentBadge]}>
-                      Actual
+                      {t("SANDetails.current")}
                     </Text>
                   )}
                   {member.status === "available" && (
                     <TouchableOpacity style={styles.joinButton}>
-                      <Text style={styles.joinText}>Unirse</Text>
+                      <Text style={styles.joinText}>{t("SANDetails.join")}</Text>
                     </TouchableOpacity>
                   )}
                 </View>

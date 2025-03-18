@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, ArrowRight, Mail } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
-const EmailStepScreen: React.FC = () => {
+interface VerificationStepProps {
+  navigation: any;
+}
+
+const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
-  const navigation = useNavigation();
 
   const handleSubmitEmail = () => {
     if (!email) {
-      Alert.alert("Campo requerido", "Por favor ingresa tu correo electrónico");
+      Alert.alert(t("EmailStepScreen.requiredField"), t("EmailStepScreen.enterEmail"));
       return;
     }
-
-    // Lógica para enviar el código (simulado)
-    Alert.alert("Código enviado", "Hemos enviado un código de verificación a tu correo");
-    // @ts-ignore
+    Alert.alert(t("EmailStepScreen.codeSentTitle"), t("EmailStepScreen.codeSentMessage"));
     navigation.navigate("RecoveryPasswordStep2");
   };
 
@@ -24,16 +25,14 @@ const EmailStepScreen: React.FC = () => {
       <View style={styles.iconContainer}>
         <Mail size={32} color="#ff7f50" />
       </View>
-      <Text style={styles.title}>Recuperar contraseña</Text>
-      <Text style={styles.subtitle}>
-        Ingresa tu correo electrónico y te enviaremos un código de verificación.
-      </Text>
+      <Text style={styles.title}>{t("EmailStepScreen.title")}</Text>
+      <Text style={styles.subtitle}>{t("EmailStepScreen.subtitle")}</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Correo electrónico</Text>
+        <Text style={styles.label}>{t("EmailStepScreen.emailLabel")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="tu@correo.com"
+          placeholder={t("EmailStepScreen.emailPlaceholder")}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -46,10 +45,10 @@ const EmailStepScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
         >
           <ArrowLeft size={20} color="#FF7F50" />
-          <Text style={styles.buttonTextSecondary}>Volver</Text>
+          <Text style={styles.buttonTextSecondary}>{t("EmailStepScreen.backButton")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleSubmitEmail}>
-          <Text style={styles.buttonText}>Enviar código</Text>
+          <Text style={styles.buttonText}>{t("EmailStepScreen.sendCodeButton")}</Text>
           <ArrowRight size={20} color="#fff" />
         </TouchableOpacity>
 

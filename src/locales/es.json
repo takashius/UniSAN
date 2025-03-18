@@ -48,5 +48,34 @@
     "benefit1": "Acceso a SANs de hasta ${{amount}}",
     "benefit2": "Participación simultánea en {{count}} SANs",
     "benefit3": "Prioridad en la selección de turnos"
+  },
+  "EmailStepScreen": {
+    "requiredField": "Campo requerido",
+    "enterEmail": "Por favor ingresa tu correo electrónico",
+    "codeSentTitle": "Código enviado",
+    "codeSentMessage": "Hemos enviado un código de verificación a tu correo",
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresa tu correo electrónico y te enviaremos un código de verificación.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@correo.com",
+    "backButton": "Volver",
+    "sendCodeButton": "Enviar código"
+  },
+  "VerificationStep": {
+    "invalidCodeTitle": "Código inválido",
+    "invalidCodeMessage": "El código debe tener 6 dígitos.",
+    "requiredFieldsTitle": "Campos requeridos",
+    "requiredFieldsMessage": "Por favor completa todos los campos.",
+    "passwordMismatchTitle": "Las contraseñas no coinciden",
+    "passwordMismatchMessage": "Por favor verifica que las contraseñas sean iguales.",
+    "successTitle": "Éxito",
+    "successMessage": "Tu contraseña ha sido actualizada correctamente.",
+    "title": "Verifica tu identidad",
+    "subtitle": "Ingresa el código de 6 dígitos enviado a tu correo electrónico.",
+    "verificationCodeLabel": "Código de verificación",
+    "newPasswordPlaceholder": "Nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirmar contraseña",
+    "backButton": "Volver",
+    "updateButton": "Actualizar"
   }
 }

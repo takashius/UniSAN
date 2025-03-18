@@ -9,12 +9,14 @@ import {
 } from "react-native";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react-native";
 import { InputOTP } from "../../components/ui/InputOtp";
+import { useTranslation } from "react-i18next";
 
 interface VerificationStepProps {
-  navigation: any; // Tipo para navegación (puedes tiparlo mejor según tu configuración de navegación)
+  navigation: any;
 }
 
 const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
+  const { t } = useTranslation();
   const [verificationCode, setVerificationCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,34 +25,33 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
 
   const handleVerificationSubmit = () => {
     if (verificationCode.length !== 6) {
-      Alert.alert("Código inválido", "El código debe tener 6 dígitos.");
+      Alert.alert(t("VerificationStep.invalidCodeTitle"), t("VerificationStep.invalidCodeMessage"));
       return;
     }
 
     if (!newPassword || !confirmPassword) {
       Alert.alert(
-        "Campos requeridos",
-        "Por favor completa todos los campos."
+        t("VerificationStep.requiredFieldsTitle"),
+        t("VerificationStep.requiredFieldsMessage")
       );
       return;
     }
 
     if (newPassword !== confirmPassword) {
       Alert.alert(
-        "Las contraseñas no coinciden",
-        "Por favor verifica que las contraseñas sean iguales."
+        t("VerificationStep.passwordMismatchTitle"),
+        t("VerificationStep.passwordMismatchMessage")
       );
       return;
     }
 
-    // Simular éxito de actualización
     Alert.alert(
-      "Éxito",
-      "Tu contraseña ha sido actualizada correctamente.",
+      t("VerificationStep.successTitle"),
+      t("VerificationStep.successMessage"),
       [
         {
           text: "OK",
-          onPress: () => navigation.navigate("Login"), // Redirigir a la pantalla de inicio de sesión
+          onPress: () => navigation.navigate("Login"),
         },
       ]
     );
@@ -58,14 +59,11 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Verifica tu identidad</Text>
-      <Text style={styles.subtitle}>
-        Ingresa el código de 6 dígitos enviado a tu correo electrónico
-      </Text>
+      <Text style={styles.title}>{t("VerificationStep.title")}</Text>
+      <Text style={styles.subtitle}>{t("VerificationStep.subtitle")}</Text>
 
-      {/* Código de verificación usando InputOTP */}
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Código de verificación</Text>
+        <Text style={styles.label}>{t("VerificationStep.verificationCodeLabel")}</Text>
         <InputOTP
           value={verificationCode}
           length={6}
@@ -75,7 +73,6 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
         />
       </View>
 
-      {/* Nueva contraseña */}
       <View style={styles.passwordInputContainer}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TextInput
@@ -83,7 +80,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
             secureTextEntry={!showPassword}
             value={newPassword}
             onChangeText={setNewPassword}
-            placeholder="Nueva contraseña"
+            placeholder={t("VerificationStep.newPasswordPlaceholder")}
           />
           <TouchableOpacity
             style={styles.eyeButton}
@@ -94,7 +91,6 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Confirmar contraseña */}
       <View style={styles.passwordInputContainer}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TextInput
@@ -102,7 +98,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
             secureTextEntry={!showPasswordConfirm}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            placeholder="Confirmar contraseña"
+            placeholder={t("VerificationStep.confirmPasswordPlaceholder")}
           />
           <TouchableOpacity
             style={styles.eyeButton}
@@ -113,20 +109,19 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Botones */}
       <View style={styles.buttonGroup}>
         <TouchableOpacity
           style={[styles.button, styles.secondaryButton]}
           onPress={() => navigation.goBack()}
         >
           <ArrowLeft size={20} color="#FF7F50" />
-          <Text style={styles.buttonTextSecondary}>Volver</Text>
+          <Text style={styles.buttonTextSecondary}>{t("VerificationStep.backButton")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.primaryButton]}
           onPress={handleVerificationSubmit}
         >
-          <Text style={styles.buttonTextPrimary}>Actualizar</Text>
+          <Text style={styles.buttonTextPrimary}>{t("VerificationStep.updateButton")}</Text>
           <ArrowRight size={20} color="#fff" />
         </TouchableOpacity>
       </View>

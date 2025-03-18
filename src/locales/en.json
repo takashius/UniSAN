@@ -48,5 +48,34 @@
     "benefit1": "Access to SANs up to ${{amount}}",
     "benefit2": "Simultaneous participation in {{count}} SANs",
     "benefit3": "Priority in turn selection"
+  },
+  "EmailStepScreen": {
+    "requiredField": "Required Field",
+    "enterEmail": "Please enter your email address",
+    "codeSentTitle": "Code Sent",
+    "codeSentMessage": "We have sent a verification code to your email",
+    "title": "Recover Password",
+    "subtitle": "Enter your email address and we will send you a verification code.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "your@email.com",
+    "backButton": "Back",
+    "sendCodeButton": "Send Code"
+  },
+  "VerificationStep": {
+    "invalidCodeTitle": "Invalid Code",
+    "invalidCodeMessage": "The code must be 6 digits long.",
+    "requiredFieldsTitle": "Required Fields",
+    "requiredFieldsMessage": "Please fill in all the fields.",
+    "passwordMismatchTitle": "Passwords do not match",
+    "passwordMismatchMessage": "Please make sure both passwords are identical.",
+    "successTitle": "Success",
+    "successMessage": "Your password has been updated successfully.",
+    "title": "Verify your identity",
+    "subtitle": "Enter the 6-digit code sent to your email address.",
+    "verificationCodeLabel": "Verification Code",
+    "newPasswordPlaceholder": "New Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "backButton": "Back",
+    "updateButton": "Update"
   }
 }

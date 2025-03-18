@@ -8,9 +8,10 @@ import {
 } from "react-native";
 import { Calendar, ChevronRight } from "lucide-react-native";
 import Animated, { FadeIn, FadeInLeft } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 const History: React.FC = () => {
-  // Mock data - Esto representaría una llamada API en una app real
+  const { t } = useTranslation();
   const historyItems = [
     {
       id: "1",
@@ -71,15 +72,13 @@ const History: React.FC = () => {
   return (
     <View style={styles.container}>
 
-      {/* Main Content */}
       <ScrollView contentContainerStyle={styles.mainContent}>
-        {/* Actividad Reciente */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Actividad reciente</Text>
+            <Text style={styles.sectionTitle}>{t("ActivityScreen.recentActivity")}</Text>
             <TouchableOpacity style={styles.filterButton}>
               <Calendar size={16} color="#ff7f50" />
-              <Text style={styles.filterText}>Filtrar por fecha</Text>
+              <Text style={styles.filterText}>{t("ActivityScreen.filterByDate")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -94,7 +93,7 @@ const History: React.FC = () => {
                   <View style={styles.historyItemHeader}>
                     <Text style={styles.historyItemTitle}>
                       {item.san}
-                      {item.type === "joined" && " - Te uniste"}
+                      {item.type === "joined" && ` - ${t("ActivityScreen.youJoined")}`}
                     </Text>
                     {item.type !== "joined" && (
                       <Text
@@ -121,10 +120,10 @@ const History: React.FC = () => {
                     >
                       <Text style={styles.statusText}>
                         {item.status === "completed"
-                          ? "Completado"
+                          ? t("ActivityScreen.completed")
                           : item.status === "received"
-                            ? "Recibido"
-                            : "Info"}
+                            ? t("ActivityScreen.received")
+                            : t("ActivityScreen.info")}
                       </Text>
                     </View>
                   </View>
@@ -134,12 +133,11 @@ const History: React.FC = () => {
           </Animated.View>
         </View>
 
-        {/* SANs Completados */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>SANs completados</Text>
+            <Text style={styles.sectionTitle}>{t("ActivityScreen.completedSANs")}</Text>
             <TouchableOpacity style={styles.viewAllButton}>
-              <Text style={styles.viewAllText}>Ver todos</Text>
+              <Text style={styles.viewAllText}>{t("ActivityScreen.viewAll")}</Text>
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>
           </View>
@@ -149,10 +147,10 @@ const History: React.FC = () => {
               <Calendar size={32} color="#ff7f50" />
             </View>
             <Text style={styles.noContentTitle}>
-              No hay SANs completados
+              {t("ActivityScreen.noCompletedSANs")}
             </Text>
             <Text style={styles.noContentText}>
-              Cuando completes tu primer SAN, aparecerá aquí.
+              {t("ActivityScreen.noCompletedSANsMessage")}
             </Text>
           </View>
         </View>

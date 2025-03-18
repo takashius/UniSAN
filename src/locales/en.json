@@ -117,5 +117,17 @@
     "completed": "Completed",
     "current": "Current",
     "join": "Join"
+  },
+  "ActivityScreen": {
+    "recentActivity": "Recent Activity",
+    "filterByDate": "Filter by date",
+    "youJoined": "You joined",
+    "completed": "Completed",
+    "received": "Received",
+    "info": "Info",
+    "completedSANs": "Completed SANs",
+    "viewAll": "View all",
+    "noCompletedSANs": "No completed SANs",
+    "noCompletedSANsMessage": "When you complete your first SAN, it will appear here."
   }
 }

@@ -117,5 +117,17 @@
     "completed": "Completado",
     "current": "Actual",
     "join": "Unirse"
+  },
+  "ActivityScreen": {
+    "recentActivity": "Actividad reciente",
+    "filterByDate": "Filtrar por fecha",
+    "youJoined": "Te uniste",
+    "completed": "Completado",
+    "received": "Recibido",
+    "info": "Info",
+    "completedSANs": "SANs completados",
+    "viewAll": "Ver todos",
+    "noCompletedSANs": "No hay SANs completados",
+    "noCompletedSANsMessage": "Cuando completes tu primer SAN, aparecerá aquí."
   }
 }

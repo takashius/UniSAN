@@ -87,5 +87,15 @@
     "turn": "Turn {{current}} of {{total}}",
     "paymentDate": "Payment Date:",
     "earlyPaymentButton": "Make Early Payment"
+  },
+  "Explorer": {
+    "availableSANs": "Available SANs",
+    "noResults": "No SANs found with that term",
+    "recommendedSANs": "Recommended SANs for you",
+    "recommendedTitle": "Premium SAN",
+    "monthly": "Monthly",
+    "participants": "participants",
+    "recommendedDescription": "This SAN is available for users with level 2 or higher.",
+    "upgradeToJoin": "Upgrade level to join"
   }
 }

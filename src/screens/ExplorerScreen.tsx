@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Search, Filter, PlusCircle } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
+import { useTranslation } from "react-i18next";
 
 const Explorer: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  // Mock data (datos de SANs)
+  const { t } = useTranslation();
   const availableSANs = [
     {
       id: "3",
@@ -25,6 +22,7 @@ const Explorer: React.FC = () => {
       maxParticipants: 10,
       nextDate: "20 mayo",
       hasOpenSpot: true,
+      external: false,
     },
     {
       id: "4",
@@ -35,6 +33,7 @@ const Explorer: React.FC = () => {
       maxParticipants: 12,
       nextDate: "1 junio",
       hasOpenSpot: true,
+      external: false,
     },
     {
       id: "5",
@@ -45,26 +44,20 @@ const Explorer: React.FC = () => {
       maxParticipants: 8,
       nextDate: "15 mayo",
       hasOpenSpot: true,
+      external: false,
     },
   ];
-
-  // Filtrar SANs por término de búsqueda
-  const filteredSANs = availableSANs.filter((san) =>
-    san.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <View style={styles.container}>
 
-      {/* Main Content */}
       <ScrollView contentContainerStyle={styles.mainContent}>
 
-        {/* Lista de SANs disponibles */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>SANs disponibles</Text>
-          {filteredSANs.length > 0 ? (
+          <Text style={styles.sectionTitle}>{t("Explorer.availableSANs")}</Text>
+          {availableSANs.length > 0 ? (
             <View style={styles.cardList}>
-              {filteredSANs.map((san, index) => (
+              {availableSANs.map((san, index) => (
                 <Animated.View
                   key={san.id}
                   entering={FadeInDown.delay(index * 100).duration(400)}
@@ -76,15 +69,14 @@ const Explorer: React.FC = () => {
           ) : (
             <View style={styles.noResults}>
               <Text style={styles.noResultsText}>
-                No se encontraron SANs con ese término
+                {t("Explorer.noResults")}
               </Text>
             </View>
           )}
         </View>
 
-        {/* SAN recomendado */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>SANs recomendados para ti</Text>
+          <Text style={styles.sectionTitle}>{t("Explorer.recommendedSANs")}</Text>
           <Animated.View
             entering={FadeInDown.duration(400)}
             style={styles.recommendedCard}
@@ -94,18 +86,18 @@ const Explorer: React.FC = () => {
                 <Text style={styles.emoji}>💰</Text>
               </View>
               <View>
-                <Text style={styles.recommendedTitle}>SAN Premium</Text>
+                <Text style={styles.recommendedTitle}>{t("Explorer.recommendedTitle")}</Text>
                 <Text style={styles.recommendedSubtitle}>
-                  $500 · Mensual · 12 personas
+                  $500 · {t("Explorer.monthly")} · 12 {t("Explorer.participants")}
                 </Text>
               </View>
             </View>
             <Text style={styles.recommendedDescription}>
-              Este SAN está disponible para usuarios de nivel 2 o superior.
+              {t("Explorer.recommendedDescription")}
             </Text>
             <TouchableOpacity style={styles.disabledButton} disabled>
               <Text style={styles.disabledButtonText}>
-                Subir de nivel para unirse
+                {t("Explorer.upgradeToJoin")}
               </Text>
             </TouchableOpacity>
           </Animated.View>

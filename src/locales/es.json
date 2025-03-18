@@ -87,5 +87,15 @@
     "turn": "Turno {{current}} de {{total}}",
     "paymentDate": "Fecha de pago:",
     "earlyPaymentButton": "Realizar pago anticipado"
+  },
+  "Explorer": {
+    "availableSANs": "SANs disponibles",
+    "noResults": "No se encontraron SANs con ese término",
+    "recommendedSANs": "SANs recomendados para ti",
+    "recommendedTitle": "SAN Premium",
+    "monthly": "Mensual",
+    "participants": "personas",
+    "recommendedDescription": "Este SAN está disponible para usuarios de nivel 2 o superior.",
+    "upgradeToJoin": "Subir de nivel para unirse"
   }
 }

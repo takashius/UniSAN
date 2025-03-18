@@ -14,6 +14,7 @@ interface SANCardProps {
   maxParticipants: number;
   nextDate: string;
   hasOpenSpot?: boolean;
+  external?: boolean;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -25,9 +26,10 @@ const SANCard: React.FC<SANCardProps> = ({
   maxParticipants,
   nextDate,
   hasOpenSpot = false,
+  external = true,
 }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
 
   return (
     <Animated.View
@@ -47,7 +49,6 @@ const SANCard: React.FC<SANCardProps> = ({
           </View>
         </View>
 
-        {/* Details */}
         <View style={styles.details}>
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
@@ -64,7 +65,6 @@ const SANCard: React.FC<SANCardProps> = ({
           </View>
         </View>
 
-        {/* Footer */}
         <View style={styles.footer}>
           {hasOpenSpot ? (
             <View style={styles.openSpot}>
@@ -75,8 +75,11 @@ const SANCard: React.FC<SANCardProps> = ({
           )}
 
           <TouchableOpacity style={styles.detailsLink} onPress={() => {
-            // @ts-ignore
-            navigation.navigate("Explorar", { screen: "SANDetails", params: { id: "123" } })
+            if (external) {
+              return navigation.navigate("Explorar", { screen: "SANDetails", params: { id: "123" } })
+            } else {
+              return navigation.navigate("SANDetails", { params: { id: "123" } })
+            }
           }}>
             <Text style={styles.linkText}>{t("SANCard.details")}</Text>
             <ChevronRight size={16} color="#ff7f50" />

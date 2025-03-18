@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
 import { LoginForm, RegisterForm } from "../components/auth/AuthForms";
 import { useUser } from "../context/UserContext";
+import { useTranslation } from "react-i18next";
 
 const LoginScreen = () => {
+  const { t } = useTranslation();
   const { login } = useUser();
   const handleDemoLogin = () => {
     login({
@@ -16,25 +18,22 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Encabezado con el texto principal */}
       <View style={styles.header}>
-        <Text style={styles.title}>UNISAN</Text>
-        <Text style={styles.description}>
-          La forma más fácil de gestionar tu sistema de ahorro colectivo
-        </Text>
+        <Image
+          source={require("../../assets/logo-naranja.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
       </View>
 
-      {/* Contenedor principal con contenido y footer */}
       <View style={styles.contentWrapper}>
-        {/* Tabs para Login y Registro */}
         <View style={styles.tabsContainer}>
           <Tabs defaultValue="login">
             <TabsList>
-              <TabsTrigger value="login">Iniciar sesión</TabsTrigger>
-              <TabsTrigger value="register">Registrarse</TabsTrigger>
+              <TabsTrigger value="login">{t("auth.loginTab")}</TabsTrigger>
+              <TabsTrigger value="register">{t("auth.registerTab")}</TabsTrigger>
             </TabsList>
 
-            {/* Contenido de Login */}
             <TabsContent value="login">
               <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -42,12 +41,11 @@ const LoginScreen = () => {
               >
                 <LoginForm />
                 <TouchableOpacity onPress={handleDemoLogin} style={styles.demoLink}>
-                  <Text style={styles.demoText}>Ver demostración sin iniciar sesión</Text>
+                  <Text style={styles.demoText}>{t("auth.demoText")}</Text>
                 </TouchableOpacity>
               </ScrollView>
             </TabsContent>
 
-            {/* Contenido de Registro */}
             <TabsContent value="register">
               <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -60,9 +58,8 @@ const LoginScreen = () => {
         </View>
       </View>
 
-      {/* Pie de página */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2023 SAN Organizer. Todos los derechos reservados.</Text>
+        <Text style={styles.footerText}>{t("auth.footerText")}</Text>
       </View>
     </View>
   );
@@ -73,7 +70,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f1e7", // Fondo beige
+    backgroundColor: "#f9f1e7",
   },
   header: {
     alignItems: "center",
@@ -96,16 +93,16 @@ const styles = StyleSheet.create({
     maxWidth: 300,
   },
   contentWrapper: {
-    flex: 1, // Ocupa el espacio disponible en la pantalla
+    flex: 1,
   },
   tabsContainer: {
-    flex: 1, // Asegura que el contenido ocupe espacio restante
+    flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
     paddingVertical: 16,
     paddingHorizontal: 8,
-    flexGrow: 1, // Permite que el ScrollView se expanda
+    flexGrow: 1,
   },
   demoLink: {
     marginTop: 16,
@@ -113,16 +110,22 @@ const styles = StyleSheet.create({
   },
   demoText: {
     fontSize: 14,
-    color: "#ff7f50", // Color naranja
+    color: "#ff7f50",
     textDecorationLine: "underline",
   },
   footer: {
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#f9f1e7", // Mismo color que el fondo
+    backgroundColor: "#f9f1e7",
   },
   footerText: {
     fontSize: 12,
     color: "#888888",
   },
+  logo: {
+    width: 200,
+    height: 100,
+    marginBottom: 16,
+  },
+
 });

@@ -1,5 +1,32 @@
 {
   "welcome": "Welcome",
-  "password": "Password",
-  "confirm_password": "Confirm Password"
+  "auth": {
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "loginTab": "Login",
+    "registerTab": "Register",
+    "demoText": "View demo without logging in",
+    "footerText": "© 2025 UNISAN. All rights reserved.",
+    "description": "The easiest way to manage your collective savings system.",
+    "loginSuccessTitle": "Login successful",
+    "loginSuccessMessage": "Welcome to UniSAN.",
+    "loginErrorTitle": "Login failed",
+    "loginErrorMessage": "Please check your credentials.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Password",
+    "forgotPasswordLink": "Forgot your password?",
+    "loginButton": "Log In",
+    "registerErrorTitle": "Registration failed",
+    "registerSuccessTitle": "Registration successful",
+    "registerSuccessMessage": "Your account has been created successfully.",
+    "registerErrorMessage": "Please fill out all fields.",
+    "passwordMismatchMessage": "Passwords do not match.",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Your full name",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "registerButton": "Sign Up"
+  }
 }

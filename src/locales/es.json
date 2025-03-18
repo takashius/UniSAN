@@ -1,5 +1,32 @@
 {
   "welcome": "Bienvenido",
-  "password": "Contraseña",
-  "confirm_password": "Confirmar Contraseña"
+  "auth": {
+    "password": "Contraseña",
+    "confirm_password": "Confirmar Contraseña",
+    "loginTab": "Iniciar sesión",
+    "registerTab": "Registrarse",
+    "demoText": "Ver demostración sin iniciar sesión",
+    "footerText": "© 2025 UNISAN. Todos los derechos reservados.",
+    "description": "La forma más fácil de gestionar tu sistema de ahorro colectivo.",
+    "loginSuccessTitle": "Inicio de sesión exitoso",
+    "loginSuccessMessage": "Bienvenido a UniSAN.",
+    "loginErrorTitle": "Error en el inicio de sesión",
+    "loginErrorMessage": "Por favor, revisa tus credenciales.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@correo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Contraseña",
+    "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+    "loginButton": "Iniciar sesión",
+    "registerErrorTitle": "Error en el registro",
+    "registerSuccessTitle": "Registro exitoso",
+    "registerSuccessMessage": "Tu cuenta ha sido creada correctamente.",
+    "registerErrorMessage": "Por favor, completa todos los campos.",
+    "passwordMismatchMessage": "Las contraseñas no coinciden.",
+    "nameLabel": "Nombre completo",
+    "namePlaceholder": "Tu nombre",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Confirmar contraseña",
+    "registerButton": "Crear cuenta"
+  }
 }

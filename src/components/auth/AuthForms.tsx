@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from "react-i18next";
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,19 +13,19 @@ export const LoginForm = () => {
 
   const handleSubmit = () => {
     if (email && password) {
-      Alert.alert("Inicio de sesión exitoso", "Bienvenido a UniSAN.");
+      Alert.alert(t("auth.loginSuccessTitle"), t("auth.loginSuccessMessage"));
     } else {
-      Alert.alert("Error en el inicio de sesión", "Por favor, revisa tus credenciales.");
+      Alert.alert(t("auth.loginErrorTitle"), t("auth.loginErrorMessage"));
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Correo electrónico</Text>
+        <Text style={styles.label}>{t("auth.emailLabel")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="tu@correo.com"
+          placeholder={t("auth.emailPlaceholder")}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -32,11 +34,11 @@ export const LoginForm = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Contraseña</Text>
+        <Text style={styles.label}>{t("auth.passwordLabel")}</Text>
         <View style={styles.passwordContainer}>
           <TextInput
             style={[styles.input, { paddingRight: 48 }]} // Espacio adicional para el ícono
-            placeholder="Contraseña"
+            placeholder={t("auth.passwordPlaceholder")}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
@@ -57,12 +59,12 @@ export const LoginForm = () => {
           // @ts-ignore
           navigation.navigate('RecoveryPasswordStep1')
         }}>
-          <Text style={styles.link}>¿Olvidaste tu contraseña?</Text>
+          <Text style={styles.link}>{t("auth.forgotPasswordLink")}</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>Iniciar sesión</Text>
+        <Text style={styles.buttonText}>{t("auth.loginButton")}</Text>
         <ArrowRight size={24} color="white" />
       </TouchableOpacity>
     </View>
@@ -70,6 +72,7 @@ export const LoginForm = () => {
 };
 
 export const RegisterForm = () => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,34 +82,34 @@ export const RegisterForm = () => {
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
-      Alert.alert("Error en el registro", "Las contraseñas no coinciden.");
+      Alert.alert(t("auth.registerErrorTitle"), t("auth.passwordMismatchMessage"));
       return;
     }
 
     if (name && email && password) {
-      Alert.alert("Registro exitoso", "Tu cuenta ha sido creada correctamente.");
+      Alert.alert(t("auth.registerSuccessTitle"), t("auth.registerSuccessMessage"));
     } else {
-      Alert.alert("Error en el registro", "Por favor, completa todos los campos.");
+      Alert.alert(t("auth.registerErrorTitle"), t("auth.registerErrorMessage"));
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Nombre completo</Text>
+        <Text style={styles.label}>{t("auth.nameLabel")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Tu nombre"
+          placeholder={t("auth.namePlaceholder")}
           value={name}
           onChangeText={setName}
         />
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Correo electrónico</Text>
+        <Text style={styles.label}>{t("auth.emailLabel")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="tu@correo.com"
+          placeholder={t("auth.emailPlaceholder")}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -115,11 +118,11 @@ export const RegisterForm = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Contraseña</Text>
+        <Text style={styles.label}>{t("auth.passwordLabel")}</Text>
         <View style={styles.passwordContainer}>
           <TextInput
             style={[styles.input, { paddingRight: 48 }]}
-            placeholder="Contraseña"
+            placeholder={t("auth.passwordPlaceholder")}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
@@ -138,11 +141,11 @@ export const RegisterForm = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Confirmar contraseña</Text>
+        <Text style={styles.label}>{t("auth.confirmPasswordLabel")}</Text>
         <View style={styles.passwordContainer}>
           <TextInput
             style={[styles.input, { paddingRight: 48 }]}
-            placeholder="Confirmar contraseña"
+            placeholder={t("auth.confirmPasswordPlaceholder")}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry={!showPasswordConfirm}
@@ -161,7 +164,7 @@ export const RegisterForm = () => {
       </View>
 
       <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>Crear cuenta</Text>
+        <Text style={styles.buttonText}>{t("auth.registerButton")}</Text>
         <ArrowRight size={24} color="white" />
       </TouchableOpacity>
     </View>
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
   eyeButton: {
     position: "absolute",
     right: 12,
-    top: "25%", // Centra el botón verticalmente en relación al TextInput
+    top: "25%",
   },
   link: {
     marginTop: 8,

@@ -77,5 +77,15 @@
     "confirmPasswordPlaceholder": "Confirmar contraseña",
     "backButton": "Volver",
     "updateButton": "Actualizar"
+  },
+  "HomeScreen": {
+    "welcome": "Bienvenido de nuevo",
+    "welcomeMessage": "Tienes 2 SANs activos y un pago próximo en 3 días.",
+    "activeSANs": "Tus SANs activos",
+    "viewAll": "Ver todos",
+    "upcomingPayments": "Próximos pagos",
+    "turn": "Turno {{current}} de {{total}}",
+    "paymentDate": "Fecha de pago:",
+    "earlyPaymentButton": "Realizar pago anticipado"
   }
 }

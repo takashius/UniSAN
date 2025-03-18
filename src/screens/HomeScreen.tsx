@@ -4,8 +4,8 @@ import { ChevronRight } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import UserLevel from "../components/ui/UserLevel";
+import { useTranslation } from "react-i18next";
 
-// Datos de ejemplo
 const mockSANs = [
   {
     id: "1",
@@ -29,27 +29,25 @@ const mockSANs = [
 ];
 
 const HomeScreen = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
 
-      {/* Main Content */}
       <ScrollView contentContainerStyle={styles.mainContent}>
-        {/* Welcome Section */}
         <Animated.View style={styles.glassCard} entering={FadeInDown.duration(400)}>
           <Text style={styles.welcomeTitle}>
-            Bienvenido de nuevo, <Text style={styles.highlight}>María</Text>
+            {t("HomeScreen.welcome")}, <Text style={styles.highlight}>María</Text>
           </Text>
-          <Text style={styles.welcomeText}>Tienes 2 SANs activos y un pago próximo en 3 días.</Text>
+          <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage")}</Text>
         </Animated.View>
 
         <UserLevel level={1} points={60} nextLevelPoints={100} />
 
-        {/* Active SANs Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Tus SANs activos</Text>
+            <Text style={styles.sectionTitle}>{t("HomeScreen.activeSANs")}</Text>
             <TouchableOpacity style={styles.link}>
-              <Text style={styles.linkText}>Ver todos</Text>
+              <Text style={styles.linkText}>{t("HomeScreen.viewAll")}</Text>
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>
           </View>
@@ -64,26 +62,25 @@ const HomeScreen = () => {
           ))}
         </View>
 
-        {/* Upcoming Payments Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Próximos pagos</Text>
+            <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
           </View>
 
           <Animated.View style={styles.paymentCard} entering={FadeInDown.delay(200).duration(500)}>
             <View style={styles.paymentCardHeader}>
               <View>
                 <Text style={styles.cardTitle}>SAN Básico</Text>
-                <Text style={styles.cardSubtitle}>Turno 3 de 10</Text>
+                <Text style={styles.cardSubtitle}>{t("HomeScreen.turn", { current: 3, total: 10 })}</Text>
               </View>
               <Text style={styles.cardAmount}>$100</Text>
             </View>
             <View style={styles.paymentDetails}>
-              <Text style={styles.detailsLabel}>Fecha de pago:</Text>
+              <Text style={styles.detailsLabel}>{t("HomeScreen.paymentDate")}</Text>
               <Text style={styles.detailsValue}>15 mayo, 2023</Text>
             </View>
             <TouchableOpacity style={styles.paymentButton}>
-              <Text style={styles.buttonText}>Realizar pago anticipado</Text>
+              <Text style={styles.buttonText}>{t("HomeScreen.earlyPaymentButton")}</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>

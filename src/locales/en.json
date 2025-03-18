@@ -77,5 +77,15 @@
     "confirmPasswordPlaceholder": "Confirm Password",
     "backButton": "Back",
     "updateButton": "Update"
+  },
+  "HomeScreen": {
+    "welcome": "Welcome back",
+    "welcomeMessage": "You have 2 active SANs and an upcoming payment in 3 days.",
+    "activeSANs": "Your Active SANs",
+    "viewAll": "View All",
+    "upcomingPayments": "Upcoming Payments",
+    "turn": "Turn {{current}} of {{total}}",
+    "paymentDate": "Payment Date:",
+    "earlyPaymentButton": "Make Early Payment"
   }
 }

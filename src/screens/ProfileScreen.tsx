@@ -4,9 +4,15 @@ import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard } from "lucid
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
+import { useUser } from "../context/UserContext";
 
 const Profile = () => {
   const { t } = useTranslation();
+  const { logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+  }
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -76,7 +82,7 @@ const Profile = () => {
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.settingsItem, styles.logoutItem]}>
+            <TouchableOpacity style={[styles.settingsItem, styles.logoutItem]} onPress={handleLogout}>
               <LogOut size={20} color="#ff4d4d" />
               <Text style={styles.logoutText}>{t("Profile.logout")}</Text>
             </TouchableOpacity>

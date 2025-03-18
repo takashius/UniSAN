@@ -146,5 +146,13 @@
     "paymentMethods": "Métodos de Pago",
     "preferences": "Preferencias",
     "logout": "Cerrar Sesión"
+  },
+  "Navigation": {
+    "home": "Inicio",
+    "chat": "Chat",
+    "explorer": "Explorar",
+    "history": "Historial",
+    "profile": "Perfil",
+    "recoverPassword": "Recuperar contraseña"
   }
 }

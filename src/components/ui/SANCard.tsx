@@ -76,7 +76,7 @@ const SANCard: React.FC<SANCardProps> = ({
 
           <TouchableOpacity style={styles.detailsLink} onPress={() => {
             if (external) {
-              return navigation.navigate("Explorar", { screen: "SANDetails", params: { id: "123" } })
+              return navigation.navigate("Explorer", { screen: "SANDetails", params: { id: "123" } })
             } else {
               return navigation.navigate("SANDetails", { params: { id: "123" } })
             }

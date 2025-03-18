@@ -15,10 +15,10 @@ import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
+import { useTranslation } from "react-i18next";
 
-// Tipos para las rutas
 type SANStackParamList = {
-  Explorar: undefined;
+  Explorer: undefined;
   Login: undefined;
   RecoveryPasswordStep1: undefined;
   RecoveryPasswordStep2: undefined;
@@ -28,20 +28,21 @@ type SANStackParamList = {
 type TabParamList = {
   UNISAN: undefined;
   Chat: undefined;
-  Explorar: undefined;
-  Historial: undefined;
-  Perfil: undefined;
+  Explorer: undefined;
+  History: undefined;
+  Profile: undefined;
 };
 
 const Stack = createStackNavigator<SANStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useUser();
 
   const SANStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Explorar" component={ExplorerScreen} />
+      <Stack.Screen name="Explorer" component={ExplorerScreen} />
       <Stack.Screen name="SANDetails" component={SANDetails} />
     </Stack.Navigator>
   );
@@ -62,13 +63,13 @@ const AppNavigator: React.FC = () => {
                   case "Chat":
                     IconComponent = MessageCircle;
                     break;
-                  case "Explorar":
+                  case "Explorer":
                     IconComponent = Search;
                     break;
-                  case "Historial":
+                  case "History":
                     IconComponent = Calendar;
                     break;
-                  case "Perfil":
+                  case "Profile":
                     IconComponent = User;
                     break;
                   default:
@@ -90,11 +91,40 @@ const AppNavigator: React.FC = () => {
               headerTintColor: "white",
             })}
           >
-            <Tab.Screen name="UNISAN" component={HomeScreen} />
-            <Tab.Screen name="Chat" component={ChatScreen} />
-            <Tab.Screen name="Explorar" component={SANStack} />
-            <Tab.Screen name="Historial" component={HistoryScreen} />
-            <Tab.Screen name="Perfil" component={ProfileScreen} />
+            <Tab.Screen
+              name="UNISAN"
+              component={HomeScreen}
+              options={{
+                tabBarLabel: t("Navigation.home"),
+                headerTitle: t("Navigation.home"),
+              }} />
+            <Tab.Screen
+              name="Chat"
+              component={ChatScreen}
+              options={{
+                tabBarLabel: t("Navigation.chat")
+              }} />
+            <Tab.Screen
+              name="Explorer"
+              component={SANStack}
+              options={{
+                tabBarLabel: t("Navigation.explorer"),
+                headerTitle: t("Navigation.explorer"),
+              }} />
+            <Tab.Screen
+              name="History"
+              component={HistoryScreen}
+              options={{
+                tabBarLabel: t("Navigation.history"),
+                headerTitle: t("Navigation.history"),
+              }} />
+            <Tab.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{
+                tabBarLabel: t("Navigation.profile"),
+                headerTitle: t("Navigation.profile"),
+              }} />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
@@ -107,7 +137,7 @@ const AppNavigator: React.FC = () => {
               name="RecoveryPasswordStep1"
               component={EmailStepScreen}
               options={{
-                headerTitle: "Recuperar contraseña",
+                headerTitle: t("Navigation.recoverPassword"),
                 headerStyle: { backgroundColor: "#ff7f50" },
                 headerTintColor: "white",
               }}
@@ -116,7 +146,7 @@ const AppNavigator: React.FC = () => {
               name="RecoveryPasswordStep2"
               component={VerificationStep}
               options={{
-                headerTitle: "Recuperar contraseña",
+                headerTitle: t("Navigation.recoverPassword"),
                 headerStyle: { backgroundColor: "#ff7f50" },
                 headerTintColor: "white",
               }}

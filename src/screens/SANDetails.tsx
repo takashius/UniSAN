@@ -49,7 +49,7 @@ const SANDetails: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate("Explorar")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Explorer")}>
           <ArrowLeft size={24} color="#888" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{sanDetails.name}</Text>

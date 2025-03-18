@@ -129,5 +129,22 @@
     "viewAll": "View all",
     "noCompletedSANs": "No completed SANs",
     "noCompletedSANsMessage": "When you complete your first SAN, it will appear here."
+  },
+  "Profile": {
+    "level": "Level {{level}} · {{type}}",
+    "levelType": {
+      "initial": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "statistics": "Statistics",
+    "sansParticipated": "SANs Participated",
+    "paymentsOnTime": "Payments On Time",
+    "sansCompleted": "SANs Completed",
+    "totalSaved": "Total Saved",
+    "settings": "Settings",
+    "paymentMethods": "Payment Methods",
+    "preferences": "Preferences",
+    "logout": "Log Out"
   }
 }

@@ -10,7 +10,7 @@ import { Calendar, ChevronRight } from "lucide-react-native";
 import Animated, { FadeIn, FadeInLeft } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 
-const History: React.FC = () => {
+const History = () => {
   const { t } = useTranslation();
   const historyItems = [
     {

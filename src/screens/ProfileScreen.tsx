@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../components/ui/UserLevel";
+import { useTranslation } from "react-i18next";
 
-const Profile: React.FC = () => {
+const Profile = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Card de Perfil */}
         <Animated.View entering={FadeInDown.duration(400)} style={styles.profileCard}>
           <View style={styles.profileHeader}>
             <View style={styles.avatarContainer}>
@@ -27,60 +28,57 @@ const Profile: React.FC = () => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.profileEmail}>maria.gonzalez@ejemplo.com</Text>
-              <Text style={styles.profileLevel}>Nivel 1 · Inicial</Text>
+              <Text style={styles.profileLevel}>{t("Profile.level", { level: 1, type: t("Profile.levelType.initial") })}</Text>
             </View>
           </View>
         </Animated.View>
 
-        {/* Sección de Nivel */}
         <View style={styles.section}>
           <UserLevel level={1} points={60} nextLevelPoints={100} />
         </View>
 
-        {/* Estadísticas */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Estadísticas</Text>
+          <Text style={styles.sectionTitle}>{t("Profile.statistics")}</Text>
           <Animated.View entering={FadeInDown.duration(400).delay(100)} style={styles.statsGrid}>
             <View style={styles.statCard}>
-              <Text style={styles.statLabel}>SANs participados</Text>
+              <Text style={styles.statLabel}>{t("Profile.sansParticipated")}</Text>
               <Text style={styles.statValue}>2</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statLabel}>Pagos a tiempo</Text>
+              <Text style={styles.statLabel}>{t("Profile.paymentsOnTime")}</Text>
               <Text style={styles.statValue}>4/4</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statLabel}>SANs completados</Text>
+              <Text style={styles.statLabel}>{t("Profile.sansCompleted")}</Text>
               <Text style={styles.statValue}>0</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statLabel}>Total ahorrado</Text>
+              <Text style={styles.statLabel}>{t("Profile.totalSaved")}</Text>
               <Text style={styles.statValueOrange}>$400</Text>
             </View>
           </Animated.View>
         </View>
 
-        {/* Configuración */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Configuración</Text>
+          <Text style={styles.sectionTitle}>{t("Profile.settings")}</Text>
           <Animated.View entering={FadeIn.duration(400).delay(200)} style={styles.settingsCard}>
             <TouchableOpacity style={styles.settingsItem}>
               <View style={styles.settingsItemRow}>
                 <CreditCard size={20} color="#ff7f50" />
-                <Text style={styles.settingsItemText}>Métodos de pago</Text>
+                <Text style={styles.settingsItemText}>{t("Profile.paymentMethods")}</Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.settingsItem}>
               <View style={styles.settingsItemRow}>
                 <Settings size={20} color="#ff7f50" />
-                <Text style={styles.settingsItemText}>Preferencias</Text>
+                <Text style={styles.settingsItemText}>{t("Profile.preferences")}</Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.settingsItem, styles.logoutItem]}>
               <LogOut size={20} color="#ff4d4d" />
-              <Text style={styles.logoutText}>Cerrar sesión</Text>
+              <Text style={styles.logoutText}>{t("Profile.logout")}</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>

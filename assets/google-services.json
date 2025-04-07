@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301734436877",
+    "project_id": "unisan-e3923",
+    "storage_bucket": "unisan-e3923.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301734436877:android:1175d9dbe0e4af889d3544",
+        "android_client_info": {
+          "package_name": "com.erickhernandez.UniSAN"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnK0mRkWJErpr9oJ2YhOGUMEMzu36AnnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

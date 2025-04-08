@@ -4,11 +4,11 @@ import { Eye, EyeOff, ArrowRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useRegister } from '../../services/auth';
 import { useUser } from '../../context/UserContext';
 import { Button, TextInput } from 'react-native-paper';
-import { useLogin } from '../../services/auth';
+import { useLogin, useRegister } from '../../services/auth';
 import Toast from 'react-native-toast-message';
+import errorToast from '../ui/ErrorToast';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
@@ -17,7 +17,6 @@ export const LoginForm = () => {
   const loginMutate = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
 
-  // RHF: Configurar useForm
   const {
     control,
     handleSubmit,
@@ -25,7 +24,6 @@ export const LoginForm = () => {
   } = useForm<{ email: string; password: string }>();
 
   const onSubmit = (data: { email: string; password: string }) => {
-    console.log(data)
     loginMutate.mutate(
       { email: data.email, password: data.password },
       {
@@ -37,12 +35,17 @@ export const LoginForm = () => {
             photo: responseData.photo,
             token: responseData.token,
           });
+          Toast.show({
+            type: 'success',
+            text1: t("auth.loginSuccessTitle"),
+            text2: t("auth.loginSuccessMessage")
+          });
         },
         onError: (error) => {
           Toast.show({
             type: 'error',
-            text1: 'Error',
-            text2: `${error}`
+            text1: t("auth.loginErrorTitle"),
+            text2: `${errorToast(error)}}`
           });
           console.log('Error al hacer login:', error)
         }
@@ -85,7 +88,6 @@ export const LoginForm = () => {
         )}
       </View>
 
-      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
         <View style={styles.passwordContainer}>
           <Controller
@@ -121,7 +123,6 @@ export const LoginForm = () => {
           </Text>
         )}
 
-        {/* Enlace para restablecer contraseña */}
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("RecoveryPasswordStep1");
@@ -150,104 +151,180 @@ export const LoginForm = () => {
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const registerMutate = useRegister();
+  const { login } = useUser();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
 
-  const handleSubmit = () => {
-    if (password !== confirmPassword) {
-      Alert.alert(t("auth.registerErrorTitle"), t("auth.passwordMismatchMessage"));
-      return;
-    }
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    if (name && email && password) {
-      registerMutate.mutate({ name, email, password }, {
-        onSuccess: (data) => {
-        }
-      });
-    } else {
-      Alert.alert(t("auth.registerErrorTitle"), t("auth.registerErrorMessage"));
-    }
+  const password = watch("password"); // Observar el valor de "password"
+
+  const onSubmit = (data: { name: string; email: string; password: string; confirmPassword: string }) => {
+    registerMutate.mutate(
+      { name: data.name, email: data.email, password: data.password },
+      {
+        onSuccess: (response) => {
+          login({
+            email: data.email,
+            name: response.name,
+            token: response.token,
+          });
+          Toast.show({
+            type: 'success',
+            text1: t("auth.registerSuccessTitle"),
+            text2: t("auth.registerSuccessMessage")
+          });
+        },
+        onError: (error) => {
+          Toast.show({
+            type: 'error',
+            text1: t("auth.registerErrorTitle"),
+            text2: `${errorToast(error)}`
+          });
+          console.log('Error al registrarse:', error)
+        },
+      }
+    );
   };
 
   return (
     <View style={styles.container}>
+      {/* Campo de Nombre */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.nameLabel")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.namePlaceholder")}
-          value={name}
-          onChangeText={setName}
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            required: t("auth.nameRequired"),
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder={t("auth.nameLabel")}
+              value={value}
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              onChangeText={onChange}
+              style={styles.input}
+            />
+          )}
         />
+        {errors.name && <Text style={styles.errorText}>{errors.name.message}</Text>}
       </View>
 
+      {/* Campo de Email */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.emailLabel")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.emailPlaceholder")}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: t("auth.emailRequired"),
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: t("auth.emailInvalid"),
+            },
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder={t("auth.emailLabel")}
+              value={value}
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              onChangeText={onChange}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+            />
+          )}
         />
+        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
       </View>
 
+      {/* Campo de Contraseña */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.passwordLabel")}</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { paddingRight: 48 }]}
-            placeholder={t("auth.passwordPlaceholder")}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.eyeButton}
-          >
-            {showPassword ? (
-              <EyeOff size={24} color="#ff7f50" />
-            ) : (
-              <Eye size={24} color="#ff7f50" />
-            )}
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={control}
+          name="password"
+          rules={{
+            required: t("auth.passwordRequired"),
+            minLength: {
+              value: 7,
+              message: t("auth.passwordMinLength"),
+            },
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder={t("auth.passwordLabel")}
+              value={value}
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              onChangeText={onChange}
+              secureTextEntry={!showPassword}
+              right={showPassword ?
+                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
+                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
+              style={styles.input}
+            />
+          )}
+        />
+        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
       </View>
 
+      {/* Confirmar Contraseña */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.confirmPasswordLabel")}</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { paddingRight: 48 }]}
-            placeholder={t("auth.confirmPasswordPlaceholder")}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry={!showPasswordConfirm}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
-            style={styles.eyeButton}
-          >
-            {showPasswordConfirm ? (
-              <EyeOff size={24} color="#ff7f50" />
-            ) : (
-              <Eye size={24} color="#ff7f50" />
-            )}
-          </TouchableOpacity>
-        </View>
+        <Controller
+          control={control}
+          name="confirmPassword"
+          rules={{
+            required: t("auth.confirmPasswordRequired"),
+            validate: (value) =>
+              value === password || t("auth.passwordMismatchMessage"),
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder={t("auth.confirmPasswordLabel")}
+              value={value}
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              onChangeText={onChange}
+              secureTextEntry={!showPasswordConfirm}
+              right={showPasswordConfirm ?
+                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />
+                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />}
+              style={styles.input}
+            />
+          )}
+        />
+        {errors.confirmPassword && (
+          <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
+        )}
       </View>
 
-      <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>{t("auth.registerButton")}</Text>
-        <ArrowRight size={24} color="white" />
-      </TouchableOpacity>
+      {/* Botón de Registro */}
+      <Button
+        mode="contained"
+        style={styles.button}
+        contentStyle={styles.buttonContent}
+        onPress={handleSubmit(onSubmit)}
+        loading={registerMutate.isPending}
+        icon={({ size, color }) => (
+          <ArrowRight size={size} color={color} />
+        )}
+      >
+        {t("auth.registerButton")}
+      </Button>
     </View>
   );
 };

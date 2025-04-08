@@ -40,9 +40,6 @@ const LoginScreen = () => {
                 keyboardShouldPersistTaps="handled"
               >
                 <LoginForm />
-                <TouchableOpacity onPress={handleDemoLogin} style={styles.demoLink}>
-                  <Text style={styles.demoText}>{t("auth.demoText")}</Text>
-                </TouchableOpacity>
               </ScrollView>
             </TabsContent>
 

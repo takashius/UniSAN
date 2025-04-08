@@ -288,7 +288,7 @@ export const RegisterForm = () => {
           control={control}
           name="confirmPassword"
           rules={{
-            required: t("auth.confirmPasswordRequired"),
+            required: t("auth.passwordRequired"),
             validate: (value) =>
               value === password || t("auth.passwordMismatchMessage"),
           }}

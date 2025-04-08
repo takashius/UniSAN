@@ -1,12 +1,10 @@
 import axios from "axios";
 import urlJoin from "url-join";
-import Constants from "expo-constants";
 import SecureStoreManager from "../components/AsyncStorageManager";
 
-const { API_URL, API_DEBUG } = Constants.expoConfig?.extra || {};
-const DEBUG = API_DEBUG;
+const DEBUG = process.env.EXPO_PUBLIC_API_DEBUG;
 const locale = "es";
-const apiUrl = API_URL;
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const ERDEAxios = axios.create();
 

@@ -28,9 +28,7 @@
     "extra": {
       "eas": {
         "projectId": "19526fb3-cc6e-4e87-a550-c294f8cc0d17"
-      },
-      "API_URL": "http://192.168.20.189:8080/",
-      "API_DEBUG": true
+      }
     },
     "runtimeVersion": {
       "policy": "appVersion"

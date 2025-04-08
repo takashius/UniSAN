@@ -31,7 +31,8 @@
     "emailRequired": "El correo no debe estar vacio",
     "passwordRequired": "La contraseña no debe estar vacia",
     "passwordMinLength": "La contraseña debe tener minimo 7 caracteres",
-    "emailInvalid": "El correo debe tener un formato válido"
+    "emailInvalid": "El correo debe tener un formato válido",
+    "nameRequired": "El nombre no debe estar vacio"
   },
   "SANCard": {
     "perTurn": "por turno",

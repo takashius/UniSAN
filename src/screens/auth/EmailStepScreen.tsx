@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import { ArrowLeft, ArrowRight, Mail } from "lucide-react-native";
+import React from "react";
+import { View, StyleSheet, Alert, Text } from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import { TextInput, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { ArrowLeft, Mail } from "lucide-react-native";
+import { useRecoveryOne } from "../../services/auth";
+import Toast from "react-native-toast-message";
+import errorToast from "../../components/ui/ErrorToast";
 
 interface VerificationStepProps {
   navigation: any;
@@ -9,49 +14,107 @@ interface VerificationStepProps {
 
 const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
   const { t } = useTranslation();
-  const [email, setEmail] = useState("");
+  const recoveryMutate = useRecoveryOne();
 
-  const handleSubmitEmail = () => {
-    if (!email) {
-      Alert.alert(t("EmailStepScreen.requiredField"), t("EmailStepScreen.enterEmail"));
-      return;
-    }
-    Alert.alert(t("EmailStepScreen.codeSentTitle"), t("EmailStepScreen.codeSentMessage"));
-    navigation.navigate("RecoveryPasswordStep2");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (data: { email: string }) => {
+    recoveryMutate.mutate(
+      data.email,
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: 'success',
+            text1: t("EmailStepScreen.codeSentTitle"),
+            text2: t("EmailStepScreen.codeSentMessage")
+          });
+          navigation.navigate("RecoveryPasswordStep2");
+        },
+        onError: (error) => {
+          Toast.show({
+            type: 'error',
+            text1: "Error",
+            text2: `${errorToast(error)}`
+          });
+          console.log('Error:', error)
+        },
+      }
+    );
   };
 
   return (
     <View style={styles.container}>
+      {/* Ícono */}
       <View style={styles.iconContainer}>
         <Mail size={32} color="#ff7f50" />
       </View>
+
+      {/* Títulos */}
       <Text style={styles.title}>{t("EmailStepScreen.title")}</Text>
       <Text style={styles.subtitle}>{t("EmailStepScreen.subtitle")}</Text>
 
+      {/* Campo de Email */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("EmailStepScreen.emailLabel")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("EmailStepScreen.emailPlaceholder")}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: t("EmailStepScreen.requiredField"),
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: t("auth.emailInvalid"),
+            },
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label={t("EmailStepScreen.emailLabel")}
+              placeholder={t("EmailStepScreen.emailPlaceholder")}
+              keyboardType="email-address"
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              autoCapitalize="none"
+              value={value}
+              onChangeText={onChange}
+              error={!!errors.email} // Resalta si hay error
+              style={styles.input}
+            />
+          )}
         />
+        {errors.email && (
+          <Text style={styles.errorText}>{errors.email.message}</Text>
+        )}
       </View>
 
+      {/* Botones */}
       <View style={styles.buttonGroup}>
-        <TouchableOpacity
-          style={[styles.button, styles.secondaryButton]}
+        <Button
+          mode="outlined"
           onPress={() => navigation.goBack()}
+          style={styles.secondaryButton}
+          icon={() => <ArrowLeft size={20} color="#FF7F50" />} // Ícono personalizado con color
+          contentStyle={styles.secondaryButtonContent}
+          labelStyle={styles.secondaryButtonText} // Color del texto
         >
-          <ArrowLeft size={20} color="#FF7F50" />
-          <Text style={styles.buttonTextSecondary}>{t("EmailStepScreen.backButton")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleSubmitEmail}>
-          <Text style={styles.buttonText}>{t("EmailStepScreen.sendCodeButton")}</Text>
-          <ArrowRight size={20} color="#fff" />
-        </TouchableOpacity>
-
+          {t("EmailStepScreen.backButton")}
+        </Button>
+        <Button
+          mode="contained"
+          onPress={handleSubmit(onSubmit)}
+          style={styles.primaryButton}
+          contentStyle={styles.buttonContent}
+          loading={recoveryMutate.isPending}
+          icon="arrow-right"
+        >
+          {t("EmailStepScreen.sendCodeButton")}
+        </Button>
       </View>
     </View>
   );
@@ -85,33 +148,15 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 20,
   },
-  label: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 8,
-  },
   input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: "#fff",
+    marginBottom: 10,
+    backgroundColor: "transparent",
   },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    backgroundColor: "#ff7f50",
-    padding: 16,
-    borderRadius: 8,
-    flex: 1,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginRight: 8,
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
   },
   buttonGroup: {
     flexDirection: "row",
@@ -119,25 +164,36 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   secondaryButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderColor: "#FF7F50",
-    marginRight: 8,
-  },
-  buttonTextSecondary: {
-    color: "#FF7F50",
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  buttonTextPrimary: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    marginRight: 8,
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 16,
   },
   primaryButton: {
-    backgroundColor: "#FF7F50",
-    marginLeft: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ff7f50',
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 16,
   },
+  buttonContent: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+  },
+  secondaryButtonText: {
+    color: "#FF7F50", // Mismo color que el borde
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  secondaryButtonContent: {
+    flexDirection: "row", // Mantener ícono y texto en línea
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
 });

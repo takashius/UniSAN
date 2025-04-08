@@ -1,72 +1,149 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Eye, EyeOff, ArrowRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useRegister } from '../../services/auth';
+import { useUser } from '../../context/UserContext';
+import { Button, TextInput } from 'react-native-paper';
+import { useLogin } from '../../services/auth';
+import Toast from 'react-native-toast-message';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const navigation: any = useNavigation();
+  const { login } = useUser();
+  const loginMutate = useLogin();
+  const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleSubmit = () => {
-    if (email && password) {
-      Alert.alert(t("auth.loginSuccessTitle"), t("auth.loginSuccessMessage"));
-    } else {
-      Alert.alert(t("auth.loginErrorTitle"), t("auth.loginErrorMessage"));
-    }
+  // RHF: Configurar useForm
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<{ email: string; password: string }>();
+
+  const onSubmit = (data: { email: string; password: string }) => {
+    console.log(data)
+    loginMutate.mutate(
+      { email: data.email, password: data.password },
+      {
+        onSuccess: (responseData) => {
+          login({
+            email: data.email,
+            name: responseData.name,
+            lastName: responseData.lastName,
+            photo: responseData.photo,
+            token: responseData.token,
+          });
+        },
+        onError: (error) => {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: `${error}`
+          });
+          console.log('Error al hacer login:', error)
+        }
+      }
+    );
   };
 
   return (
     <View style={styles.container}>
+      {/* Campo de correo */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.emailLabel")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.emailPlaceholder")}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: t("auth.emailRequired"),
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: t("auth.emailInvalid"),
+            },
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              placeholder={t("auth.emailLabel")}
+              value={value}
+              activeUnderlineColor="#ff7f50"
+              textColor="black"
+              onChangeText={onChange}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={errors.email ? true : false}
+            />
+          )}
         />
+        {errors.email && (
+          <Text style={styles.errorText}>
+            {String(errors.email.message)}
+          </Text>
+        )}
       </View>
 
+      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{t("auth.passwordLabel")}</Text>
         <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { paddingRight: 48 }]} // Espacio adicional para el ícono
-            placeholder={t("auth.passwordPlaceholder")}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.eyeButton}
-          >
-            {showPassword ? (
-              <EyeOff size={24} color="#ff7f50" />
-            ) : (
-              <Eye size={24} color="#ff7f50" />
+          <Controller
+            control={control}
+            name="password"
+            rules={{
+              required: t("auth.passwordRequired"),
+              minLength: {
+                value: 7,
+                message: t("auth.passwordMinLength"),
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label={t("auth.passwordPlaceholder")}
+                value={value}
+                onChangeText={onChange}
+                activeUnderlineColor="#ff7f50"
+                textColor="black"
+                secureTextEntry={!showPassword}
+                right={showPassword ?
+                  <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
+                  : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
+                style={styles.input}
+                error={errors.password ? true : false}
+              />
             )}
-          </TouchableOpacity>
+          />
         </View>
+        {errors.password && (
+          <Text style={styles.errorText}>
+            {String(errors.password.message)}
+          </Text>
+        )}
 
-        <TouchableOpacity onPress={() => {
-          // @ts-ignore
-          navigation.navigate('RecoveryPasswordStep1')
-        }}>
+        {/* Enlace para restablecer contraseña */}
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("RecoveryPasswordStep1");
+          }}
+        >
           <Text style={styles.link}>{t("auth.forgotPasswordLink")}</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>{t("auth.loginButton")}</Text>
-        <ArrowRight size={24} color="white" />
-      </TouchableOpacity>
+      <Button
+        mode="contained"
+        style={styles.button}
+        contentStyle={styles.buttonContent}
+        onPress={handleSubmit(onSubmit)}
+        loading={loginMutate.isPending}
+        icon={({ size, color }) => (
+          <ArrowRight size={size} color={color} />
+        )}
+      >
+        {t("auth.loginButton")}
+      </Button>
+
     </View>
   );
 };
@@ -79,6 +156,7 @@ export const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const registerMutate = useRegister();
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
@@ -87,7 +165,10 @@ export const RegisterForm = () => {
     }
 
     if (name && email && password) {
-      Alert.alert(t("auth.registerSuccessTitle"), t("auth.registerSuccessMessage"));
+      registerMutate.mutate({ name, email, password }, {
+        onSuccess: (data) => {
+        }
+      });
     } else {
       Alert.alert(t("auth.registerErrorTitle"), t("auth.registerErrorMessage"));
     }
@@ -182,17 +263,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
     width: "100%",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "white",
+    color: "black"
   },
   passwordContainer: {
     flexDirection: "row",
@@ -228,5 +303,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 8,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: "bold",
+  },
+  buttonContent: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
   },
 });

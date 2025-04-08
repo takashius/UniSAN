@@ -1,23 +1,30 @@
 import axios from "axios";
 import urlJoin from "url-join";
-import "dotenv/config";
+import Constants from "expo-constants";
+import SecureStoreManager from "../components/AsyncStorageManager";
 
-const DEBUG = process.env.API_DEBUG;
+const { API_URL, API_DEBUG } = Constants.expoConfig?.extra || {};
+const DEBUG = API_DEBUG;
 const locale = "es";
-const apiUrl = process.env.API_URL;
+const apiUrl = API_URL;
 
 const ERDEAxios = axios.create();
 
-// interceptor for outgoing requests
+// Interceptor para solicitudes salientes
 ERDEAxios.interceptors.request.use(
   async (config) => {
-    const userToken = localStorage.getItem("Token");
-    const contentType = localStorage.getItem("contentType");
-    const responseType = localStorage.getItem("responseType");
+    // Obtener valores almacenados en SecureStore
+    const userToken = await SecureStoreManager.getItem<string>("Token");
+    const contentType = await SecureStoreManager.getItem<string>("contentType");
+    const responseType = await SecureStoreManager.getItem<string>(
+      "responseType"
+    );
+
     if (userToken) {
-      config.headers["Authorization"] = "Bearer " + userToken;
+      config.headers["Authorization"] = `Bearer ${userToken}`;
     }
     config.headers["Accept-Language"] = locale;
+
     if (contentType) {
       config.headers["Content-type"] = "multipart/form-data";
       if (DEBUG) console.log("Content-type", "multipart/form-data");
@@ -25,12 +32,13 @@ ERDEAxios.interceptors.request.use(
       if (DEBUG) console.log("Content-type", "application/json");
       config.headers["Content-type"] = "application/json";
     }
+
     if (responseType) {
       config.headers["responseType"] = responseType;
       if (DEBUG) console.log("ResponseType", responseType);
     }
 
-    config.url = urlJoin(apiUrl!, `${config.url}`);
+    config.url = urlJoin(apiUrl, `${config.url}`);
     if (DEBUG) {
       console.log("URL", config.method, config.url);
       config.data && console.log("DATA", config.data);
@@ -46,7 +54,7 @@ ERDEAxios.interceptors.request.use(
   }
 );
 
-// interceptor for incoming responses
+// Interceptor para respuestas entrantes
 ERDEAxios.interceptors.response.use(
   (response) => {
     if (DEBUG) {
@@ -88,7 +96,7 @@ ERDEAxios.interceptors.response.use(
           break;
         case 502:
           return Promise.reject(
-            "Falla Temporal de comunicacion  con el servidor, intente nuevamente mas tarde"
+            "Falla Temporal de comunicacion con el servidor, intente nuevamente mas tarde"
           );
           break;
         default:

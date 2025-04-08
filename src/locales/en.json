@@ -27,7 +27,11 @@
     "namePlaceholder": "Your full name",
     "confirmPasswordLabel": "Confirm Password",
     "confirmPasswordPlaceholder": "Confirm Password",
-    "registerButton": "Sign Up"
+    "registerButton": "Sign Up",
+    "emailRequired": "The email must not be empty",
+    "passwordRequired": "The password must not be empty",
+    "passwordMinLength": "The password must be at least 7 characters long",
+    "emailInvalid": "The email must be in a valid format"
   },
   "SANCard": {
     "perTurn": "per turn",

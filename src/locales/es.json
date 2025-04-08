@@ -27,7 +27,11 @@
     "namePlaceholder": "Tu nombre",
     "confirmPasswordLabel": "Confirmar contraseña",
     "confirmPasswordPlaceholder": "Confirmar contraseña",
-    "registerButton": "Crear cuenta"
+    "registerButton": "Crear cuenta",
+    "emailRequired": "El correo no debe estar vacio",
+    "passwordRequired": "La contraseña no debe estar vacia",
+    "passwordMinLength": "La contraseña debe tener minimo 7 caracteres",
+    "emailInvalid": "El correo debe tener un formato válido"
   },
   "SANCard": {
     "perTurn": "por turno",

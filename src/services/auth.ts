@@ -17,6 +17,7 @@ export const useLogin = (): UseMutationResult<
   return useMutation<LoginResponse, unknown, Login>({
     mutationFn: async (data: Login) => {
       const response = await ERDEAxios.post("/user/login", data);
+      console.log("data login", response);
       return response.data;
     },
   });

@@ -69,6 +69,7 @@
     "invalidCodeTitle": "Código inválido",
     "invalidCodeMessage": "El código debe tener 6 dígitos.",
     "requiredFieldsTitle": "Campos requeridos",
+    "requiredField": "El campo es requerido",
     "requiredFieldsMessage": "Por favor completa todos los campos.",
     "passwordMismatchTitle": "Las contraseñas no coinciden",
     "passwordMismatchMessage": "Por favor verifica que las contraseñas sean iguales.",

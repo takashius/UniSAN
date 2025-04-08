@@ -69,6 +69,7 @@
     "invalidCodeTitle": "Invalid Code",
     "invalidCodeMessage": "The code must be 6 digits long.",
     "requiredFieldsTitle": "Required Fields",
+    "requiredField": "The field is required",
     "requiredFieldsMessage": "Please fill in all the fields.",
     "passwordMismatchTitle": "Passwords do not match",
     "passwordMismatchMessage": "Please make sure both passwords are identical.",

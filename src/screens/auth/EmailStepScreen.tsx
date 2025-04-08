@@ -36,7 +36,7 @@ const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
             text1: t("EmailStepScreen.codeSentTitle"),
             text2: t("EmailStepScreen.codeSentMessage")
           });
-          navigation.navigate("RecoveryPasswordStep2");
+          navigation.navigate("RecoveryPasswordStep2", { email: data.email });
         },
         onError: (error) => {
           Toast.show({

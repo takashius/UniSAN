@@ -62,6 +62,7 @@ export interface Statistics {
   totalSavings: number;
   totalPayments: number;
   onTimePayments: number;
+  daysUntilNextPayment: number;
 }
 
 export interface San {

@@ -8,32 +8,42 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
 
-const mockSANs = [
-  {
-    id: "1",
-    name: "SAN Básico",
-    amount: 100,
-    period: "Semanal",
-    participants: 8,
-    maxParticipants: 10,
-    nextDate: "15 mayo",
-    hasOpenSpot: true,
-  },
-  {
-    id: "2",
-    name: "SAN Quincenal",
-    amount: 200,
-    period: "Quincenal",
-    participants: 10,
-    maxParticipants: 10,
-    nextDate: "22 mayo",
-  },
-];
-
 const HomeScreen = () => {
   const { t } = useTranslation();
   const { user } = useUser();
   console.log('USER', JSON.stringify(user, null, 2));
+
+  const GetWelcomeMessage = () => {
+    const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
+    const daysUntilNextPayment = user?.statistics.daysUntilNextPayment ? user?.statistics.daysUntilNextPayment : 0;;
+
+    // Determinar si no hay SANs activos
+    if (sansCount === 0) {
+      return <Text style={styles.welcomeText}>{t("noActiveSansMessage")}</Text>; // Mensaje específico cuando no hay SANs activos
+    }
+
+    // Determinar el texto del número de SANs (singular/plural)
+    const sansKey = sansCount === 1 ? "singularSan" : "pluralSan";
+
+    // Determinar el mensaje del próximo pago
+    let paymentMessage = "";
+    if (daysUntilNextPayment > 0) {
+      paymentMessage = t(`HomeScreen.paymentUpcoming`, { days: daysUntilNextPayment });
+    } else if (daysUntilNextPayment === 0) {
+      paymentMessage = t(`HomeScreen.paymentToday`);
+    } else if (daysUntilNextPayment < 0) {
+      paymentMessage = t(`HomeScreen.paymentOverdue`, { days: Math.abs(daysUntilNextPayment) });
+    }
+
+    // Obtener el texto traducido utilizando i18n
+    return <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage", {
+      sansCount,
+      sansText: t(`HomeScreen.${sansKey}`), // Texto dinámico para singular/plural
+      days: Math.abs(daysUntilNextPayment || 0), // Valor absoluto para días vencidos
+      paymentMessage, // Mensaje dinámico según los días
+    })}</Text>;
+  }
+
   return (
     <View style={styles.container}>
 
@@ -42,7 +52,7 @@ const HomeScreen = () => {
           <Text style={styles.welcomeTitle}>
             {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
           </Text>
-          <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage")}</Text>
+          <GetWelcomeMessage />
         </Animated.View>
 
         <UserLevel level={user?.user.level ? user?.user.level : 1} points={user?.user.points ? user?.user.points : 0} nextLevelPoints={100} />

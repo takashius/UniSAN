@@ -17,7 +17,6 @@ export const useLogin = (): UseMutationResult<
   return useMutation<LoginResponse, unknown, Login>({
     mutationFn: async (data: Login) => {
       const response = await ERDEAxios.post("/user/login", data);
-      console.log("data login", response);
       return response.data;
     },
   });
@@ -27,6 +26,7 @@ export const useAccount = (): UseQueryResult<Account, Error> => {
   return useQuery<Account, Error>({
     queryKey: ["myAccount"],
     retry: false,
+    enabled: false,
     queryFn: () => {
       return ERDEAxios.get<Account>("/user/account").then(
         (response) => response.data

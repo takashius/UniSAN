@@ -1,27 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import SecureStoreManager from '../components/AsyncStorageManager';
-
-type User = {
-  email: string;
-  name: string;
-  lastName?: string;
-  photo?: string;
-  token: string;
-};
+import { Account } from '../types';
 
 type UserContextType = {
-  user: User | null;
-  login: (userData: User) => void;
+  user: Account | null;
+  login: (userData: Account) => void;
   logout: () => void;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Account | null>(null);
 
-  const login = async (userData: User) => {
-    await SecureStoreManager.setItem<string>("Token", userData.token);
+  const login = async (userData: Account) => {
     setUser(userData);
   };
 

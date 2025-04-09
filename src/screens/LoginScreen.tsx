@@ -1,23 +1,39 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
 import { LoginForm, RegisterForm } from "../components/auth/AuthForms";
-import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
+import SecureStoreManager from "../components/AsyncStorageManager";
+import { useAccount } from "../services/auth";
+import { useUser } from "../context/UserContext";
+import { ActivityIndicator } from "react-native-paper";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
+  const { refetch, isFetching } = useAccount();
   const { login } = useUser();
-  const handleDemoLogin = () => {
-    login({
-      email: "takashi.onimaru@gmail.com",
-      name: 'Usuario Ejemplo',
-      token: 'fake-token',
-    });
-  };
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = await SecureStoreManager.getItem<string>("Token");
+      if (token) {
+        const user = await refetch();
+        if (user.data) {
+          login(user.data);
+        }
+      }
+    }
+
+    loadUser();
+  }, [])
 
   return (
     <View style={styles.container}>
+      {isFetching && (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#ff4d4d" />
+        </View>
+      )}
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo-naranja.png")}
@@ -124,5 +140,15 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 16,
   },
-
+  loaderContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
+    zIndex: 10,
+  }
 });

@@ -65,6 +65,7 @@ export interface Statistics {
 }
 
 export interface San {
+  id: string;
   sanName: string;
   amount: number;
   startDate: string;
@@ -73,6 +74,7 @@ export interface San {
 }
 
 export interface NextPayment {
+  id: string;
   sanName: string;
   sanAmount: number;
   paymentAmount: number;

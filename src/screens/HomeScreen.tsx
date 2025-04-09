@@ -5,6 +5,8 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
+import { useUser } from "../context/UserContext";
+import SANPlaceholder from "../components/SANPlaceholder";
 
 const mockSANs = [
   {
@@ -30,28 +32,30 @@ const mockSANs = [
 
 const HomeScreen = () => {
   const { t } = useTranslation();
+  const { user } = useUser();
+  console.log('USER', JSON.stringify(user, null, 2));
   return (
     <View style={styles.container}>
 
       <ScrollView contentContainerStyle={styles.mainContent}>
         <Animated.View style={styles.glassCard} entering={FadeInDown.duration(400)}>
           <Text style={styles.welcomeTitle}>
-            {t("HomeScreen.welcome")}, <Text style={styles.highlight}>María</Text>
+            {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
           </Text>
           <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage")}</Text>
         </Animated.View>
 
-        <UserLevel level={1} points={60} nextLevelPoints={100} />
+        <UserLevel level={user?.user.level ? user?.user.level : 1} points={user?.user.points ? user?.user.points : 0} nextLevelPoints={100} />
 
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t("HomeScreen.activeSANs")}</Text>
-            <TouchableOpacity style={styles.link}>
-              <Text style={styles.linkText}>{t("HomeScreen.viewAll")}</Text>
-              <ChevronRight size={16} color="#ff7f50" />
-            </TouchableOpacity>
-          </View>
-          {mockSANs.map((san, index) => (
+          {user?.sans.length === 0 ? (
+            <SANPlaceholder />
+          ) : (
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t("HomeScreen.activeSANs")}</Text>
+            </View>
+          )}
+          {user?.sans.map((san, index) => (
             <Animated.View
               key={san.id}
               entering={FadeInDown.delay(index * 100).duration(400)}
@@ -62,28 +66,33 @@ const HomeScreen = () => {
           ))}
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
-          </View>
 
-          <Animated.View style={styles.paymentCard} entering={FadeInDown.delay(200).duration(500)}>
-            <View style={styles.paymentCardHeader}>
-              <View>
-                <Text style={styles.cardTitle}>SAN Básico</Text>
-                <Text style={styles.cardSubtitle}>{t("HomeScreen.turn", { current: 3, total: 10 })}</Text>
-              </View>
-              <Text style={styles.cardAmount}>$100</Text>
+
+        {user?.nextPayments && user?.nextPayments.length > 0 &&
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
             </View>
-            <View style={styles.paymentDetails}>
-              <Text style={styles.detailsLabel}>{t("HomeScreen.paymentDate")}</Text>
-              <Text style={styles.detailsValue}>15 mayo, 2023</Text>
-            </View>
-            <TouchableOpacity style={styles.paymentButton}>
-              <Text style={styles.buttonText}>{t("HomeScreen.earlyPaymentButton")}</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
+            {user?.nextPayments.map((payment, index) => (
+              <Animated.View key={payment.id} style={styles.paymentCard} entering={FadeInDown.delay(200).duration(500)}>
+                <View style={styles.paymentCardHeader}>
+                  <View>
+                    <Text style={styles.cardTitle}>{payment.sanName}</Text>
+                    <Text style={styles.cardSubtitle}>{t("HomeScreen.turn", { current: 3, total: 10 })}</Text>
+                  </View>
+                  <Text style={styles.cardAmount}>${payment.sanAmount}</Text>
+                </View>
+                <View style={styles.paymentDetails}>
+                  <Text style={styles.detailsLabel}>{t("HomeScreen.paymentDate")}</Text>
+                  <Text style={styles.detailsValue}>{payment.nextPaymentDate}</Text>
+                </View>
+                <TouchableOpacity style={styles.paymentButton}>
+                  <Text style={styles.buttonText}>{t("HomeScreen.earlyPaymentButton")}</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        }
       </ScrollView>
     </View>
   );

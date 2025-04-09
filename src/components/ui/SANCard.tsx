@@ -7,24 +7,22 @@ import { useTranslation } from "react-i18next";
 
 interface SANCardProps {
   id: string;
-  name: string;
+  sanName: string;
   amount: number;
-  period: string;
-  participants: number;
-  maxParticipants: number;
-  nextDate: string;
+  frequency: string;
+  position: number;
+  startDate: string;
   hasOpenSpot?: boolean;
   external?: boolean;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
   id,
-  name,
+  sanName,
   amount,
-  period,
-  participants,
-  maxParticipants,
-  nextDate,
+  frequency,
+  position,
+  startDate,
   hasOpenSpot = false,
   external = true,
 }) => {
@@ -40,8 +38,8 @@ const SANCard: React.FC<SANCardProps> = ({
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.period}>{period}</Text>
+            <Text style={styles.name}>{sanName}</Text>
+            <Text style={styles.period}>{frequency}</Text>
           </View>
           <View style={styles.headerAmount}>
             <Text style={styles.amount}>${amount}</Text>
@@ -53,15 +51,12 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
             <Text style={styles.detailText}>
-              {t("SANCard.participants", {
-                participants,
-                maxParticipants,
-              })}
+              {position}
             </Text>
           </View>
           <View style={styles.detailItem}>
             <Calendar size={16} color="#888" style={styles.icon} />
-            <Text style={styles.detailText}>{nextDate}</Text>
+            <Text style={styles.detailText}>{startDate}</Text>
           </View>
         </View>
 

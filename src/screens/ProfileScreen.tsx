@@ -5,16 +5,34 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
+import { useLogout } from "../services/auth";
+import { ActivityIndicator } from "react-native-paper";
 
 const Profile = () => {
   const { t } = useTranslation();
   const { logout } = useUser();
+  const logoutMutate = useLogout();
 
   const handleLogout = () => {
-    logout();
+    logoutMutate.mutate(undefined,
+      {
+        onSuccess: () => {
+          logout();
+        },
+        onError: (error) => {
+          console.log('Error:', error)
+        },
+      }
+    );
   }
   return (
     <View style={styles.container}>
+      {logoutMutate.isPending && (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#ff4d4d" />
+        </View>
+      )}
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View entering={FadeInDown.duration(400)} style={styles.profileCard}>
           <View style={styles.profileHeader}>
@@ -235,5 +253,16 @@ const styles = StyleSheet.create({
     color: "#ff4d4d",
     marginLeft: 12, // Añade espacio entre el icono y el texto
   },
+  loaderContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
+    zIndex: 10,
+  }
 });
 

@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Eye, EyeOff, ArrowRight } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useUser } from '../../context/UserContext';
 import { Button, TextInput } from 'react-native-paper';
-import { useLogin, useRegister } from '../../services/auth';
+import { useLogin, useRegister, useAccount } from '../../services/auth';
 import Toast from 'react-native-toast-message';
 import errorToast from '../ui/ErrorToast';
+import SecureStoreManager from '../AsyncStorageManager';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export const LoginForm = () => {
   const { login } = useUser();
   const loginMutate = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
+  const { refetch, isFetching } = useAccount();
 
   const {
     control,
@@ -27,19 +29,23 @@ export const LoginForm = () => {
     loginMutate.mutate(
       { email: data.email, password: data.password },
       {
-        onSuccess: (responseData) => {
-          login({
-            email: data.email,
-            name: responseData.name,
-            lastName: responseData.lastName,
-            photo: responseData.photo,
-            token: responseData.token,
-          });
-          Toast.show({
-            type: 'success',
-            text1: t("auth.loginSuccessTitle"),
-            text2: t("auth.loginSuccessMessage")
-          });
+        onSuccess: async (responseData) => {
+          await SecureStoreManager.setItem<string>("Token", responseData.token);
+          const user = await refetch();
+          if (user.data) {
+            login(user.data);
+            Toast.show({
+              type: 'success',
+              text1: t("auth.loginSuccessTitle"),
+              text2: t("auth.loginSuccessMessage")
+            });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: t("auth.loginErrorTitle"),
+              text2: t("auth.loginErrorMessage")
+            });
+          }
         },
         onError: (error) => {
           Toast.show({
@@ -137,7 +143,7 @@ export const LoginForm = () => {
         style={styles.button}
         contentStyle={styles.buttonContent}
         onPress={handleSubmit(onSubmit)}
-        loading={loginMutate.isPending}
+        loading={loginMutate.isPending || isFetching}
         icon={({ size, color }) => (
           <ArrowRight size={size} color={color} />
         )}
@@ -155,6 +161,7 @@ export const RegisterForm = () => {
   const { login } = useUser();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
+  const { refetch, isFetching } = useAccount();
 
   const {
     control,
@@ -176,17 +183,23 @@ export const RegisterForm = () => {
     registerMutate.mutate(
       { name: data.name, email: data.email, password: data.password },
       {
-        onSuccess: (response) => {
-          login({
-            email: data.email,
-            name: response.name,
-            token: response.token,
-          });
-          Toast.show({
-            type: 'success',
-            text1: t("auth.registerSuccessTitle"),
-            text2: t("auth.registerSuccessMessage")
-          });
+        onSuccess: async (response) => {
+          await SecureStoreManager.setItem<string>("Token", response.token);
+          const user = await refetch();
+          if (user.data) {
+            login(user.data);
+            Toast.show({
+              type: 'success',
+              text1: t("auth.registerSuccessTitle"),
+              text2: t("auth.registerSuccessMessage")
+            });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: t("auth.registerErrorTitle"),
+              text2: t("auth.registerErrorMessage")
+            });
+          }
         },
         onError: (error) => {
           Toast.show({

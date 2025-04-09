@@ -68,7 +68,7 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
           <View style={styles.bulletPoint} />
           <Text style={styles.benefitText}>
             {t("UserLevel.benefit1", {
-              amount: level === 1 ? "100" : level === 2 ? "300" : "1000",
+              amount: level === 1 ? "100" : level === 2 ? "200" : "300",
             })}
           </Text>
         </View>

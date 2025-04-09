@@ -54,6 +54,7 @@ export interface UserAccount {
   email: string;
   points: number;
   level: number;
+  pointsNeeded: number;
 }
 
 export interface Statistics {

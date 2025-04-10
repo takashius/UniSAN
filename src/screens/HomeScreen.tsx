@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { ChevronRight } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import UserLevel from "../components/ui/UserLevel";
@@ -11,21 +10,17 @@ import SANPlaceholder from "../components/SANPlaceholder";
 const HomeScreen = () => {
   const { t } = useTranslation();
   const { user } = useUser();
-  console.log('USER', JSON.stringify(user, null, 2));
 
   const GetWelcomeMessage = () => {
     const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
     const daysUntilNextPayment = user?.statistics.daysUntilNextPayment ? user?.statistics.daysUntilNextPayment : 0;;
 
-    // Determinar si no hay SANs activos
     if (sansCount === 0) {
-      return <Text style={styles.welcomeText}>{t("noActiveSansMessage")}</Text>; // Mensaje específico cuando no hay SANs activos
+      return <Text style={styles.welcomeText}>{t("HomeScreen.noActiveSansMessage")}</Text>;
     }
 
-    // Determinar el texto del número de SANs (singular/plural)
     const sansKey = sansCount === 1 ? "singularSan" : "pluralSan";
 
-    // Determinar el mensaje del próximo pago
     let paymentMessage = "";
     if (daysUntilNextPayment > 0) {
       paymentMessage = t(`HomeScreen.paymentUpcoming`, { days: daysUntilNextPayment });
@@ -35,12 +30,11 @@ const HomeScreen = () => {
       paymentMessage = t(`HomeScreen.paymentOverdue`, { days: Math.abs(daysUntilNextPayment) });
     }
 
-    // Obtener el texto traducido utilizando i18n
     return <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage", {
       sansCount,
-      sansText: t(`HomeScreen.${sansKey}`), // Texto dinámico para singular/plural
-      days: Math.abs(daysUntilNextPayment || 0), // Valor absoluto para días vencidos
-      paymentMessage, // Mensaje dinámico según los días
+      sansText: t(`HomeScreen.${sansKey}`),
+      days: Math.abs(daysUntilNextPayment || 0),
+      paymentMessage,
     })}</Text>;
   }
 
@@ -79,8 +73,6 @@ const HomeScreen = () => {
           ))}
         </View>
 
-
-
         {user?.nextPayments && user?.nextPayments.length > 0 &&
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -116,13 +108,13 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f3f4f6", // Fondo claro similar al bg-san-light-gray
+    backgroundColor: "#f3f4f6",
   },
   mainContent: {
     padding: 16,
   },
   glassCard: {
-    backgroundColor: "#ffffff", // Color semitransparente
+    backgroundColor: "#ffffff",
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -141,7 +133,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   highlight: {
-    color: "#ff7f50", // Color similar a text-san-orange
+    color: "#ff7f50",
     fontWeight: "bold",
   },
   section: {

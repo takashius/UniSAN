@@ -67,6 +67,20 @@ export interface Statistics {
 }
 
 export interface San {
+  _id: string;
+  name: string;
+  amount: number;
+  frequency: string;
+  paymentDates: Date[];
+  isActive: boolean;
+  active: boolean;
+  members: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
+export interface SanMin {
   id: string;
   sanName: string;
   amount: number;
@@ -87,6 +101,6 @@ export interface NextPayment {
 export interface Account {
   user: UserAccount;
   statistics: Statistics;
-  sans: San[];
+  sans: SanMin[];
   nextPayments: NextPayment[];
 }

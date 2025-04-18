@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard } from "lucide-react-native";
+import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard, User } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
@@ -90,6 +90,13 @@ const Profile = () => {
               <View style={styles.settingsItemRow}>
                 <CreditCard size={20} color="#ff7f50" />
                 <Text style={styles.settingsItemText}>{t("Profile.paymentMethods")}</Text>
+              </View>
+              <ChevronRight size={20} color="#888" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.settingsItem}>
+              <View style={styles.settingsItemRow}>
+                <User size={20} color="#ff7f50" />
+                <Text style={styles.settingsItemText}>{t("Profile.edit")}</Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>

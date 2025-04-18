@@ -7,11 +7,13 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
 import { useLogout } from "../services/auth";
 import { ActivityIndicator } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const { t } = useTranslation();
   const { logout } = useUser();
   const logoutMutate = useLogout();
+  const navigation: any = useNavigation();
 
   const handleLogout = () => {
     logoutMutate.mutate(undefined,
@@ -100,7 +102,10 @@ const Profile = () => {
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingsItem}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => navigation.navigate("Preference")}
+            >
               <View style={styles.settingsItemRow}>
                 <Settings size={20} color="#ff7f50" />
                 <Text style={styles.settingsItemText}>{t("Profile.preferences")}</Text>

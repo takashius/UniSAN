@@ -166,5 +166,28 @@
     "history": "History",
     "profile": "Profile",
     "recoverPassword": "Recover Password"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "language": "Language",
+    "languageDescription": "Select the application language",
+    "notifications": "Notifications",
+    "notificationsDescription": "Receive reminders and updates"
+  },
+  "languages": {
+    "es": "Spanish",
+    "en": "English"
+  },
+  "alerts": {
+    "languageChangedEs": "El idioma ha sido cambiado a Español",
+    "languageChangedEn": "The language has been changed to English",
+    "notificationsOn": "Notifications enabled. You will now receive important updates about your SANs.",
+    "notificationsOff": "Notifications disabled. You will not receive updates about your SANs."
+  },
+  "about": {
+    "title": "About SAN Organizer",
+    "description": "SAN Organizer is an app designed to organize and manage collective savings systems, making participation and tracking of group savings simple and efficient.",
+    "version": "Version: 1.0.0",
+    "rights": "© 2025 SAN Organizer. All rights reserved."
   }
 }

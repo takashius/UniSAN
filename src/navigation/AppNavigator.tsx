@@ -14,6 +14,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import SANDetails from "../screens/SANDetails";
 import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
+import PreferencesScreen from "../screens/profile/PreferencesScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
@@ -31,6 +32,11 @@ type ChatStackParamList = {
   ChatDetail: { id: string };
 };
 
+type ProfileStackParamList = {
+  Profile: undefined;
+  Preference: undefined;
+};
+
 type TabParamList = {
   UNISAN: undefined;
   Chat: undefined;
@@ -41,6 +47,7 @@ type TabParamList = {
 
 const Stack = createStackNavigator<SANStackParamList>();
 const Chat = createStackNavigator<ChatStackParamList>();
+const Profile = createStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
@@ -52,6 +59,13 @@ const AppNavigator: React.FC = () => {
       <Stack.Screen name="Explorer" component={ExplorerScreen} />
       <Stack.Screen name="SANDetails" component={SANDetails} />
     </Stack.Navigator>
+  );
+
+  const ProfileStack = () => (
+    <Profile.Navigator screenOptions={{ headerShown: false }}>
+      <Profile.Screen name="Profile" component={ProfileScreen} />
+      <Profile.Screen name="Preference" component={PreferencesScreen} />
+    </Profile.Navigator>
   );
 
   const ChatStack = () => (
@@ -134,7 +148,7 @@ const AppNavigator: React.FC = () => {
               }} />
             <Tab.Screen
               name="Profile"
-              component={ProfileScreen}
+              component={ProfileStack}
               options={{
                 tabBarLabel: t("Navigation.profile"),
                 headerTitle: t("Navigation.profile"),

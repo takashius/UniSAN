@@ -6,7 +6,8 @@ import { Provider as PaperProvider } from "react-native-paper";
 import CustomTheme from "../utils/CustomTheme";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
-import ChatScreen from "../screens/ChatScreen";
+import ChatList from "../screens/chat/ChatList";
+import ChatDetail from "../screens/chat/ChatDetail";
 import HistoryScreen from "../screens/HistoryScreen";
 import ExplorerScreen from "../screens/ExplorerScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -25,6 +26,11 @@ type SANStackParamList = {
   SANDetails: { id: string };
 };
 
+type ChatStackParamList = {
+  ChatList: any;
+  ChatDetail: { id: string };
+};
+
 type TabParamList = {
   UNISAN: undefined;
   Chat: undefined;
@@ -34,6 +40,7 @@ type TabParamList = {
 };
 
 const Stack = createStackNavigator<SANStackParamList>();
+const Chat = createStackNavigator<ChatStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
@@ -45,6 +52,13 @@ const AppNavigator: React.FC = () => {
       <Stack.Screen name="Explorer" component={ExplorerScreen} />
       <Stack.Screen name="SANDetails" component={SANDetails} />
     </Stack.Navigator>
+  );
+
+  const ChatStack = () => (
+    <Chat.Navigator screenOptions={{ headerShown: false }}>
+      <Chat.Screen name="ChatList" component={ChatList} />
+      <Chat.Screen name="ChatDetail" component={ChatDetail} />
+    </Chat.Navigator>
   );
 
   return (
@@ -100,7 +114,7 @@ const AppNavigator: React.FC = () => {
               }} />
             <Tab.Screen
               name="Chat"
-              component={ChatScreen}
+              component={ChatStack}
               options={{
                 tabBarLabel: t("Navigation.chat")
               }} />

@@ -10,11 +10,12 @@ import ChatList from "../screens/chat/ChatList";
 import ChatDetail from "../screens/chat/ChatDetail";
 import HistoryScreen from "../screens/HistoryScreen";
 import ExplorerScreen from "../screens/ExplorerScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
 import SANDetails from "../screens/SANDetails";
 import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
 import PreferencesScreen from "../screens/profile/PreferencesScreen";
+import EditProfile from "../screens/profile/EditProfileScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
@@ -35,6 +36,7 @@ type ChatStackParamList = {
 type ProfileStackParamList = {
   Profile: undefined;
   Preference: undefined;
+  EditProfile: undefined;
 };
 
 type TabParamList = {
@@ -65,6 +67,7 @@ const AppNavigator: React.FC = () => {
     <Profile.Navigator screenOptions={{ headerShown: false }}>
       <Profile.Screen name="Profile" component={ProfileScreen} />
       <Profile.Screen name="Preference" component={PreferencesScreen} />
+      <Profile.Screen name="EditProfile" component={EditProfile} />
     </Profile.Navigator>
   );
 

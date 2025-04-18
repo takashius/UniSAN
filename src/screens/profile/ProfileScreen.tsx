@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard, User } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
-import UserLevel from "../components/ui/UserLevel";
+import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
-import { useUser } from "../context/UserContext";
-import { useLogout } from "../services/auth";
+import { useUser } from "../../context/UserContext";
+import { useLogout } from "../../services/auth";
 import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
@@ -95,7 +95,10 @@ const Profile = () => {
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingsItem}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => navigation.navigate("EditProfile")}
+            >
               <View style={styles.settingsItemRow}>
                 <User size={20} color="#ff7f50" />
                 <Text style={styles.settingsItemText}>{t("Profile.edit")}</Text>

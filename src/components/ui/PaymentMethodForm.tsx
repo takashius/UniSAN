@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, TextInput, HelperText, Menu, Portal, Dialog } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
+import SelectButton from "./SelectButton";
 
 interface PaymentMethodFormProps {
   visible: boolean;
@@ -99,13 +100,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   visible={menuBankVisible}
                   onDismiss={() => setMenuBankVisible(false)}
                   anchor={
-                    <Button
-                      mode="outlined"
+                    <SelectButton
+                      value={value}
+                      placeholder="Selecciona un banco"
                       onPress={() => setMenuBankVisible(true)}
-                      style={styles.selectButton}
-                    >
-                      {value || "Selecciona un banco"}
-                    </Button>
+                    />
                   }
                 >
                   {banks.map((bank) => (
@@ -134,13 +133,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   visible={menuPaymentTypeVisible}
                   onDismiss={() => setMenuPaymentTypeVisible(false)}
                   anchor={
-                    <Button
-                      mode="outlined"
+                    <SelectButton
+                      value={value === "transferencia" ? "Transferencia" : "Pago Móvil"}
+                      placeholder="Selecciona un tipo de pago"
                       onPress={() => setMenuPaymentTypeVisible(true)}
-                      style={styles.selectButton}
-                    >
-                      {value === "transferencia" ? "Transferencia" : "Pago Móvil"}
-                    </Button>
+                    />
                   }
                 >
                   <Menu.Item
@@ -195,13 +192,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       visible={menuAccountTypeVisible}
                       onDismiss={() => setMenuAccountTypeVisible(false)}
                       anchor={
-                        <Button
-                          mode="outlined"
+                        <SelectButton
+                          value={value === "corriente" ? "Corriente" : "Ahorro"}
+                          placeholder="Selecciona un tipo de cuenta"
                           onPress={() => setMenuAccountTypeVisible(true)}
-                          style={styles.selectButton}
-                        >
-                          {value === "corriente" ? "Corriente" : "Ahorro"}
-                        </Button>
+                        />
                       }
                     >
                       <Menu.Item
@@ -297,17 +292,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 16,
   },
-  selectButton: {
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
   input: {
     backgroundColor: "#fff",
     color: "#000",
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#ddd",
     paddingHorizontal: 8,
   },
   actions: {

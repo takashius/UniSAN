@@ -314,10 +314,14 @@ const styles = StyleSheet.create({
   cancelButton: {
     borderColor: "#ff7f50",
     borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     backgroundColor: "#fff",
   },
   submitButton: {
     backgroundColor: "#ff7f50",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   menuItem: {
     color: "#000000",

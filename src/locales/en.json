@@ -165,6 +165,9 @@
     "explorer": "Explorer",
     "history": "History",
     "profile": "Profile",
+    "preferences": "Preferences",
+    "editProfile": "Edit Profile",
+    "paymentMethods": "Payment Methods",
     "recoverPassword": "Recover Password"
   },
   "preferences": {

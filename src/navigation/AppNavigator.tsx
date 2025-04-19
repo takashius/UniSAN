@@ -66,11 +66,43 @@ const AppNavigator: React.FC = () => {
   );
 
   const ProfileStack = () => (
-    <Profile.Navigator screenOptions={{ headerShown: false }}>
-      <Profile.Screen name="Profile" component={ProfileScreen} />
-      <Profile.Screen name="Preference" component={PreferencesScreen} />
-      <Profile.Screen name="EditProfile" component={EditProfile} />
-      <Profile.Screen name="PaymentMethods" component={PaymentMethods} />
+    <Profile.Navigator>
+      <Profile.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTitle: t("Navigation.profile"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
+      <Profile.Screen
+        name="Preference"
+        component={PreferencesScreen}
+        options={{
+          headerTitle: t("Navigation.preferences"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
+      <Profile.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{
+          headerTitle: t("Navigation.editProfile"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
+      <Profile.Screen
+        name="PaymentMethods"
+        component={PaymentMethods}
+        options={{
+          headerTitle: t("Navigation.paymentMethods"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
     </Profile.Navigator>
   );
 
@@ -156,8 +188,7 @@ const AppNavigator: React.FC = () => {
               name="Profile"
               component={ProfileStack}
               options={{
-                tabBarLabel: t("Navigation.profile"),
-                headerTitle: t("Navigation.profile"),
+                headerShown: false
               }} />
           </Tab.Navigator>
         ) : (

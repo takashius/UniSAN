@@ -1,21 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  FlatList,
-  Alert,
-} from "react-native";
-import {
-  Button,
-  Card,
-  Dialog,
-  Portal,
-  IconButton,
-} from "react-native-paper";
+import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
+import { Button, Card, IconButton } from "react-native-paper";
 import { PlusCircle, CreditCard, Trash2 } from "lucide-react-native";
 import PaymentMethodForm from "../../components/ui/PaymentMethodForm";
+import { useTranslation } from "react-i18next";
 
 type PaymentMethodType = "movil" | "transferencia";
 
@@ -31,22 +19,15 @@ interface PaymentMethod {
 }
 
 const PaymentMethods: React.FC = () => {
+  const { t } = useTranslation(); // Hook para traducir
+
   const [open, setOpen] = useState(false);
-  const [paymentType, setPaymentType] = useState<PaymentMethodType>(
-    "transferencia"
-  );
-  const [title, setTitle] = useState("");
-  const [bank, setBank] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [accountType, setAccountType] = useState("corriente");
-  const [identityNumber, setIdentityNumber] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
       id: "1",
       type: "transferencia",
-      title: "Cuenta Principal",
+      title: t("methods.mainAccount"), // Traducción de "Cuenta Principal"
       bank: "Banesco",
       accountNumber: "01340123456789012345",
       accountType: "corriente",
@@ -55,147 +36,121 @@ const PaymentMethods: React.FC = () => {
     {
       id: "2",
       type: "movil",
-      title: "Pago Móvil Personal",
+      title: t("methods.mobilePayment"), // Traducción de "Pago Móvil Personal"
       bank: "Mercantil",
       identityNumber: "V-12345678",
       phoneNumber: "04141234567",
     },
   ]);
 
-  const handleSubmit = () => {
-    const newPaymentMethod: PaymentMethod = {
-      id: Date.now().toString(),
-      type: paymentType,
-      title,
-      bank,
-      identityNumber,
-      ...(paymentType === "transferencia"
-        ? { accountNumber, accountType }
-        : { phoneNumber }),
-    };
-
-    setPaymentMethods([...paymentMethods, newPaymentMethod]);
-
-    // Reset form
-    setTitle("");
-    setBank("");
-    setAccountNumber("");
-    setAccountType("corriente");
-    setIdentityNumber("");
-    setPhoneNumber("");
-
-    setOpen(false);
-
-    Alert.alert("Método de pago agregado", "Tu método de pago ha sido agregado exitosamente.");
-  };
-
   const handleDelete = (id: string) => {
     setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
-    Alert.alert("Método de pago eliminado", "Tu método de pago ha sido eliminado exitosamente.");
+    Alert.alert(
+      t("alerts.deletedTitle"), // Traducción de "Método de pago eliminado"
+      t("alerts.deletedMessage") // Traducción de "Tu método de pago ha sido eliminado exitosamente."
+    );
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{t("methods.title")}</Text>
+        <Button
+          mode="contained"
+          onPress={() => setOpen(true)}
+          style={styles.addButton}
+          icon={({ size, color }) => <PlusCircle size={size} color={color} />}
+        >
+          {t("methods.add")}
+        </Button>
+      </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Tus métodos de pago</Text>
-          <Button
-            mode="contained"
-            onPress={() => setOpen(true)}
-            style={styles.addButton}
-          >
-            <PlusCircle size={20} color="#fff" />
-            Agregar
-          </Button>
-        </View>
-
-        {paymentMethods.length > 0 ? (
-          <FlatList
-            data={paymentMethods}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Card style={styles.card}>
-                <Card.Content>
-                  <View style={styles.cardHeader}>
-                    <View style={styles.cardIcon}>
-                      <CreditCard size={24} color="#ff7f50" />
-                    </View>
-                    <View style={styles.cardDetails}>
-                      <Text style={styles.cardTitle}>{item.title}</Text>
-                      <Text style={styles.cardSubtitle}>{item.bank}</Text>
-                    </View>
-                    <IconButton
-                      icon={({ size, color }) => (
-                        <Trash2 size={size} color={color} />
-                      )}
-                      onPress={() => handleDelete(item.id)}
-                      style={styles.trashIcon}
-                    />
+      {paymentMethods.length > 0 ? (
+        <FlatList
+          data={paymentMethods}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Card style={styles.card}>
+              <Card.Content>
+                <View style={styles.cardHeader}>
+                  <View style={styles.cardIcon}>
+                    <CreditCard size={24} color="#ff7f50" />
                   </View>
-                  <View style={styles.cardContent}>
-                    {item.type === "transferencia" ? (
-                      <>
-                        <Text style={styles.cardInfo}>
-                          Tipo de cuenta:{" "}
-                          <Text style={styles.cardInfoHighlight}>
-                            {item.accountType === "corriente"
-                              ? "Corriente"
-                              : "Ahorro"}
-                          </Text>
-                        </Text>
-                        <Text style={styles.cardInfo}>
-                          Número de cuenta:{" "}
-                          <Text style={styles.cardInfoHighlight}>
-                            {item.accountNumber}
-                          </Text>
-                        </Text>
-                        <Text style={styles.cardInfo}>
-                          Cédula:{" "}
-                          <Text style={styles.cardInfoHighlight}>
-                            {item.identityNumber}
-                          </Text>
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Text style={styles.cardInfo}>
-                          Tipo:{" "}
-                          <Text style={styles.cardInfoHighlight}>Pago Móvil</Text>
-                        </Text>
-                        <Text style={styles.cardInfo}>
-                          Teléfono:{" "}
-                          <Text style={styles.cardInfoHighlight}>
-                            {item.phoneNumber}
-                          </Text>
-                        </Text>
-                        <Text style={styles.cardInfo}>
-                          Cédula:{" "}
-                          <Text style={styles.cardInfoHighlight}>
-                            {item.identityNumber}
-                          </Text>
-                        </Text>
-                      </>
+                  <View style={styles.cardDetails}>
+                    <Text style={styles.cardTitle}>{item.title}</Text>
+                    <Text style={styles.cardSubtitle}>{item.bank}</Text>
+                  </View>
+                  <IconButton
+                    icon={({ size, color }) => (
+                      <Trash2 size={size} color={color} />
                     )}
-                  </View>
-                </Card.Content>
-              </Card>
-            )}
-          />
-        ) : (
-          <Card style={styles.card}>
-            <Card.Content>
-              <View style={styles.emptyState}>
-                <CreditCard size={48} color="#aaa" />
-                <Text style={styles.emptyText}>
-                  No tienes métodos de pago registrados. Agrega uno para facilitar tus pagos en
-                  los SANs.
-                </Text>
-              </View>
-            </Card.Content>
-          </Card>
-        )}
-      </ScrollView>
+                    onPress={() => handleDelete(item.id)}
+                    style={styles.trashIcon}
+                  />
+                </View>
+                <View style={styles.cardContent}>
+                  {item.type === "transferencia" ? (
+                    <>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.accountType")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {item.accountType === "corriente"
+                            ? t("methods.current")
+                            : t("methods.savings")}
+                        </Text>
+                      </Text>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.accountNumber")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {item.accountNumber}
+                        </Text>
+                      </Text>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.identityNumber")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {item.identityNumber}
+                        </Text>
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.type")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {t("methods.mobile")}
+                        </Text>
+                      </Text>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.phoneNumber")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {item.phoneNumber}
+                        </Text>
+                      </Text>
+                      <Text style={styles.cardInfo}>
+                        {t("methods.identityNumber")}:{" "}
+                        <Text style={styles.cardInfoHighlight}>
+                          {item.identityNumber}
+                        </Text>
+                      </Text>
+                    </>
+                  )}
+                </View>
+              </Card.Content>
+            </Card>
+          )}
+        />
+      ) : (
+        <Card style={styles.card}>
+          <Card.Content>
+            <View style={styles.emptyState}>
+              <CreditCard size={48} color="#aaa" />
+              <Text style={styles.emptyText}>
+                {t("methods.emptyMessage")}
+              </Text>
+            </View>
+          </Card.Content>
+        </Card>
+      )}
       <PaymentMethodForm visible={open} onDismiss={() => setOpen(false)} />
     </View>
   );
@@ -207,8 +162,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-  },
-  scrollContent: {
     padding: 16,
   },
   sectionHeader: {

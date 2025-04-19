@@ -182,12 +182,29 @@
     "languageChangedEs": "El idioma ha sido cambiado a Español",
     "languageChangedEn": "The language has been changed to English",
     "notificationsOn": "Notifications enabled. You will now receive important updates about your SANs.",
-    "notificationsOff": "Notifications disabled. You will not receive updates about your SANs."
+    "notificationsOff": "Notifications disabled. You will not receive updates about your SANs.",
+    "deletedTitle": "Payment Method Deleted",
+    "deletedMessage": "Your payment method has been successfully deleted."
   },
   "about": {
     "title": "About SAN Organizer",
     "description": "SAN Organizer is an app designed to organize and manage collective savings systems, making participation and tracking of group savings simple and efficient.",
     "version": "Version: 1.0.0",
     "rights": "© 2025 SAN Organizer. All rights reserved."
+  },
+  "methods": {
+    "title": "Your payment methods",
+    "add": "Add",
+    "mainAccount": "Main Account",
+    "mobilePayment": "Personal Mobile Payment",
+    "accountType": "Account Type",
+    "current": "Current",
+    "savings": "Savings",
+    "accountNumber": "Account Number",
+    "identityNumber": "Identity Number",
+    "type": "Type",
+    "mobile": "Mobile Payment",
+    "phoneNumber": "Phone Number",
+    "emptyMessage": "You have no payment methods registered. Add one to simplify your payments in the SANs."
   }
 }

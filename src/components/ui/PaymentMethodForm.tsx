@@ -115,6 +115,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                         onChange(bank);
                         setMenuBankVisible(false);
                       }}
+                      titleStyle={styles.menuItem}
                     />
                   ))}
                 </Menu>
@@ -146,6 +147,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       onChange("transferencia");
                       setMenuPaymentTypeVisible(false);
                     }}
+                    titleStyle={styles.menuItem}
                   />
                   <Menu.Item
                     title="Pago Móvil"
@@ -153,6 +155,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       onChange("movil");
                       setMenuPaymentTypeVisible(false);
                     }}
+                    titleStyle={styles.menuItem}
                   />
                 </Menu>
               </View>
@@ -170,6 +173,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   placeholder="Número de Cédula"
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
+                  inputMode="numeric"
                   value={value}
                   style={styles.input}
                   onChangeText={onChange}
@@ -205,6 +209,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                           onChange("corriente");
                           setMenuAccountTypeVisible(false);
                         }}
+                        titleStyle={styles.menuItem}
                       />
                       <Menu.Item
                         title="Ahorro"
@@ -212,6 +217,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                           onChange("ahorro");
                           setMenuAccountTypeVisible(false);
                         }}
+                        titleStyle={styles.menuItem}
                       />
                     </Menu>
                   </View>
@@ -229,6 +235,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       placeholder="Número de cuenta"
                       activeUnderlineColor="#ff7f50"
                       textColor="black"
+                      inputMode="numeric"
                       value={value}
                       style={styles.input}
                       onChangeText={onChange}
@@ -251,6 +258,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     placeholder="Número de teléfono"
                     activeUnderlineColor="#ff7f50"
                     textColor="black"
+                    inputMode="tel"
                     value={value}
                     style={styles.input}
                     onChangeText={onChange}
@@ -307,5 +315,12 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "#ff7f50",
+  },
+  menuItem: {
+    color: "#000000",
+    textAlign: "left",
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
 });

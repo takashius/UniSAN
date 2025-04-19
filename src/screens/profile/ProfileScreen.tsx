@@ -88,7 +88,10 @@ const Profile = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("Profile.settings")}</Text>
           <Animated.View entering={FadeIn.duration(400).delay(200)} style={styles.settingsCard}>
-            <TouchableOpacity style={styles.settingsItem}>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => navigation.navigate("PaymentMethods")}
+            >
               <View style={styles.settingsItemRow}>
                 <CreditCard size={20} color="#ff7f50" />
                 <Text style={styles.settingsItemText}>{t("Profile.paymentMethods")}</Text>

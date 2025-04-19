@@ -16,6 +16,7 @@ import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
 import PreferencesScreen from "../screens/profile/PreferencesScreen";
 import EditProfile from "../screens/profile/EditProfileScreen";
+import PaymentMethods from "../screens/profile/PaymentMethodsScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
@@ -37,6 +38,7 @@ type ProfileStackParamList = {
   Profile: undefined;
   Preference: undefined;
   EditProfile: undefined;
+  PaymentMethods: undefined;
 };
 
 type TabParamList = {
@@ -68,6 +70,7 @@ const AppNavigator: React.FC = () => {
       <Profile.Screen name="Profile" component={ProfileScreen} />
       <Profile.Screen name="Preference" component={PreferencesScreen} />
       <Profile.Screen name="EditProfile" component={EditProfile} />
+      <Profile.Screen name="PaymentMethods" component={PaymentMethods} />
     </Profile.Navigator>
   );
 

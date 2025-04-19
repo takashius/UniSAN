@@ -207,5 +207,23 @@
     "mobile": "Pago Móvil",
     "phoneNumber": "Teléfono",
     "emptyMessage": "No tienes métodos de pago registrados. Agrega uno para facilitar tus pagos en los SANs."
+  },
+  "methodsForm": {
+    "title": "Agregar método de pago",
+    "titlePlaceholder": "Título del método de pago",
+    "bankPlaceholder": "Selecciona un banco",
+    "paymentTypePlaceholder": "Selecciona un tipo de pago",
+    "transfer": "Transferencia",
+    "mobile": "Pago Móvil",
+    "identityNumberPlaceholder": "Número de Cédula",
+    "accountTypePlaceholder": "Selecciona un tipo de cuenta",
+    "current": "Corriente",
+    "savings": "Ahorro",
+    "accountNumberPlaceholder": "Número de cuenta",
+    "phoneNumberPlaceholder": "Número de teléfono",
+    "requiredError": "Este campo es obligatorio",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "formSubmitted": "Formulario enviado exitosamente"
   }
 }

@@ -206,5 +206,23 @@
     "mobile": "Mobile Payment",
     "phoneNumber": "Phone Number",
     "emptyMessage": "You have no payment methods registered. Add one to simplify your payments in the SANs."
+  },
+  "methodsForm": {
+    "title": "Add Payment Method",
+    "titlePlaceholder": "Payment method title",
+    "bankPlaceholder": "Select a bank",
+    "paymentTypePlaceholder": "Select a payment type",
+    "transfer": "Transfer",
+    "mobile": "Mobile Payment",
+    "identityNumberPlaceholder": "Identity Number",
+    "accountTypePlaceholder": "Select an account type",
+    "current": "Current",
+    "savings": "Savings",
+    "accountNumberPlaceholder": "Account Number",
+    "phoneNumberPlaceholder": "Phone Number",
+    "requiredError": "This field is required",
+    "cancel": "Cancel",
+    "save": "Save",
+    "formSubmitted": "Form successfully submitted"
   }
 }

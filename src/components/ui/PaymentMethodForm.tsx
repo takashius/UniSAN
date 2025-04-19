@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, TextInput, HelperText, Menu, Portal, Dialog } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import SelectButton from "./SelectButton";
+import { useTranslation } from "react-i18next";
 
 interface PaymentMethodFormProps {
   visible: boolean;
@@ -43,13 +44,15 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
     },
   });
 
+  const { t } = useTranslation(); // Hook para traducción
+
   const paymentType = watch("paymentType");
   const [menuBankVisible, setMenuBankVisible] = useState(false);
   const [menuPaymentTypeVisible, setMenuPaymentTypeVisible] = useState(false);
   const [menuAccountTypeVisible, setMenuAccountTypeVisible] = useState(false);
 
   const onSubmit = (data: FormData) => {
-    console.log("Formulario enviado:", data);
+    console.log(t("methodsForm.formSubmitted"), data); // Mensaje traducido
     reset();
     onDismiss();
   };
@@ -65,9 +68,9 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
         visible={visible}
         onDismiss={closeDialog}
         style={styles.dialog}
-        theme={{ colors: { backdrop: '#ff7f50' } }}
+        theme={{ colors: { backdrop: "#ff7f50" } }}
       >
-        <Dialog.Title style={styles.dialogTitle}>Agregar método de pago</Dialog.Title>
+        <Dialog.Title style={styles.dialogTitle}>{t("methodsForm.title")}</Dialog.Title>
         <Dialog.Content>
           {/* Título del método de pago */}
           <Controller
@@ -77,14 +80,14 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View style={styles.inputContainer}>
                 <TextInput
-                  placeholder="Título del método de pago"
+                  placeholder={t("methodsForm.titlePlaceholder")}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
                   value={value}
                   style={styles.input}
                   onChangeText={onChange}
                 />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -102,7 +105,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   anchor={
                     <SelectButton
                       value={value}
-                      placeholder="Selecciona un banco"
+                      placeholder={t("methodsForm.bankPlaceholder")}
                       onPress={() => setMenuBankVisible(true)}
                     />
                   }
@@ -119,7 +122,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     />
                   ))}
                 </Menu>
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -135,14 +138,14 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   onDismiss={() => setMenuPaymentTypeVisible(false)}
                   anchor={
                     <SelectButton
-                      value={value === "transferencia" ? "Transferencia" : "Pago Móvil"}
-                      placeholder="Selecciona un tipo de pago"
+                      value={value === "transferencia" ? t("methodsForm.transfer") : t("methodsForm.mobile")}
+                      placeholder={t("methodsForm.paymentTypePlaceholder")}
                       onPress={() => setMenuPaymentTypeVisible(true)}
                     />
                   }
                 >
                   <Menu.Item
-                    title="Transferencia"
+                    title={t("methodsForm.transfer")}
                     onPress={() => {
                       onChange("transferencia");
                       setMenuPaymentTypeVisible(false);
@@ -150,7 +153,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     titleStyle={styles.menuItem}
                   />
                   <Menu.Item
-                    title="Pago Móvil"
+                    title={t("methodsForm.mobile")}
                     onPress={() => {
                       onChange("movil");
                       setMenuPaymentTypeVisible(false);
@@ -170,7 +173,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View style={styles.inputContainer}>
                 <TextInput
-                  placeholder="Número de Cédula"
+                  placeholder={t("methodsForm.identityNumberPlaceholder")}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
                   inputMode="numeric"
@@ -178,12 +181,12 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                   style={styles.input}
                   onChangeText={onChange}
                 />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
 
-          {/* Campos condicionales */}
+          {/* Campos Condicionales */}
           {paymentType === "transferencia" && (
             <>
               {/* Tipo de cuenta */}
@@ -197,14 +200,14 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       onDismiss={() => setMenuAccountTypeVisible(false)}
                       anchor={
                         <SelectButton
-                          value={value === "corriente" ? "Corriente" : "Ahorro"}
-                          placeholder="Selecciona un tipo de cuenta"
+                          value={value === "corriente" ? t("methodsForm.current") : t("methodsForm.savings")}
+                          placeholder={t("methodsForm.accountTypePlaceholder")}
                           onPress={() => setMenuAccountTypeVisible(true)}
                         />
                       }
                     >
                       <Menu.Item
-                        title="Corriente"
+                        title={t("methodsForm.current")}
                         onPress={() => {
                           onChange("corriente");
                           setMenuAccountTypeVisible(false);
@@ -212,7 +215,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                         titleStyle={styles.menuItem}
                       />
                       <Menu.Item
-                        title="Ahorro"
+                        title={t("methodsForm.savings")}
                         onPress={() => {
                           onChange("ahorro");
                           setMenuAccountTypeVisible(false);
@@ -232,7 +235,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                   <View style={styles.inputContainer}>
                     <TextInput
-                      placeholder="Número de cuenta"
+                      placeholder={t("methodsForm.accountNumberPlaceholder")}
                       activeUnderlineColor="#ff7f50"
                       textColor="black"
                       inputMode="numeric"
@@ -240,7 +243,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       style={styles.input}
                       onChangeText={onChange}
                     />
-                    {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                    {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                   </View>
                 )}
               />
@@ -255,7 +258,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
               render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View style={styles.inputContainer}>
                   <TextInput
-                    placeholder="Número de teléfono"
+                    placeholder={t("methodsForm.phoneNumberPlaceholder")}
                     activeUnderlineColor="#ff7f50"
                     textColor="black"
                     inputMode="tel"
@@ -263,7 +266,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     style={styles.input}
                     onChangeText={onChange}
                   />
-                  {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                  {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                 </View>
               )}
             />
@@ -277,10 +280,10 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
             onPress={closeDialog}
             textColor="#ff7f50"
           >
-            Cancelar
+            {t("methodsForm.cancel")}
           </Button>
           <Button mode="contained" onPress={handleSubmit(onSubmit)} style={styles.submitButton}>
-            Guardar
+            {t("methodsForm.save")}
           </Button>
         </Dialog.Actions>
       </Dialog>

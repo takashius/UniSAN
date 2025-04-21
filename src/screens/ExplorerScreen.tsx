@@ -5,64 +5,46 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import { useTranslation } from "react-i18next";
+import { useAvailableSan } from "../services/san";
 
 const Explorer: React.FC = () => {
   const { t } = useTranslation();
-  const availableSANs = [
-    {
-      id: "3",
-      name: "SAN Semanal",
-      amount: 100,
-      period: "Semanal" as const,
-      participants: 5,
-      maxParticipants: 10,
-      nextDate: "20 mayo",
-      hasOpenSpot: true,
-      external: false,
-    },
-    {
-      id: "4",
-      name: "SAN Mensual",
-      amount: 300,
-      period: "Mensual" as const,
-      participants: 8,
-      maxParticipants: 12,
-      nextDate: "1 junio",
-      hasOpenSpot: true,
-      external: false,
-    },
-    {
-      id: "5",
-      name: "SAN Quincenal Plus",
-      amount: 200,
-      period: "Quincenal" as const,
-      participants: 7,
-      maxParticipants: 8,
-      nextDate: "15 mayo",
-      hasOpenSpot: true,
-      external: false,
-    },
-  ];
+  const { data: availableSANs, isLoading } = useAvailableSan();
 
   return (
     <View style={styles.container}>
 
+      {isLoading && (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#ff4d4d" />
+        </View>
+      )}
       <ScrollView contentContainerStyle={styles.mainContent}>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("Explorer.availableSANs")}</Text>
-          {availableSANs.length > 0 ? (
+          {availableSANs && availableSANs.length > 0 ? (
             <View style={styles.cardList}>
               {availableSANs.map((san, index) => (
                 <Animated.View
-                  key={san.id}
+                  key={san._id}
                   entering={FadeInDown.delay(index * 100).duration(400)}
                 >
-                  <SANCard {...san} />
+                  <SANCard
+                    id={san._id}
+                    sanName={san.name}
+                    amount={san.amount}
+                    frequency={san.frequency}
+                    position={0}
+                    startDate={san.createdAt}
+                    hasOpenSpot={san.members.length < 12}
+                    external={false}
+                  />
                 </Animated.View>
               ))}
             </View>
@@ -189,4 +171,15 @@ const styles = StyleSheet.create({
   disabledButtonText: {
     color: "#999",
   },
+  loaderContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 10,
+  }
 });

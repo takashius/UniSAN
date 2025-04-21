@@ -75,8 +75,8 @@ export interface San {
   isActive: boolean;
   active: boolean;
   members: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 }
 

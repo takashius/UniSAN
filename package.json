@@ -7,7 +7,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.2.1",
@@ -16,7 +19,7 @@
     "@tanstack/react-query": "^5.68.0",
     "axios": "^1.8.3",
     "dotenv": "^16.4.7",
-    "expo": "~52.0.42",
+    "expo": "~52.0.46",
     "expo-constants": "^17.0.8",
     "expo-notifications": "~0.29.14",
     "expo-secure-store": "~14.0.1",
@@ -41,6 +44,15 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.3.12",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   },
   "private": true

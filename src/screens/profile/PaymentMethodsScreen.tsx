@@ -1,55 +1,81 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
+import { View, Text, FlatList, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { Button, Card, IconButton } from "react-native-paper";
-import { PlusCircle, CreditCard, Trash2 } from "lucide-react-native";
+import { PlusCircle, CreditCard, Trash2, Edit2 } from "lucide-react-native";
 import PaymentMethodForm from "../../components/ui/PaymentMethodForm";
 import { useTranslation } from "react-i18next";
-
-type PaymentMethodType = "movil" | "transferencia";
-
-interface PaymentMethod {
-  id: string;
-  type: PaymentMethodType;
-  title: string;
-  bank: string;
-  accountNumber?: string;
-  accountType?: string;
-  identityNumber: string;
-  phoneNumber?: string;
-}
+import { usePaymentMethods, useDeletePaymentMethod } from "../../services/paymentMethod";
+import { PaymentMethod } from "../../types/paymentMethod";
+import Toast from "react-native-toast-message";
 
 const PaymentMethods: React.FC = () => {
-  const { t } = useTranslation(); // Hook para traducir
-
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | undefined>();
 
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    {
-      id: "1",
-      type: "transferencia",
-      title: t("methods.mainAccount"), // Traducción de "Cuenta Principal"
-      bank: "Banesco",
-      accountNumber: "01340123456789012345",
-      accountType: "corriente",
-      identityNumber: "V-12345678",
-    },
-    {
-      id: "2",
-      type: "movil",
-      title: t("methods.mobilePayment"), // Traducción de "Pago Móvil Personal"
-      bank: "Mercantil",
-      identityNumber: "V-12345678",
-      phoneNumber: "04141234567",
-    },
-  ]);
+  const { data: paymentMethods, isLoading, error } = usePaymentMethods();
+  const deletePaymentMethod = useDeletePaymentMethod();
+
+  const handleEdit = (method: PaymentMethod) => {
+    setSelectedMethod(method);
+    setOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedMethod(undefined);
+    setOpen(true);
+  };
 
   const handleDelete = (id: string) => {
-    setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
     Alert.alert(
-      t("alerts.deletedTitle"), // Traducción de "Método de pago eliminado"
-      t("alerts.deletedMessage") // Traducción de "Tu método de pago ha sido eliminado exitosamente."
+      t("alerts.deleteConfirmTitle"),
+      t("alerts.deleteConfirmMessage"),
+      [
+        {
+          text: t("common.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: () => {
+            deletePaymentMethod.mutate(id, {
+              onSuccess: () => {
+                Toast.show({
+                  type: "success",
+                  text1: t("alerts.deletedTitle"),
+                  text2: t("alerts.deletedMessage"),
+                });
+              },
+              onError: () => {
+                Toast.show({
+                  type: "error",
+                  text1: t("alerts.errorTitle"),
+                  text2: t("alerts.errorMessage"),
+                });
+              },
+            });
+          },
+        },
+      ]
     );
   };
+
+  if (isLoading || deletePaymentMethod.isPending) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ff7f50" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{t("errors.loading")}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -57,7 +83,7 @@ const PaymentMethods: React.FC = () => {
         <Text style={styles.sectionTitle}>{t("methods.title")}</Text>
         <Button
           mode="contained"
-          onPress={() => setOpen(true)}
+          onPress={handleAdd}
           style={styles.addButton}
           icon={({ size, color }) => <PlusCircle size={size} color={color} />}
         >
@@ -65,10 +91,10 @@ const PaymentMethods: React.FC = () => {
         </Button>
       </View>
 
-      {paymentMethods.length > 0 ? (
+      {paymentMethods && paymentMethods.length > 0 ? (
         <FlatList
           data={paymentMethods}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <Card style={styles.card}>
               <Card.Content>
@@ -78,25 +104,32 @@ const PaymentMethods: React.FC = () => {
                   </View>
                   <View style={styles.cardDetails}>
                     <Text style={styles.cardTitle}>{item.title}</Text>
-                    <Text style={styles.cardSubtitle}>{item.bank}</Text>
+                    <Text style={styles.cardSubtitle}>{item.bank.name}</Text>
                   </View>
-                  <IconButton
-                    icon={({ size, color }) => (
-                      <Trash2 size={size} color={color} />
-                    )}
-                    onPress={() => handleDelete(item.id)}
-                    style={styles.trashIcon}
-                  />
+                  <View style={styles.cardActions}>
+                    <IconButton
+                      icon={({ size, color }) => (
+                        <Edit2 size={size} color={color} />
+                      )}
+                      onPress={() => handleEdit(item)}
+                      style={styles.actionIcon}
+                    />
+                    <IconButton
+                      icon={({ size, color }) => (
+                        <Trash2 size={size} color={color} />
+                      )}
+                      onPress={() => handleDelete(item._id)}
+                      style={styles.actionIcon}
+                    />
+                  </View>
                 </View>
                 <View style={styles.cardContent}>
-                  {item.type === "transferencia" ? (
+                  {item.method === "transferencia" ? (
                     <>
                       <Text style={styles.cardInfo}>
                         {t("methods.accountType")}:{" "}
                         <Text style={styles.cardInfoHighlight}>
-                          {item.accountType === "corriente"
-                            ? t("methods.current")
-                            : t("methods.savings")}
+                          {item.accountType}
                         </Text>
                       </Text>
                       <Text style={styles.cardInfo}>
@@ -108,7 +141,7 @@ const PaymentMethods: React.FC = () => {
                       <Text style={styles.cardInfo}>
                         {t("methods.identityNumber")}:{" "}
                         <Text style={styles.cardInfoHighlight}>
-                          {item.identityNumber}
+                          {item.idNumber}
                         </Text>
                       </Text>
                     </>
@@ -129,7 +162,7 @@ const PaymentMethods: React.FC = () => {
                       <Text style={styles.cardInfo}>
                         {t("methods.identityNumber")}:{" "}
                         <Text style={styles.cardInfoHighlight}>
-                          {item.identityNumber}
+                          {item.idNumber}
                         </Text>
                       </Text>
                     </>
@@ -151,7 +184,11 @@ const PaymentMethods: React.FC = () => {
           </Card.Content>
         </Card>
       )}
-      <PaymentMethodForm visible={open} onDismiss={() => setOpen(false)} />
+      <PaymentMethodForm
+        visible={open}
+        onDismiss={() => setOpen(false)}
+        method={selectedMethod}
+      />
     </View>
   );
 };
@@ -163,6 +200,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
     padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f3f4f6",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f3f4f6",
+    padding: 16,
+  },
+  errorText: {
+    color: "#ff4d4d",
+    fontSize: 16,
+    textAlign: "center",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -207,7 +262,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  trashIcon: {
+  cardActions: {
+    flexDirection: "row",
+  },
+  actionIcon: {
     backgroundColor: "transparent",
   },
   cardContent: {

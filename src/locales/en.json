@@ -1,5 +1,15 @@
 {
   "welcome": "Welcome",
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "formSubmitted": "Form successfully submitted"
+  },
   "auth": {
     "password": "Password",
     "confirm_password": "Confirm Password",
@@ -187,7 +197,13 @@
     "notificationsOn": "Notifications enabled. You will now receive important updates about your SANs.",
     "notificationsOff": "Notifications disabled. You will not receive updates about your SANs.",
     "deletedTitle": "Payment Method Deleted",
-    "deletedMessage": "Your payment method has been successfully deleted."
+    "deletedMessage": "Your payment method has been successfully deleted.",
+    "createdTitle": "Payment Method Created",
+    "createdMessage": "Your payment method has been successfully created.",
+    "updatedTitle": "Payment Method Updated",
+    "updatedMessage": "Your payment method has been successfully updated.",
+    "deleteConfirmTitle": "Delete Payment Method",
+    "deleteConfirmMessage": "Are you sure you want to delete this payment method?"
   },
   "about": {
     "title": "About SAN Organizer",

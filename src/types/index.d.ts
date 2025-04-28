@@ -51,6 +51,7 @@ export interface Recovery {
 export interface UserAccount {
   id: string;
   name: string;
+  lastName: string;
   email: string;
   points: number;
   level: number;

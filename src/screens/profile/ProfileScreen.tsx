@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const { t } = useTranslation();
-  const { logout } = useUser();
+  const { user, logout } = useUser();
   const logoutMutate = useLogout();
   const navigation: any = useNavigation();
 
@@ -48,19 +48,22 @@ const Profile = () => {
             </View>
             <View style={styles.profileInfo}>
               <View style={styles.profileRow}>
-                <Text style={styles.profileName}>María González</Text>
+                <Text style={styles.profileName}>{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>
                 <TouchableOpacity>
                   <Edit2 size={16} color="#888" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.profileEmail}>maria.gonzalez@ejemplo.com</Text>
-              <Text style={styles.profileLevel}>{t("Profile.level", { level: 1, type: t("Profile.levelType.initial") })}</Text>
+              <Text style={styles.profileEmail}>{user?.user.email}</Text>
+              <Text style={styles.profileLevel}>{t("Profile.level", { level: user?.user.level ? user?.user.level : 1, type: t("Profile.levelType.initial") })}</Text>
             </View>
           </View>
         </Animated.View>
 
         <View style={styles.section}>
-          <UserLevel level={1} points={60} nextLevelPoints={100} />
+          <UserLevel
+            level={user?.user.level ? user?.user.level : 1}
+            points={user?.user.points ? user?.user.points : 0}
+            nextLevelPoints={user?.user.pointsNeeded ? user?.user.pointsNeeded : 0} />
         </View>
 
         <View style={styles.section}>
@@ -68,19 +71,19 @@ const Profile = () => {
           <Animated.View entering={FadeInDown.duration(400).delay(100)} style={styles.statsGrid}>
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>{t("Profile.sansParticipated")}</Text>
-              <Text style={styles.statValue}>2</Text>
+              <Text style={styles.statValue}>{user?.statistics.activeSansCount}</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>{t("Profile.paymentsOnTime")}</Text>
-              <Text style={styles.statValue}>4/4</Text>
+              <Text style={styles.statValue}>{user?.statistics.onTimePayments}/{user?.statistics.totalPayments}</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>{t("Profile.sansCompleted")}</Text>
-              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statValue}>{user?.statistics.completedSansCount}</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>{t("Profile.totalSaved")}</Text>
-              <Text style={styles.statValueOrange}>$400</Text>
+              <Text style={styles.statValueOrange}>${user?.statistics.totalSavings}</Text>
             </View>
           </Animated.View>
         </View>

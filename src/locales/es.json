@@ -1,5 +1,15 @@
 {
   "welcome": "Bienvenido",
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "formSubmitted": "Formulario enviado exitosamente"
+  },
   "auth": {
     "password": "Contraseña",
     "confirm_password": "Confirmar Contraseña",
@@ -188,7 +198,13 @@
     "notificationsOn": "Notificaciones activadas. Ahora recibirás notificaciones importantes de tus SANs.",
     "notificationsOff": "Notificaciones desactivadas. No recibirás notificaciones de tus SANs.",
     "deletedTitle": "Método de pago eliminado",
-    "deletedMessage": "Tu método de pago ha sido eliminado exitosamente."
+    "deletedMessage": "Tu método de pago ha sido eliminado exitosamente.",
+    "createdTitle": "Método de pago creado",
+    "createdMessage": "Tu método de pago ha sido creado exitosamente.",
+    "updatedTitle": "Método de pago actualizado",
+    "updatedMessage": "Tu método de pago ha sido actualizado exitosamente.",
+    "deleteConfirmTitle": "Eliminar método de pago",
+    "deleteConfirmMessage": "¿Estás seguro de querer eliminar este método de pago?"
   },
   "about": {
     "title": "Acerca de SAN Organizer",

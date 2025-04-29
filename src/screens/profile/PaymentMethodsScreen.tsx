@@ -7,16 +7,20 @@ import { useTranslation } from "react-i18next";
 import { usePaymentMethods, useDeletePaymentMethod } from "../../services/paymentMethod";
 import { PaymentMethod } from "../../types/paymentMethod";
 import Toast from "react-native-toast-message";
+import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 
 const PaymentMethods: React.FC = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | undefined>();
+  const [itemDelete, setItemDelete] = useState<string | null>(null);
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
 
   const { data: paymentMethods, isLoading, error } = usePaymentMethods();
   const deletePaymentMethod = useDeletePaymentMethod();
 
   const handleEdit = (method: PaymentMethod) => {
+    console.log('Editando método:', method);
     setSelectedMethod(method);
     setOpen(true);
   };
@@ -26,39 +30,35 @@ const PaymentMethods: React.FC = () => {
     setOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    Alert.alert(
-      t("alerts.deleteConfirmTitle"),
-      t("alerts.deleteConfirmMessage"),
-      [
-        {
-          text: t("common.cancel"),
-          style: "cancel",
-        },
-        {
-          text: t("common.delete"),
-          style: "destructive",
-          onPress: () => {
-            deletePaymentMethod.mutate(id, {
-              onSuccess: () => {
-                Toast.show({
-                  type: "success",
-                  text1: t("alerts.deletedTitle"),
-                  text2: t("alerts.deletedMessage"),
-                });
-              },
-              onError: () => {
-                Toast.show({
-                  type: "error",
-                  text1: t("alerts.errorTitle"),
-                  text2: t("alerts.errorMessage"),
-                });
-              },
-            });
-          },
-        },
-      ]
-    );
+  const onDelete = (id: string) => {
+    console.log('Iniciando eliminación:', id);
+    setItemDelete(id);
+    setIsDeleteDialogVisible(true);
+  };
+
+  const handleDelete = () => {
+    if (!itemDelete) return;
+
+    console.log('Eliminando método:', itemDelete);
+    deletePaymentMethod.mutate(itemDelete, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: t("alerts.deletedTitle"),
+          text2: t("alerts.deletedMessage"),
+        });
+        setIsDeleteDialogVisible(false);
+        setItemDelete(null);
+      },
+      onError: () => {
+        setIsDeleteDialogVisible(false);
+        Toast.show({
+          type: "error",
+          text1: t("alerts.errorTitle"),
+          text2: t("alerts.errorMessage"),
+        });
+      }
+    });
   };
 
   if (isLoading || deletePaymentMethod.isPending) {
@@ -118,7 +118,7 @@ const PaymentMethods: React.FC = () => {
                       icon={({ size, color }) => (
                         <Trash2 size={size} color={color} />
                       )}
-                      onPress={() => handleDelete(item._id)}
+                      onPress={() => onDelete(item._id)}
                       style={styles.actionIcon}
                     />
                   </View>
@@ -188,6 +188,13 @@ const PaymentMethods: React.FC = () => {
         visible={open}
         onDismiss={() => setOpen(false)}
         method={selectedMethod}
+      />
+
+      <ConfirmationDialog
+        visible={isDeleteDialogVisible}
+        message={t("alerts.deleteConfirmTitle")}
+        onConfirm={handleDelete}
+        onCancel={() => setIsDeleteDialogVisible(false)}
       />
     </View>
   );

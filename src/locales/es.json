@@ -6,6 +6,7 @@
     "success": "Éxito",
     "cancel": "Cancelar",
     "create": "Crear",
+    "accept": "Aceptar",
     "delete": "Eliminar",
     "save": "Guardar",
     "formSubmitted": "Formulario enviado exitosamente"
@@ -229,6 +230,7 @@
   },
   "methodsForm": {
     "title": "Agregar método de pago",
+    "editTitle": "Editar método de pago",
     "titlePlaceholder": "Título del método de pago",
     "bankPlaceholder": "Selecciona un banco",
     "paymentTypePlaceholder": "Selecciona un tipo de pago",

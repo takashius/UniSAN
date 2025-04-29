@@ -7,6 +7,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create",
+    "accept": "Accept",
     "delete": "Delete",
     "formSubmitted": "Form successfully submitted"
   },
@@ -228,6 +229,7 @@
   },
   "methodsForm": {
     "title": "Add Payment Method",
+    "editTitle": "Edit Payment Method",
     "titlePlaceholder": "Payment method title",
     "bankPlaceholder": "Select a bank",
     "paymentTypePlaceholder": "Select a payment type",

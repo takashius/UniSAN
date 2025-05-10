@@ -9,6 +9,7 @@
     "create": "Create",
     "accept": "Accept",
     "delete": "Delete",
+    "confirm": "Confirm",
     "formSubmitted": "Form successfully submitted"
   },
   "auth": {
@@ -246,5 +247,20 @@
     "cancel": "Cancel",
     "save": "Save",
     "formSubmitted": "Form successfully submitted"
+  },
+  "Payment": {
+    "title": "Payment details",
+    "referenceNumber": "Reference number",
+    "amount": "Amount",
+    "paymentDate": "Payment Date",
+    "confirmPayment": "Confirm Payment",
+    "bank": "Bank",
+    "phone": "Phone number",
+    "documentID": "Document ID",
+    "amountToPay": "Amount to pay",
+    "paymentSuccessTitle": "Payment Successful",
+    "paymentSuccessMessage": "Your payment has been processed successfully.",
+    "paymentErrorTitle": "Payment Failed",
+    "paymentErrorMessage": "There was an error processing your payment. Please try again."
   }
 }

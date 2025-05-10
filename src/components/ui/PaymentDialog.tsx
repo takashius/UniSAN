@@ -4,6 +4,7 @@ import { Button, TextInput, Dialog, Portal, HelperText } from "react-native-pape
 import { useForm, Controller } from "react-hook-form";
 import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
+import { useTranslation } from "react-i18next";
 
 interface PaymentDialogProps {
   open: boolean;
@@ -20,19 +21,9 @@ interface PaymentFormData {
   proofImage?: FileList;
 }
 
-const BANKS = [
-  "Bancamiga",
-  "Banesco",
-  "BBVA Provincial",
-  "Banco de Venezuela",
-  "Mercantil",
-  "BOD",
-  "BNC",
-  "Banco del Tesoro",
-];
-
 const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, onPaymentRegistered }) => {
   const { control, handleSubmit, reset } = useForm<PaymentFormData>();
+  const { t } = useTranslation();
 
   const onSubmit = (data: PaymentFormData) => {
     console.log("Payment registered:", data);
@@ -51,23 +42,23 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
         style={styles.dialog}
         theme={{ colors: { backdrop: "#ff7f50" } }}
       >
-        <Dialog.Title style={styles.dialogTitle}>Datos de pago</Dialog.Title>
+        <Dialog.Title style={styles.dialogTitle}>{t("Payment.title")}</Dialog.Title>
         <Dialog.Content>
           <View style={styles.paymentDetails}>
             <View style={styles.detailRow}>
-              <HelperText type="info">Banco:</HelperText>
+              <HelperText type="info">{t("Payment.bank")}:</HelperText>
               <HelperText type="info">Bancamiga</HelperText>
             </View>
             <View style={styles.detailRow}>
-              <HelperText type="info">Teléfono:</HelperText>
+              <HelperText type="info">{t("Payment.phone")}:</HelperText>
               <HelperText type="info">04125557916</HelperText>
             </View>
             <View style={styles.detailRow}>
-              <HelperText type="info">Documento:</HelperText>
+              <HelperText type="info">{t("Payment.documentID")}:</HelperText>
               <HelperText type="info">13952494</HelperText>
             </View>
             <View style={styles.detailRow}>
-              <HelperText type="info">Monto a pagar:</HelperText>
+              <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
               <HelperText type="info" style={styles.highlightAmount}>${amount}</HelperText>
             </View>
           </View>
@@ -99,7 +90,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
                   onChangeText={onChange}
                   style={formStyles.input}
                 />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -111,7 +102,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
                 <TextInput
-                  label="Monto exacto"
+                  label={t("Payment.amount")}
                   value={value}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
@@ -120,7 +111,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
                   onChangeText={onChange}
                   style={formStyles.input}
                 />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -132,7 +123,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
                 <TextInput
-                  label="Número de referencia"
+                  label={t("Payment.referenceNumber")}
                   value={value}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
@@ -140,7 +131,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
                   onChangeText={onChange}
                   style={formStyles.input}
                 />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -151,10 +142,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
             mode="outlined"
             onPress={onDismiss}
             style={formStyles.cancelButton}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button mode="contained" onPress={handleSubmit(onSubmit)} style={formStyles.confirmButton}>
-            Confirmar pago
+            {t("Payment.confirmPayment")}
           </Button>
         </Dialog.Actions>
       </Dialog>

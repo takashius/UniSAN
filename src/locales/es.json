@@ -9,6 +9,7 @@
     "accept": "Aceptar",
     "delete": "Eliminar",
     "save": "Guardar",
+    "confirm": "Confirmar",
     "formSubmitted": "Formulario enviado exitosamente"
   },
   "auth": {
@@ -247,5 +248,20 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "formSubmitted": "Formulario enviado exitosamente"
+  },
+  "Payment": {
+    "title": "Datos de pago",
+    "referenceNumber": "Número de referencia",
+    "amount": "Monto exacto",
+    "paymentDate": "Fecha de pago",
+    "confirmPayment": "Confirmar pago",
+    "bank": "Banco",
+    "phone": "Teléfono",
+    "documentID": "Cédula",
+    "amountToPay": "Monto a pagar",
+    "paymentSuccessTitle": "Pago exitoso",
+    "paymentSuccessMessage": "Su pago ha sido procesado exitosamente.",
+    "paymentErrorTitle": "Pago fallido",
+    "paymentErrorMessage": "Se produjo un error al procesar tu pago. Inténtalo de nuevo."
   }
 }

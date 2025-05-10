@@ -34,7 +34,7 @@ const BankSelectField: React.FC<BankSelectFieldProps> = ({ selectedBank, onSelec
           banks?.map((bank) => (
             <Menu.Item
               key={bank._id}
-              title={bank.name}
+              title={`(${bank.code}) ${bank.name}`}
               onPress={() => {
                 onSelectBank(bank._id);
                 setMenuVisible(false);

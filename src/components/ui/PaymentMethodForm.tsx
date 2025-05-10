@@ -5,9 +5,10 @@ import { useForm, Controller } from "react-hook-form";
 import SelectButton from "./SelectButton";
 import { useTranslation } from "react-i18next";
 import { useCreatePaymentMethod, useUpdatePaymentMethod } from "../../services/paymentMethod";
-import { useBanks } from "../../services/bank";
 import { PaymentMethod, PaymentMethodCreate } from "../../types/paymentMethod";
 import Toast from "react-native-toast-message";
+import BankSelectField from "./BankSelectField";
+import formStyles from "../../styles/FormStyles";
 
 interface PaymentMethodFormProps {
   visible: boolean;
@@ -31,10 +32,8 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
   const { t } = useTranslation();
   const createPaymentMethod = useCreatePaymentMethod();
   const updatePaymentMethod = useUpdatePaymentMethod();
-  const { data: banks, isLoading: isLoadingBanks } = useBanks();
 
   const paymentType = watch("method");
-  const [menuBankVisible, setMenuBankVisible] = useState(false);
   const [menuPaymentTypeVisible, setMenuPaymentTypeVisible] = useState(false);
   const [menuAccountTypeVisible, setMenuAccountTypeVisible] = useState(false);
 
@@ -100,7 +99,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
     onDismiss();
   };
 
-  const isLoading = createPaymentMethod.isPending || updatePaymentMethod.isPending || isLoadingBanks;
+  const isLoading = createPaymentMethod.isPending || updatePaymentMethod.isPending;
 
   return (
     <Portal>
@@ -146,30 +145,8 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
-                  <View style={styles.inputContainer}>
-                    <Menu
-                      visible={menuBankVisible}
-                      onDismiss={() => setMenuBankVisible(false)}
-                      anchor={
-                        <SelectButton
-                          value={banks?.find(b => b._id === value)?.name || ""}
-                          placeholder={t("methodsForm.bankPlaceholder")}
-                          onPress={() => setMenuBankVisible(true)}
-                        />
-                      }
-                    >
-                      {banks?.map((bank) => (
-                        <Menu.Item
-                          key={bank._id}
-                          title={bank.name}
-                          onPress={() => {
-                            onChange(bank._id);
-                            setMenuBankVisible(false);
-                          }}
-                          titleStyle={styles.menuItem}
-                        />
-                      ))}
-                    </Menu>
+                  <View>
+                    <BankSelectField selectedBank={value} onSelectBank={onChange} />
                     {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                   </View>
                 )}
@@ -323,12 +300,18 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
           )}
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={closeDialog} textColor="#666">
+          <Button
+            onPress={closeDialog}
+            textColor="#ff7f50"
+            mode="outlined"
+            style={formStyles.cancelButton}>
             {t("common.cancel")}
           </Button>
           <Button
             onPress={handleSubmit(onSubmit)}
-            textColor="#ff7f50"
+            mode="outlined"
+            textColor="#fff"
+            style={formStyles.confirmButton}
             disabled={isLoading}
           >
             {method ? t("common.save") : t("common.create")}

@@ -49,7 +49,8 @@
     "perTurn": "por turno",
     "participants": "{{participants}}/{{maxParticipants}} participantes",
     "openSpot": "Disponible para unirse",
-    "details": "Ver detalles"
+    "details": "Ver detalles",
+    "join": "Unirse"
   },
   "UserLevel": {
     "currentLevel": "Nivel actual",

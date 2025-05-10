@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Calendar, Users, ChevronRight } from "lucide-react-native";
+import { Calendar, Users, ChevronRight, PlusCircle } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from "react-i18next";
+import PaymentDialog from "./PaymentDialog";
 
 interface SANCardProps {
   id: string;
@@ -28,6 +29,8 @@ const SANCard: React.FC<SANCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigation: any = useNavigation();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
 
   return (
     <Animated.View
@@ -61,7 +64,7 @@ const SANCard: React.FC<SANCardProps> = ({
         </View>
 
         <View style={styles.footer}>
-          {hasOpenSpot ? (
+          {hasOpenSpot && !external ? (
             <View style={styles.openSpot}>
               <Text style={styles.openSpotText}>{t("SANCard.openSpot")}</Text>
             </View>
@@ -69,19 +72,28 @@ const SANCard: React.FC<SANCardProps> = ({
             <View style={{ height: 10 }}></View>
           )}
 
-          <TouchableOpacity style={styles.detailsLink} onPress={() => {
-            if (external) {
-              return navigation.navigate("Explorer", { screen: "SANDetails", params: { id: "123" } })
-            } else {
-              return navigation.navigate("SANDetails", { params: { id: "123" } })
-            }
-          }}>
-            <Text style={styles.linkText}>{t("SANCard.details")}</Text>
-            <ChevronRight size={16} color="#ff7f50" />
-          </TouchableOpacity>
+          {external ?
+            <TouchableOpacity style={styles.detailsLink} onPress={() => navigation.navigate("Explorer", { screen: "SANDetails", params: { id: "123" } })}>
+              <Text style={styles.linkText}>{t("SANCard.details")}</Text>
+              <ChevronRight size={16} color="#ff7f50" />
+            </TouchableOpacity>
+            :
+            <TouchableOpacity style={styles.detailsLink} onPress={() => setDialogOpen(true)}>
+              <Text style={styles.linkText}>{t("SANCard.join")}</Text>
+              <PlusCircle size={16} color="#ff7f50" />
+            </TouchableOpacity>
+          }
+
         </View>
       </View>
       <View style={styles.bottomBorder} />
+      <PaymentDialog
+        open={dialogOpen}
+        amount={100}
+        onDismiss={() => setDialogOpen(false)}
+        onPaymentRegistered={() => console.log("Pago registrado!")}
+      />
+
     </Animated.View>
   );
 };

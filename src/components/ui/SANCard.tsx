@@ -31,7 +31,6 @@ const SANCard: React.FC<SANCardProps> = ({
   const navigation: any = useNavigation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
   return (
     <Animated.View
       entering={FadeInDown.duration(400)}
@@ -89,7 +88,8 @@ const SANCard: React.FC<SANCardProps> = ({
       <View style={styles.bottomBorder} />
       <PaymentDialog
         open={dialogOpen}
-        amount={100}
+        amount={amount / 10}
+        san={id}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}
       />

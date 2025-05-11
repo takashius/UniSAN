@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, TextInput, Dialog, Portal, HelperText } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
@@ -6,32 +6,49 @@ import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
+import { useJoinSan } from "../../services/san";
+import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
+import Toast from "react-native-toast-message";
 
-interface PaymentDialogProps {
-  open: boolean;
-  onDismiss: () => void;
-  amount: number;
-  onPaymentRegistered?: () => void;
-}
-
-interface PaymentFormData {
-  sourceBank: string;
-  paymentDate: Date;
-  amount: string;
-  referenceNumber: string;
-  proofImage?: FileList;
-}
-
-const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, onPaymentRegistered }) => {
+const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDismiss, onPaymentRegistered }) => {
   const { control, handleSubmit, reset } = useForm<PaymentFormData>({
     defaultValues: {
       paymentDate: new Date(),
+      amount: amount,
+      referenceNumber: ''
     },
   });
   const { t } = useTranslation();
+  const joinSan = useJoinSan();
 
   const onSubmit = (data: PaymentFormData) => {
-    console.log("Payment registered:", data);
+    const payload = {
+      san,
+      bank: data.sourceBank,
+      amount: data.amount,
+      operationReference: data.referenceNumber,
+      date: data.paymentDate.toLocaleDateString()
+    };
+    joinSan.mutate(payload,
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: t("alerts.paymentSuccessTitle"),
+            text2: t("alerts.paymentSuccessMessage"),
+          });
+        },
+        onError: (error) => {
+          console.log(error)
+          Toast.show({
+            type: "success",
+            text1: t("alerts.paymentErrorTitle"),
+            text2: t("alerts.paymentErrorMessage"),
+          });
+        },
+      }
+    );
+
     if (onPaymentRegistered) {
       onPaymentRegistered();
     }
@@ -100,7 +117,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
               <View>
                 <TextInput
                   label={t("Payment.amount")}
-                  value={value}
+                  value={value ? value.toString() : amount.toString()}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
                   keyboardType="numeric"

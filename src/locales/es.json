@@ -11,6 +11,7 @@
     "save": "Guardar",
     "confirm": "Confirmar",
     "selectDate": "Selecciona la fecha",
+    "selectADate": "Selecciona una fecha",
     "formSubmitted": "Formulario enviado exitosamente"
   },
   "auth": {

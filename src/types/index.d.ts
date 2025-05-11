@@ -105,3 +105,11 @@ export interface Account {
   sans: SanMin[];
   nextPayments: NextPayment[];
 }
+
+export interface JoinSanData {
+  san: string;
+  bank: string;
+  amount: number;
+  date: string;
+  operationReference: string;
+}

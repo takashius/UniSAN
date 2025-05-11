@@ -11,7 +11,7 @@ interface DateInputFieldProps {
 }
 
 const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }) => {
-  const [showPicker, setShowPicker] = useState(true);
+  const [showPicker, setShowPicker] = useState(false);
   const { t } = useTranslation();
 
   const handleConfirm = (event: any, selectedDate?: Date) => {
@@ -44,13 +44,13 @@ const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }
               onDismiss={() => setShowPicker(false)}
               theme={{ colors: { backdrop: "#00000040" } }}
             >
-              <Dialog.Title>Selecciona una fecha</Dialog.Title>
+              <Dialog.Title>{t("common.selectADate")}</Dialog.Title>
               <Dialog.Content>
                 <DateTimePicker value={date} mode="date" display="spinner" onChange={handleConfirm} />
               </Dialog.Content>
               <Dialog.Actions>
-                <Button onPress={() => setShowPicker(false)}>Cancelar</Button>
-                <Button onPress={() => setShowPicker(false)}>Confirmar</Button>
+                <Button onPress={() => setShowPicker(false)}>{t("common.cancel")}</Button>
+                <Button onPress={() => setShowPicker(false)}>{t("common.confirm")}</Button>
               </Dialog.Actions>
             </Dialog>
           </Portal>

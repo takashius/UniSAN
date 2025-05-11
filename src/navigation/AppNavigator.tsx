@@ -20,34 +20,7 @@ import PaymentMethods from "../screens/profile/PaymentMethodsScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
-
-type SANStackParamList = {
-  Explorer: undefined;
-  Login: undefined;
-  RecoveryPasswordStep1: undefined;
-  RecoveryPasswordStep2: undefined;
-  SANDetails: { id: string };
-};
-
-type ChatStackParamList = {
-  ChatList: any;
-  ChatDetail: { id: string };
-};
-
-type ProfileStackParamList = {
-  Profile: undefined;
-  Preference: undefined;
-  EditProfile: undefined;
-  PaymentMethods: undefined;
-};
-
-type TabParamList = {
-  UNISAN: undefined;
-  Chat: undefined;
-  Explorer: undefined;
-  History: undefined;
-  Profile: undefined;
-};
+import { ChatStackParamList, ProfileStackParamList, SANStackParamList, TabParamList } from "../types/navigation";
 
 const Stack = createStackNavigator<SANStackParamList>();
 const Chat = createStackNavigator<ChatStackParamList>();

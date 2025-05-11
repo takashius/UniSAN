@@ -14,6 +14,7 @@ interface SANCardProps {
   position: number;
   startDate: string;
   hasOpenSpot?: boolean;
+  usersCount?: number;
   external?: boolean;
 }
 
@@ -25,6 +26,7 @@ const SANCard: React.FC<SANCardProps> = ({
   position,
   startDate,
   hasOpenSpot = false,
+  usersCount = 0,
   external = true,
 }) => {
   const { t } = useTranslation();
@@ -53,7 +55,7 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
             <Text style={styles.detailText}>
-              {position}
+              {hasOpenSpot && !external ? position : `${usersCount}/10`}
             </Text>
           </View>
           <View style={styles.detailItem}>
@@ -68,7 +70,13 @@ const SANCard: React.FC<SANCardProps> = ({
               <Text style={styles.openSpotText}>{t("SANCard.openSpot")}</Text>
             </View>
           ) : (
-            <View style={{ height: 10 }}></View>
+            <>
+              {!hasOpenSpot ? (
+                <View style={styles.waitingSpot}>
+                  <Text style={styles.waitingSpotText}>{t("SANCard.waitingForSlots")}</Text>
+                </View>
+              ) : (<View style={{ height: 10 }}></View>)}
+            </>
           )}
 
           {external ?
@@ -171,6 +179,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 12,
   },
+  waitingSpot: {
+    backgroundColor: "#FDE68A",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  waitingSpotText: {
+    color: "#D97706",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+
   openSpotText: {
     color: "#059669",
     fontSize: 12,

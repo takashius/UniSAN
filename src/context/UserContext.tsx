@@ -6,6 +6,7 @@ type UserContextType = {
   user: Account | null;
   login: (userData: Account) => void;
   logout: () => void;
+  setUser: any;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -23,7 +24,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, setUser }}>
       {children}
     </UserContext.Provider>
   );

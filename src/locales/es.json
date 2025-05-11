@@ -53,7 +53,8 @@
     "participants": "{{participants}}/{{maxParticipants}} participantes",
     "openSpot": "Disponible para unirse",
     "details": "Ver detalles",
-    "join": "Unirse"
+    "join": "Unirse",
+    "waitingForSlots": "Faltan cupos por llenar."
   },
   "UserLevel": {
     "currentLevel": "Nivel actual",
@@ -113,7 +114,9 @@
     "upcomingPayments": "Próximos pagos",
     "turn": "Turno {{current}} de {{total}}",
     "paymentDate": "Fecha de pago:",
-    "earlyPaymentButton": "Realizar pago anticipado"
+    "earlyPaymentButton": "Realizar pago anticipado",
+    "noSans": "Aún no tienes ningún SAN activo.",
+    "explore": "Explora nuevos SANs"
   },
   "Explorer": {
     "availableSANs": "SANs disponibles",

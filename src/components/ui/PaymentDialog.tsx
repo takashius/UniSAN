@@ -9,6 +9,8 @@ import DateInputField from "./DatePickerForm";
 import { useJoinSan } from "../../services/san";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "../../context/UserContext";
 
 const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDismiss, onPaymentRegistered }) => {
   const { control, handleSubmit, reset } = useForm<PaymentFormData>({
@@ -20,6 +22,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
   });
   const { t } = useTranslation();
   const joinSan = useJoinSan();
+  const queryClient = useQueryClient();
+  const { setUser } = useUser();
 
   const onSubmit = (data: PaymentFormData) => {
     const payload = {
@@ -31,19 +35,23 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
     };
     joinSan.mutate(payload,
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+          await queryClient.refetchQueries({ queryKey: ["myAccount"] });
+          const updatedUser = await queryClient.ensureQueryData({ queryKey: ["myAccount"] });
+          setUser(updatedUser);
           Toast.show({
             type: "success",
-            text1: t("alerts.paymentSuccessTitle"),
-            text2: t("alerts.paymentSuccessMessage"),
+            text1: t("Payment.paymentSuccessTitle"),
+            text2: t("Payment.paymentSuccessMessage"),
           });
         },
         onError: (error) => {
           console.log(error)
           Toast.show({
             type: "success",
-            text1: t("alerts.paymentErrorTitle"),
-            text2: t("alerts.paymentErrorMessage"),
+            text1: t("Payment.paymentErrorTitle"),
+            text2: t("Payment.paymentErrorMessage"),
           });
         },
       }
@@ -141,6 +149,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
                   value={value}
                   activeUnderlineColor="#ff7f50"
                   textColor="black"
+                  keyboardType="numeric"
                   placeholder="Ej: 123456789"
                   onChangeText={onChange}
                   style={formStyles.input}
@@ -158,7 +167,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
             style={formStyles.cancelButton}>
             {t("common.cancel")}
           </Button>
-          <Button mode="contained" onPress={handleSubmit(onSubmit)} style={formStyles.confirmButton}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            style={formStyles.confirmButton}
+            loading={joinSan.isPending}
+          >
             {t("Payment.confirmPayment")}
           </Button>
         </Dialog.Actions>

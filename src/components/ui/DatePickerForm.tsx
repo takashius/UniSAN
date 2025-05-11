@@ -1,0 +1,71 @@
+import React, { useState } from "react";
+import { View, StyleSheet, TouchableWithoutFeedback, Platform } from "react-native";
+import { TextInput, Portal, Dialog, Button } from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useTranslation } from "react-i18next";
+
+interface DateInputFieldProps {
+  label: string;
+  date: Date;
+  onChange: (date: Date) => void;
+}
+
+const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }) => {
+  const [showPicker, setShowPicker] = useState(true);
+  const { t } = useTranslation();
+
+  const handleConfirm = (event: any, selectedDate?: Date) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      onChange(selectedDate);
+    }
+  };
+
+  return (
+    <View>
+      <TouchableWithoutFeedback onPress={() => setShowPicker(true)}>
+        <TextInput
+          label={label}
+          onPress={() => setShowPicker(true)}
+          value={date.toLocaleDateString()}
+          activeUnderlineColor="#ff7f50"
+          textColor="black"
+          placeholder={t("common.selectDate")}
+          editable={false}
+          style={styles.input}
+        />
+      </TouchableWithoutFeedback>
+
+      {showPicker && (
+        Platform.OS === "ios" ? (
+          <Portal>
+            <Dialog
+              visible={showPicker}
+              onDismiss={() => setShowPicker(false)}
+              theme={{ colors: { backdrop: "#00000040" } }}
+            >
+              <Dialog.Title>Selecciona una fecha</Dialog.Title>
+              <Dialog.Content>
+                <DateTimePicker value={date} mode="date" display="spinner" onChange={handleConfirm} />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={() => setShowPicker(false)}>Cancelar</Button>
+                <Button onPress={() => setShowPicker(false)}>Confirmar</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        ) : (
+          <DateTimePicker value={date} mode="date" display="default" onChange={handleConfirm} />
+        )
+      )}
+    </View>
+  );
+};
+
+export default DateInputField;
+
+const styles = StyleSheet.create({
+  input: {
+    backgroundColor: "#fff",
+  },
+});

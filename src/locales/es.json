@@ -10,6 +10,7 @@
     "delete": "Eliminar",
     "save": "Guardar",
     "confirm": "Confirmar",
+    "selectDate": "Selecciona la fecha",
     "formSubmitted": "Formulario enviado exitosamente"
   },
   "auth": {

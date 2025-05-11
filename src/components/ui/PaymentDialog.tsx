@@ -5,6 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
+import DateInputField from "./DatePickerForm";
 
 interface PaymentDialogProps {
   open: boolean;
@@ -15,14 +16,18 @@ interface PaymentDialogProps {
 
 interface PaymentFormData {
   sourceBank: string;
-  paymentDate: string;
+  paymentDate: Date;
   amount: string;
   referenceNumber: string;
   proofImage?: FileList;
 }
 
 const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, onPaymentRegistered }) => {
-  const { control, handleSubmit, reset } = useForm<PaymentFormData>();
+  const { control, handleSubmit, reset } = useForm<PaymentFormData>({
+    defaultValues: {
+      paymentDate: new Date(),
+    },
+  });
   const { t } = useTranslation();
 
   const onSubmit = (data: PaymentFormData) => {
@@ -31,7 +36,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
       onPaymentRegistered();
     }
     reset();
-    onDismiss(); // Llamamos a `onDismiss` cuando se completa el pago
+    onDismiss();
   };
 
   return (
@@ -70,7 +75,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
                 <BankSelectField selectedBank={value} onSelectBank={onChange} />
-                {error && <HelperText type="error">Este campo es obligatorio</HelperText>}
+                {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}
           />
@@ -81,15 +86,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, onDismiss, 
             rules={{ required: true }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <View>
-                <TextInput
-                  label="Fecha del pago"
-                  value={value}
-                  activeUnderlineColor="#ff7f50"
-                  textColor="black"
-                  placeholder="Selecciona la fecha"
-                  onChangeText={onChange}
-                  style={formStyles.input}
-                />
+                <DateInputField date={value} onChange={onChange} label={t("Payment.paymentDate")} />
                 {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
               </View>
             )}

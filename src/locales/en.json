@@ -10,6 +10,7 @@
     "accept": "Accept",
     "delete": "Delete",
     "confirm": "Confirm",
+    "selectDate": "Select the date",
     "formSubmitted": "Form successfully submitted"
   },
   "auth": {

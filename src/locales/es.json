@@ -146,7 +146,9 @@
     "turn": "Turno {{turn}}",
     "completed": "Completado",
     "current": "Actual",
-    "join": "Unirse"
+    "join": "Unirse",
+    "pending": "Pago pendiente",
+    "paid": "Pagado"
   },
   "ActivityScreen": {
     "recentActivity": "Actividad reciente",

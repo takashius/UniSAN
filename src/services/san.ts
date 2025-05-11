@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import ERDEAxios from './ERDEAxios';
 import { San, JoinSanData } from '../types';
+import { SanDetail } from '../types/san';
 
 export const useAvailableSan = (): UseQueryResult<San[], Error> => {
   return useQuery<San[], Error>({
@@ -29,5 +30,16 @@ export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sanJoined'] });
     },
+  });
+};
+
+export const useSanDetail = (sanId: string) => {
+  return useQuery<SanDetail, Error>({
+    queryKey: ['sanDetail', sanId],
+    queryFn: async () => {
+      const response = await ERDEAxios.get<SanDetail>(`/san/${sanId}`);
+      return response.data;
+    },
+    enabled: !!sanId,
   });
 };

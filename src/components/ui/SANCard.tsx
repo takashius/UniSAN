@@ -80,7 +80,7 @@ const SANCard: React.FC<SANCardProps> = ({
           )}
 
           {external ?
-            <TouchableOpacity style={styles.detailsLink} onPress={() => navigation.navigate("Explorer", { screen: "SANDetails", params: { id: "123" } })}>
+            <TouchableOpacity style={styles.detailsLink} onPress={() => navigation.navigate("Explorer", { screen: "SANDetails", params: { id } })}>
               <Text style={styles.linkText}>{t("SANCard.details")}</Text>
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>

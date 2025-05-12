@@ -9,8 +9,9 @@ export const useTransactionsHistory = (page: number = 1) => {
       const response = await ERDEAxios.get<TransactionHistoryResponse>(
         `/transaction/history?page=${page}`
       );
-      console.log('useTransactionsHistory', response.data);
       return response.data;
     },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: previousData => previousData,
   });
 };

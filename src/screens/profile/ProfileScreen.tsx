@@ -8,6 +8,7 @@ import { useUser } from "../../context/UserContext";
 import { useLogout } from "../../services/auth";
 import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import generalStyles from "../../styles/general";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       {logoutMutate.isPending && (
-        <View style={styles.loaderContainer}>
+        <View style={generalStyles.loaderContainer}>
           <ActivityIndicator size="large" color="#ff4d4d" />
         </View>
       )}
@@ -274,16 +275,5 @@ const styles = StyleSheet.create({
     color: "#ff4d4d",
     marginLeft: 12, // Añade espacio entre el icono y el texto
   },
-  loaderContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
-    zIndex: 10,
-  }
 });
 

@@ -272,6 +272,9 @@
     "paymentSuccessTitle": "Pago exitoso",
     "paymentSuccessMessage": "Su pago ha sido procesado exitosamente.",
     "paymentErrorTitle": "Pago fallido",
-    "paymentErrorMessage": "Se produjo un error al procesar tu pago. Inténtalo de nuevo."
+    "paymentErrorMessage": "Se produjo un error al procesar tu pago. Inténtalo de nuevo.",
+    "early": "Anticipado",
+    "ontime": "A Tiempo",
+    "late": "Tarde"
   }
 }

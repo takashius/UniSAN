@@ -19,7 +19,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSanDetail } from "../services/san";
-import nextPaymentStyles from "../styles/paymentCard";
+import generalStyles from "../styles/general";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 
 const SANDetails: React.FC = () => {
@@ -32,7 +32,7 @@ const SANDetails: React.FC = () => {
   return (
     <View style={styles.container}>
       {isLoading && (
-        <View style={styles.loaderContainer}>
+        <View style={generalStyles.loaderContainer}>
           <ActivityIndicator size="large" color="#ff4d4d" />
         </View>
       )}
@@ -429,17 +429,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#fff",
     fontWeight: "600",
-  },
-  loaderContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 10,
   },
   noResults: {
     alignItems: "center",

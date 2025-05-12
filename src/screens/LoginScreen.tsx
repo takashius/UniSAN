@@ -7,6 +7,7 @@ import SecureStoreManager from "../components/AsyncStorageManager";
 import { useAccount } from "../services/auth";
 import { useUser } from "../context/UserContext";
 import { ActivityIndicator } from "react-native-paper";
+import generalStyles from "../styles/general";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       {isFetching && (
-        <View style={styles.loaderContainer}>
+        <View style={generalStyles.loaderContainer}>
           <ActivityIndicator size="large" color="#ff4d4d" />
         </View>
       )}
@@ -139,16 +140,5 @@ const styles = StyleSheet.create({
     width: 200,
     height: 100,
     marginBottom: 16,
-  },
-  loaderContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
-    zIndex: 10,
   }
 });

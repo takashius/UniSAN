@@ -271,6 +271,9 @@
     "paymentSuccessTitle": "Payment Successful",
     "paymentSuccessMessage": "Your payment has been processed successfully.",
     "paymentErrorTitle": "Payment Failed",
-    "paymentErrorMessage": "There was an error processing your payment. Please try again."
+    "paymentErrorMessage": "There was an error processing your payment. Please try again.",
+    "early": "Early",
+    "ontime": "On Time",
+    "late": "Late"
   }
 }

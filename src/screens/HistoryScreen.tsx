@@ -1,76 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Calendar, ChevronRight } from "lucide-react-native";
-import Animated, { FadeIn, FadeInLeft } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useTransactionsHistory } from "../services/transactions";
+import HistoryTransactionItem from "../components/ui/HistoryTransactionItem";
+import generalStyles from "../styles/general";
 
 const History = () => {
   const { t } = useTranslation();
-  const historyItems = [
-    {
-      id: "1",
-      type: "payment",
-      san: "SAN Básico",
-      amount: 100,
-      date: "1 mayo, 2023",
-      status: "completed",
-    },
-    {
-      id: "2",
-      type: "payment",
-      san: "SAN Quincenal",
-      amount: 200,
-      date: "30 abril, 2023",
-      status: "completed",
-    },
-    {
-      id: "3",
-      type: "received",
-      san: "SAN Básico",
-      amount: 1000,
-      date: "15 abril, 2023",
-      status: "received",
-    },
-    {
-      id: "4",
-      type: "payment",
-      san: "SAN Básico",
-      amount: 100,
-      date: "15 abril, 2023",
-      status: "completed",
-    },
-    {
-      id: "5",
-      type: "payment",
-      san: "SAN Quincenal",
-      amount: 200,
-      date: "15 abril, 2023",
-      status: "completed",
-    },
-    {
-      id: "6",
-      type: "joined",
-      san: "SAN Quincenal",
-      date: "1 abril, 2023",
-      status: "info",
-    },
-    {
-      id: "7",
-      type: "joined",
-      san: "SAN Básico",
-      date: "1 marzo, 2023",
-      status: "info",
-    },
-  ];
+  const [page, setPage] = useState(1);
+  const { data, isLoading, refetch } = useTransactionsHistory(page);
 
   return (
     <View style={styles.container}>
+
+      {isLoading && (
+        <View style={generalStyles.loaderContainer}>
+          <ActivityIndicator size="large" color="#ff4d4d" />
+        </View>
+      )}
 
       <ScrollView contentContainerStyle={styles.mainContent}>
         <View style={styles.section}>
@@ -83,53 +39,16 @@ const History = () => {
           </View>
 
           <Animated.View entering={FadeIn.duration(400)} style={styles.card}>
-            <View>
-              {historyItems.map((item, index) => (
-                <Animated.View
-                  key={item.id}
-                  entering={FadeInLeft.delay(index * 50).duration(300)}
-                  style={styles.historyItem}
-                >
-                  <View style={styles.historyItemHeader}>
-                    <Text style={styles.historyItemTitle}>
-                      {item.san}
-                      {item.type === "joined" && ` - ${t("ActivityScreen.youJoined")}`}
-                    </Text>
-                    {item.type !== "joined" && (
-                      <Text
-                        style={[
-                          styles.historyItemAmount,
-                          item.type === "received"
-                            ? styles.amountReceived
-                            : styles.amountPaid,
-                        ]}
-                      >
-                        {item.type === "received" ? "+" : "-"}${item.amount}
-                      </Text>
-                    )}
-                  </View>
-                  <View style={styles.historyItemFooter}>
-                    <Text style={styles.historyItemDate}>{item.date}</Text>
-                    <View
-                      style={[
-                        styles.statusBadge,
-                        item.status === "completed" && styles.statusCompleted,
-                        item.status === "received" && styles.statusReceived,
-                        item.status === "info" && styles.statusInfo,
-                      ]}
-                    >
-                      <Text style={styles.statusText}>
-                        {item.status === "completed"
-                          ? t("ActivityScreen.completed")
-                          : item.status === "received"
-                            ? t("ActivityScreen.received")
-                            : t("ActivityScreen.info")}
-                      </Text>
-                    </View>
-                  </View>
-                </Animated.View>
-              ))}
-            </View>
+            {data?.transactions && data.transactions.length > 0 &&
+              <View>
+                {data?.transactions.map((item, index) => (
+                  <HistoryTransactionItem
+                    key={item._id + index}
+                    item={item}
+                  />
+                ))}
+              </View>
+            }
           </Animated.View>
         </View>
 
@@ -203,58 +122,11 @@ const styles = StyleSheet.create({
     elevation: 3,
     padding: 16,
   },
-  historyItem: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
-  },
-  historyItemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  historyItemTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-  historyItemAmount: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
   amountReceived: {
     color: "#10b981", // Verde
   },
   amountPaid: {
     color: "#ff7f50", // Naranja
-  },
-  historyItemFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  historyItemDate: {
-    fontSize: 14,
-    color: "#666",
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusCompleted: {
-    backgroundColor: "#d1fae5", // Verde claro
-  },
-  statusReceived: {
-    backgroundColor: "#bfdbfe", // Azul claro
-  },
-  statusInfo: {
-    backgroundColor: "#ffe4d4", // Naranja claro
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#333",
   },
   viewAllButton: {
     flexDirection: "row",

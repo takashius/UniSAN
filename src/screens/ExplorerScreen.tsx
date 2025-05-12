@@ -11,6 +11,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import { useTranslation } from "react-i18next";
 import { useAvailableSan } from "../services/san";
+import generalStyles from "../styles/general";
 
 const Explorer: React.FC = () => {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ const Explorer: React.FC = () => {
     <View style={styles.container}>
 
       {isLoading && (
-        <View style={styles.loaderContainer}>
+        <View style={generalStyles.loaderContainer}>
           <ActivityIndicator size="large" color="#ff4d4d" />
         </View>
       )}
@@ -170,16 +171,5 @@ const styles = StyleSheet.create({
   },
   disabledButtonText: {
     color: "#999",
-  },
-  loaderContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 10,
   }
 });

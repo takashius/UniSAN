@@ -115,6 +115,7 @@
     "turn": "Turno {{current}} de {{total}}",
     "paymentDate": "Fecha de pago:",
     "earlyPaymentButton": "Realizar pago anticipado",
+    "PaymentButton": "Realizar pago",
     "noSans": "Aún no tienes ningún SAN activo.",
     "explore": "Explora nuevos SANs"
   },
@@ -148,7 +149,8 @@
     "current": "Actual",
     "join": "Unirse",
     "pending": "Pago pendiente",
-    "paid": "Pagado"
+    "paid": "Pagado",
+    "awaitMessage": "Este SAN aún está en proceso de formación. Los números de turno serán asignados de manera aleatoria una vez que todos los participantes se hayan unido. En ese momento, también se establecerán las fechas de pago para cada turno. ¡Solo falta completar los cupos!"
   },
   "ActivityScreen": {
     "recentActivity": "Actividad reciente",

@@ -6,6 +6,8 @@ import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
+import nextPaymentStyles from "../styles/paymentCard";
+import NextPaymentCard from "../components/ui/NextPaymentCard";
 
 const HomeScreen = () => {
   const { t } = useTranslation();
@@ -79,22 +81,16 @@ const HomeScreen = () => {
               <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
             </View>
             {user?.nextPayments.map((payment, index) => (
-              <Animated.View key={payment.id} style={styles.paymentCard} entering={FadeInDown.delay(200).duration(500)}>
-                <View style={styles.paymentCardHeader}>
-                  <View>
-                    <Text style={styles.cardTitle}>{payment.sanName}</Text>
-                    <Text style={styles.cardSubtitle}>{t("HomeScreen.turn", { current: 3, total: 10 })}</Text>
-                  </View>
-                  <Text style={styles.cardAmount}>${payment.sanAmount}</Text>
-                </View>
-                <View style={styles.paymentDetails}>
-                  <Text style={styles.detailsLabel}>{t("HomeScreen.paymentDate")}</Text>
-                  <Text style={styles.detailsValue}>{payment.nextPaymentDate}</Text>
-                </View>
-                <TouchableOpacity style={styles.paymentButton}>
-                  <Text style={styles.buttonText}>{t("HomeScreen.earlyPaymentButton")}</Text>
-                </TouchableOpacity>
-              </Animated.View>
+              <View>
+                <NextPaymentCard
+                  id={payment.id}
+                  name={payment.sanName}
+                  currentTurn={payment.currentTurn}
+                  amount={payment.sanAmount}
+                  nextPaymentDate={payment.nextPaymentDate}
+                  lastPaidTurn={payment.lastPaidTurn!}
+                />
+              </View>
             ))}
           </View>
         }
@@ -158,55 +154,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginRight: 4,
   },
-  paymentCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  paymentCardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  cardSubtitle: {
-    fontSize: 12,
-    color: "#888",
-  },
-  cardAmount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#ff7f50",
-  },
-  paymentDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  detailsLabel: {
-    fontSize: 12,
-    color: "#888",
-  },
-  detailsValue: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  paymentButton: {
-    backgroundColor: "#ff7f50",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
+
 });

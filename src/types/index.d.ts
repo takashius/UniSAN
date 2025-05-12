@@ -96,6 +96,8 @@ export interface NextPayment {
   sanAmount: number;
   paymentAmount: number;
   nextPaymentDate: string;
+  lastPaidTurn: number;
+  currentTurn: number | null;
   isOwnTurn: boolean;
 }
 

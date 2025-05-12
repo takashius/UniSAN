@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import {
-  ArrowLeft,
   Calendar,
   Users,
   Info,
@@ -20,6 +19,8 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSanDetail } from "../services/san";
+import nextPaymentStyles from "../styles/paymentCard";
+import NextPaymentCard from "../components/ui/NextPaymentCard";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
@@ -81,21 +82,12 @@ const SANDetails: React.FC = () => {
               </View>
             </Animated.View>
 
-            {/* <View style={styles.descriptionCard}>
+            {!sanDetails.isOpen &&
+              <View style={styles.descriptionCard}>
                 <Text style={styles.descriptionTitle}>{t("SANDetails.descriptionTitle")}</Text>
-                <Text style={styles.descriptionText}>{sanDetails.description}</Text>
-
-                <View style={styles.dateRow}>
-                  <View>
-                    <Text style={styles.infoText}>{t("SANDetails.startDate")}</Text>
-                    <Text style={styles.dateText}>{sanDetails.startDate}</Text>
-                  </View>
-                  <View>
-                    <Text style={styles.infoText}>{t("SANDetails.endDate")}</Text>
-                    <Text style={styles.dateText}>{sanDetails.endDate}</Text>
-                  </View>
-                </View>
-              </View> */}
+                <Text style={styles.descriptionText}>{t("SANDetails.awaitMessage")}</Text>
+              </View>
+            }
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t("SANDetails.progressTitle")}</Text>
@@ -127,6 +119,19 @@ const SANDetails: React.FC = () => {
                       })}
                 </Text>
               </View>
+            </View>
+
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
+
+              <NextPaymentCard
+                id={sanDetails.id}
+                currentTurn={sanDetails.currentTurn}
+                amount={sanDetails.amount}
+                nextPaymentDate={sanDetails.nextPaymentDate}
+                lastPaidTurn={sanDetails.lastPaidTurn!}
+              />
             </View>
 
             <View style={styles.section}>

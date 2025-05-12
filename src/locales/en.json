@@ -114,6 +114,7 @@
     "turn": "Turn {{current}} of {{total}}",
     "paymentDate": "Payment Date:",
     "earlyPaymentButton": "Make Early Payment",
+    "PaymentButton": "Make Payment",
     "noSans": "You don't have any active SAN yet.",
     "explore": "Explore new SANs"
   },
@@ -147,7 +148,8 @@
     "current": "Current",
     "join": "Join",
     "pending": "Pending payment",
-    "paid": "Paid"
+    "paid": "Paid",
+    "awaitMessage": "This SAN is still in the development process. Shift numbers will be randomly assigned once all participants have joined. At that time, payment dates for each shift will also be established. All that's left is to fill the quota!"
   },
   "ActivityScreen": {
     "recentActivity": "Recent Activity",

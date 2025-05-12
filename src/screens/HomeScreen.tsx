@@ -44,7 +44,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
 
       <ScrollView contentContainerStyle={generalStyles.mainContent}>
-        <Animated.View style={[generalStyles.card, { marginBottom: 16 }]} entering={FadeInDown.duration(400)}>
+        <Animated.View style={[generalStyles.card, { marginVertical: 16 }]} entering={FadeInDown.duration(400)}>
           <Text style={styles.welcomeTitle}>
             {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
           </Text>

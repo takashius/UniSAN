@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import ERDEAxios from '../services/api';
+import ERDEAxios from './ERDEAxios';
 import { TransactionHistoryResponse } from '../types/transactions';
 
 export const useTransactionsHistory = (page: number = 1) => {
@@ -9,6 +9,7 @@ export const useTransactionsHistory = (page: number = 1) => {
       const response = await ERDEAxios.get<TransactionHistoryResponse>(
         `/transaction/history?page=${page}`
       );
+      console.log('useTransactionsHistory', response.data);
       return response.data;
     },
   });

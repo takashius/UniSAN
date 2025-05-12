@@ -81,16 +81,15 @@ const HomeScreen = () => {
               <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
             </View>
             {user?.nextPayments.map((payment, index) => (
-              <View>
-                <NextPaymentCard
-                  id={payment.id}
-                  name={payment.sanName}
-                  currentTurn={payment.currentTurn}
-                  amount={payment.sanAmount}
-                  nextPaymentDate={payment.nextPaymentDate}
-                  lastPaidTurn={payment.lastPaidTurn!}
-                />
-              </View>
+              <NextPaymentCard
+                key={payment.id}
+                id={payment.id}
+                name={payment.sanName}
+                currentTurn={payment.currentTurn}
+                amount={payment.sanAmount}
+                nextPaymentDate={payment.nextPaymentDate}
+                lastPaidTurn={payment.lastPaidTurn!}
+              />
             ))}
           </View>
         }

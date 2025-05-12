@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { Calendar, ChevronRight } from "lucide-react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -13,11 +14,15 @@ import { useTranslation } from "react-i18next";
 import { useTransactionsHistory } from "../services/transactions";
 import HistoryTransactionItem from "../components/ui/HistoryTransactionItem";
 import generalStyles from "../styles/general";
+import { Dialog, Portal, Button } from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const History = () => {
   const { t } = useTranslation();
+  const [showPicker, setShowPicker] = useState(false);
   const [page, setPage] = useState(1);
-  const { data, isLoading, refetch } = useTransactionsHistory(page);
+  const [date, setDate] = useState<Date | null>(null);
+  const { data, isLoading, refetch } = useTransactionsHistory(page, date ? date.toLocaleDateString() : null);
 
   return (
     <View style={styles.container}>
@@ -32,7 +37,7 @@ const History = () => {
         <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t("ActivityScreen.recentActivity")}</Text>
-            <TouchableOpacity style={styles.filterButton}>
+            <TouchableOpacity style={styles.filterButton} onPress={() => setShowPicker(true)}>
               <Calendar size={16} color="#ff7f50" />
               <Text style={styles.filterText}>{t("ActivityScreen.filterByDate")}</Text>
             </TouchableOpacity>
@@ -55,10 +60,6 @@ const History = () => {
         <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t("ActivityScreen.completedSANs")}</Text>
-            <TouchableOpacity style={styles.viewAllButton}>
-              <Text style={styles.viewAllText}>{t("ActivityScreen.viewAll")}</Text>
-              <ChevronRight size={16} color="#ff7f50" />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.noContent}>
@@ -74,7 +75,42 @@ const History = () => {
           </View>
         </View>
       </ScrollView>
-
+      {showPicker && (
+        Platform.OS === "ios" ? (
+          <Portal>
+            <Dialog
+              visible={showPicker}
+              onDismiss={() => setShowPicker(false)}
+              theme={{ colors: { backdrop: "#00000040" } }}
+            >
+              <Dialog.Title>{t("common.selectADate")}</Dialog.Title>
+              <Dialog.Content>
+                <DateTimePicker
+                  value={date ?? new Date()}
+                  mode="date"
+                  display="spinner"
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) setDate(selectedDate);
+                  }}
+                />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={() => setShowPicker(false)}>{t("common.cancel")}</Button>
+                <Button onPress={() => setShowPicker(false)}>{t("common.confirm")}</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        ) : (
+          <DateTimePicker
+            value={date ?? new Date()}
+            mode="date"
+            display="spinner"
+            onChange={(event, selectedDate) => {
+              if (selectedDate) setDate(selectedDate);
+            }}
+          />
+        )
+      )}
     </View>
   );
 };

@@ -1,15 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 const nextPaymentStyles = StyleSheet.create({
-  paymentCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
   paymentCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

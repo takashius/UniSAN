@@ -25,7 +25,7 @@ const Explorer: React.FC = () => {
           <ActivityIndicator size="large" color="#ff4d4d" />
         </View>
       )}
-      <ScrollView contentContainerStyle={styles.mainContent}>
+      <ScrollView contentContainerStyle={generalStyles.mainContent}>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("Explorer.availableSANs")}</Text>
@@ -62,7 +62,7 @@ const Explorer: React.FC = () => {
           <Text style={styles.sectionTitle}>{t("Explorer.recommendedSANs")}</Text>
           <Animated.View
             entering={FadeInDown.duration(400)}
-            style={styles.recommendedCard}
+            style={generalStyles.card}
           >
             <View style={styles.recommendedCardHeader}>
               <View style={styles.emojiContainer}>
@@ -97,10 +97,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
   },
-  mainContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
-  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -123,15 +119,6 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 14,
     color: "#666",
-  },
-  recommendedCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   recommendedCardHeader: {
     flexDirection: "row",

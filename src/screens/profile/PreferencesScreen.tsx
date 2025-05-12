@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Appbar, Card, Switch, Menu, Divider, Button } from "react-native-paper";
 import { ChevronLeft, Bell, Globe } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
+import generalStyles from "../../styles/general";
 
 const Preferences: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -27,7 +28,7 @@ const Preferences: React.FC = () => {
       {/* Main Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Language Setting */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <View style={styles.row}>
               <View style={styles.rowLeft}>
@@ -71,7 +72,7 @@ const Preferences: React.FC = () => {
         </Card>
 
         {/* Notifications Setting */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <View style={styles.row}>
               <View style={styles.rowLeft}>
@@ -91,7 +92,7 @@ const Preferences: React.FC = () => {
         </Card>
 
         {/* About Section */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <Text style={styles.cardTitle}>{t("about.title")}</Text>
             <Text style={styles.cardSubtitle}>{t("about.description")}</Text>
@@ -116,12 +117,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    elevation: 2,
   },
   row: {
     flexDirection: "row",

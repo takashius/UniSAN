@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { NextPaymentProps } from "../../types/payment";
 import PaymentDialog from "./PaymentDialog";
+import generalStyles from "../../styles/general";
 
 const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, amount, nextPaymentDate, lastPaidTurn }) => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, am
 
   return (
     <>
-      <Animated.View style={[nextPaymentStyles.paymentCard, animatedStyle]}>
+      <Animated.View style={[generalStyles.card, animatedStyle]}>
         {name ?
           <View style={nextPaymentStyles.paymentCardHeader}>
             <View>

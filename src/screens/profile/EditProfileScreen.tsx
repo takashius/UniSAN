@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Image, Text, TextInput, ScrollView } from "react-native";
 import { Appbar, Button, Card, Dialog, Portal, IconButton, Switch } from "react-native-paper";
 import { Camera, Upload } from "lucide-react-native";
+import generalStyles from "../../styles/general";
 
 const EditProfile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -34,7 +35,7 @@ const EditProfile: React.FC = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Profile Image */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content style={styles.centerContent}>
             <View style={styles.profileImageContainer}>
               {profileImage ? (
@@ -54,7 +55,7 @@ const EditProfile: React.FC = () => {
         </Card>
 
         {/* Personal Details */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <Text style={styles.label}>Nombre</Text>
             <TextInput
@@ -81,7 +82,7 @@ const EditProfile: React.FC = () => {
         </Card>
 
         {/* ID Image */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <View style={styles.row}>
               <Text style={styles.label}>Foto de Cédula</Text>
@@ -101,7 +102,7 @@ const EditProfile: React.FC = () => {
         </Card>
 
         {/* Change Password */}
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <Text style={styles.sectionTitle}>Cambiar Contraseña</Text>
             <Text style={styles.helperText}>
@@ -161,10 +162,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-    borderRadius: 12,
   },
   centerContent: {
     alignItems: "center",

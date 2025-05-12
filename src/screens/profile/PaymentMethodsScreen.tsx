@@ -8,6 +8,7 @@ import { usePaymentMethods, useDeletePaymentMethod } from "../../services/paymen
 import { PaymentMethod } from "../../types/paymentMethod";
 import Toast from "react-native-toast-message";
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
+import generalStyles from "../../styles/general";
 
 const PaymentMethods: React.FC = () => {
   const { t } = useTranslation();
@@ -96,7 +97,7 @@ const PaymentMethods: React.FC = () => {
           data={paymentMethods}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <Card style={styles.card}>
+            <Card style={generalStyles.cardMin}>
               <Card.Content>
                 <View style={styles.cardHeader}>
                   <View style={styles.cardIcon}>
@@ -173,7 +174,7 @@ const PaymentMethods: React.FC = () => {
           )}
         />
       ) : (
-        <Card style={styles.card}>
+        <Card style={generalStyles.cardMin}>
           <Card.Content>
             <View style={styles.emptyState}>
               <CreditCard size={48} color="#aaa" />
@@ -239,11 +240,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#ff7f50",
-  },
-  card: {
-    marginBottom: 16,
-    borderRadius: 12,
-    elevation: 2,
   },
   cardHeader: {
     flexDirection: "row",

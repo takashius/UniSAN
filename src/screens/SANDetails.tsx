@@ -44,7 +44,7 @@ const SANDetails: React.FC = () => {
       ) : (
         <>{sanDetails &&
           <ScrollView contentContainerStyle={styles.content}>
-            <Animated.View entering={FadeInDown.duration(400)} style={styles.card}>
+            <Animated.View entering={FadeInDown.duration(400)} style={generalStyles.cardMin}>
               <View style={styles.cardContent}>
                 <View style={styles.cardHeader}>
                   <View>
@@ -83,15 +83,15 @@ const SANDetails: React.FC = () => {
             </Animated.View>
 
             {!sanDetails.isOpen &&
-              <View style={styles.descriptionCard}>
+              <View style={[generalStyles.cardMin, { padding: 16 }]}>
                 <Text style={styles.descriptionTitle}>{t("SANDetails.descriptionTitle")}</Text>
                 <Text style={styles.descriptionText}>{t("SANDetails.awaitMessage")}</Text>
               </View>
             }
 
-            <View style={styles.section}>
+            <View style={generalStyles.section}>
               <Text style={styles.sectionTitle}>{t("SANDetails.progressTitle")}</Text>
-              <View style={styles.progressCard}>
+              <View style={generalStyles.card}>
                 <View style={styles.progressHeader}>
                   <Text style={styles.progressTitle}>{t("SANDetails.yourTurn")}</Text>
                   <Text style={styles.turnBadge}>
@@ -122,7 +122,7 @@ const SANDetails: React.FC = () => {
             </View>
 
 
-            <View style={styles.section}>
+            <View style={generalStyles.section}>
               <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
 
               <NextPaymentCard
@@ -134,9 +134,9 @@ const SANDetails: React.FC = () => {
               />
             </View>
 
-            <View style={styles.section}>
+            <View style={generalStyles.section}>
               <Text style={styles.sectionTitle}>{t("SANDetails.membersTitle")}</Text>
-              <View style={styles.membersCard}>
+              <View style={generalStyles.card}>
                 {sanDetails.members.map((member, index) => (
                   <View
                     key={member.id}
@@ -220,11 +220,6 @@ const styles = StyleSheet.create({
     color: "#333",
     marginLeft: 8,
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    marginBottom: 16,
-  },
   cardContent: {
     padding: 16,
   },
@@ -286,12 +281,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginLeft: 8,
   },
-  descriptionCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
   descriptionTitle: {
     fontSize: 16,
     fontWeight: "600",
@@ -312,23 +301,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
   },
-  section: {
-    marginBottom: 16,
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
     color: "#333",
-  },
-  progressCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   progressHeader: {
     flexDirection: "row",
@@ -359,15 +336,6 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 14,
     color: "#666",
-  },
-  membersCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   memberItem: {
     flexDirection: "row",

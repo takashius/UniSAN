@@ -2,6 +2,7 @@ import { t } from "i18next";
 import React, { useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Card } from "react-native-paper";
+import generalStyles from "../../styles/general";
 
 interface ConfirmationDialogProps {
   visible: boolean;
@@ -24,7 +25,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ visible, messag
   return (<>
     {visible &&
       <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
-        <Card style={styles.card}>
+        <Card style={[generalStyles.cardMin, { width: 300 }]}>
           <Card.Content>
             <Text style={styles.message}>{message}</Text>
           </Card.Content>
@@ -56,12 +57,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  card: {
-    width: 300,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    elevation: 4,
   },
   message: {
     fontSize: 16,

@@ -28,8 +28,8 @@ const History = () => {
         </View>
       )}
 
-      <ScrollView contentContainerStyle={styles.mainContent}>
-        <View style={styles.section}>
+      <ScrollView contentContainerStyle={generalStyles.mainContent}>
+        <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t("ActivityScreen.recentActivity")}</Text>
             <TouchableOpacity style={styles.filterButton}>
@@ -38,7 +38,7 @@ const History = () => {
             </TouchableOpacity>
           </View>
 
-          <Animated.View entering={FadeIn.duration(400)} style={styles.card}>
+          <Animated.View entering={FadeIn.duration(400)} style={generalStyles.card}>
             {data?.transactions && data.transactions.length > 0 &&
               <View>
                 {data?.transactions.map((item, index) => (
@@ -52,7 +52,7 @@ const History = () => {
           </Animated.View>
         </View>
 
-        <View style={styles.section}>
+        <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t("ActivityScreen.completedSANs")}</Text>
             <TouchableOpacity style={styles.viewAllButton}>
@@ -87,13 +87,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f4f6",
     paddingTop: 16
   },
-  mainContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
-  },
-  section: {
-    marginBottom: 16,
-  },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -112,15 +105,6 @@ const styles = StyleSheet.create({
     color: "#ff7f50",
     marginLeft: 8,
     fontSize: 14,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    padding: 16,
   },
   amountReceived: {
     color: "#10b981", // Verde

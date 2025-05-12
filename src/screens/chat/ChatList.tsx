@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import Animated from "react-native-reanimated";
 import { FadeIn } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
+import generalStyles from "../../styles/general";
 
 interface Chat {
   id: string;
@@ -44,7 +45,7 @@ const ChatList: React.FC = () => {
             <Animated.View
               key={chat.id}
               entering={FadeIn.delay(index * 100).duration(400)}
-              style={styles.chatCard}
+              style={[generalStyles.card, { marginBottom: 12 }]}
             >
               <TouchableOpacity
                 style={styles.chatButton}
@@ -85,16 +86,6 @@ const styles = StyleSheet.create({
   chatList: {
     flex: 1,
     padding: 16,
-  },
-  chatCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 12,
   },
   chatButton: {
     width: "100%",

@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
-import nextPaymentStyles from "../styles/paymentCard";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
+import generalStyles from "../styles/general";
 
 const HomeScreen = () => {
   const { t } = useTranslation();
@@ -43,8 +43,8 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
 
-      <ScrollView contentContainerStyle={styles.mainContent}>
-        <Animated.View style={styles.glassCard} entering={FadeInDown.duration(400)}>
+      <ScrollView contentContainerStyle={generalStyles.mainContent}>
+        <Animated.View style={[generalStyles.card, { marginBottom: 16 }]} entering={FadeInDown.duration(400)}>
           <Text style={styles.welcomeTitle}>
             {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
           </Text>
@@ -104,19 +104,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-  },
-  mainContent: {
-    padding: 16,
-  },
-  glassCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
   },
   welcomeTitle: {
     fontSize: 18,

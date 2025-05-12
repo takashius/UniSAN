@@ -37,7 +37,7 @@ const Profile = () => {
       )}
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Animated.View entering={FadeInDown.duration(400)} style={styles.profileCard}>
+        <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, { marginBottom: 16 }]}>
           <View style={styles.profileHeader}>
             <View style={styles.avatarContainer}>
               <View style={styles.avatar}>
@@ -60,38 +60,38 @@ const Profile = () => {
           </View>
         </Animated.View>
 
-        <View style={styles.section}>
+        <View style={generalStyles.section}>
           <UserLevel
             level={user?.user.level ? user?.user.level : 1}
             points={user?.user.points ? user?.user.points : 0}
             nextLevelPoints={user?.user.pointsNeeded ? user?.user.pointsNeeded : 0} />
         </View>
 
-        <View style={styles.section}>
+        <View style={generalStyles.section}>
           <Text style={styles.sectionTitle}>{t("Profile.statistics")}</Text>
           <Animated.View entering={FadeInDown.duration(400).delay(100)} style={styles.statsGrid}>
-            <View style={styles.statCard}>
+            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
               <Text style={styles.statLabel}>{t("Profile.sansParticipated")}</Text>
               <Text style={styles.statValue}>{user?.statistics.activeSansCount}</Text>
             </View>
-            <View style={styles.statCard}>
+            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
               <Text style={styles.statLabel}>{t("Profile.paymentsOnTime")}</Text>
               <Text style={styles.statValue}>{user?.statistics.onTimePayments}/{user?.statistics.totalPayments}</Text>
             </View>
-            <View style={styles.statCard}>
+            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
               <Text style={styles.statLabel}>{t("Profile.sansCompleted")}</Text>
               <Text style={styles.statValue}>{user?.statistics.completedSansCount}</Text>
             </View>
-            <View style={styles.statCard}>
+            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
               <Text style={styles.statLabel}>{t("Profile.totalSaved")}</Text>
               <Text style={styles.statValueOrange}>${user?.statistics.totalSavings}</Text>
             </View>
           </Animated.View>
         </View>
 
-        <View style={styles.section}>
+        <View style={generalStyles.section}>
           <Text style={styles.sectionTitle}>{t("Profile.settings")}</Text>
-          <Animated.View entering={FadeIn.duration(400).delay(200)} style={styles.settingsCard}>
+          <Animated.View entering={FadeIn.duration(400).delay(200)} style={[generalStyles.card, { padding: 0 }]}>
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => navigation.navigate("PaymentMethods")}
@@ -144,16 +144,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 80,
   },
-  profileCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginBottom: 16,
-  },
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -205,9 +195,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginTop: 4,
   },
-  section: {
-    marginBottom: 16,
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -217,17 +204,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap", // Asegura el diseño en cuadrícula
     justifyContent: "space-between", // Distribución horizontal
-  },
-  statCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    width: "48%", // Ocupa casi la mitad del ancho para cuadrícula
-    marginBottom: 16, // Espaciado entre filas
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   statLabel: {
     fontSize: 14,
@@ -243,14 +219,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#ff7f50",
-  },
-  settingsCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   settingsItem: {
     flexDirection: "row", // Asegura que el icono y texto estén alineados

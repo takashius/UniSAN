@@ -6,13 +6,13 @@ import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
-import { useJoinSan } from "../../services/san";
+import { useJoinSan, usePaymentSan } from "../../services/san";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
 
-const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDismiss, onPaymentRegistered }) => {
+const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, isJoin = false, onDismiss, onPaymentRegistered }) => {
   const { control, handleSubmit, reset } = useForm<PaymentFormData>({
     defaultValues: {
       paymentDate: new Date(),
@@ -22,6 +22,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
   });
   const { t } = useTranslation();
   const joinSan = useJoinSan();
+  const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
   const { setUser } = useUser();
 
@@ -33,29 +34,51 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, onDism
       operationReference: data.referenceNumber,
       date: data.paymentDate.toLocaleDateString()
     };
-    joinSan.mutate(payload,
-      {
-        onSuccess: async () => {
-          queryClient.invalidateQueries({ queryKey: ["availableSan"] });
-          await queryClient.refetchQueries({ queryKey: ["myAccount"] });
-          const updatedUser = await queryClient.ensureQueryData({ queryKey: ["myAccount"] });
-          setUser(updatedUser);
-          Toast.show({
-            type: "success",
-            text1: t("Payment.paymentSuccessTitle"),
-            text2: t("Payment.paymentSuccessMessage"),
-          });
-        },
-        onError: (error) => {
-          console.log(error)
-          Toast.show({
-            type: "success",
-            text1: t("Payment.paymentErrorTitle"),
-            text2: t("Payment.paymentErrorMessage"),
-          });
-        },
-      }
-    );
+    if (isJoin) {
+      joinSan.mutate(payload,
+        {
+          onSuccess: async () => {
+            queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+            await queryClient.refetchQueries({ queryKey: ["myAccount"] });
+            const updatedUser = await queryClient.ensureQueryData({ queryKey: ["myAccount"] });
+            setUser(updatedUser);
+            Toast.show({
+              type: "success",
+              text1: t("Payment.paymentSuccessTitle"),
+              text2: t("Payment.paymentSuccessMessage"),
+            });
+          },
+          onError: (error) => {
+            console.log(error)
+            Toast.show({
+              type: "success",
+              text1: t("Payment.paymentErrorTitle"),
+              text2: t("Payment.paymentErrorMessage"),
+            });
+          },
+        }
+      );
+    } else {
+      paymentSan.mutate(payload,
+        {
+          onSuccess: async () => {
+            Toast.show({
+              type: "success",
+              text1: t("Payment.paymentSuccessTitle"),
+              text2: t("Payment.paymentSuccessMessage"),
+            });
+          },
+          onError: (error) => {
+            console.log(error)
+            Toast.show({
+              type: "success",
+              text1: t("Payment.paymentErrorTitle"),
+              text2: t("Payment.paymentErrorMessage"),
+            });
+          },
+        }
+      );
+    }
 
     if (onPaymentRegistered) {
       onPaymentRegistered();

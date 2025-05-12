@@ -3,6 +3,7 @@ export interface PaymentDialogProps {
   onDismiss: () => void;
   amount: number;
   san: string;
+  isJoin?: boolean;
   onPaymentRegistered?: () => void;
 }
 

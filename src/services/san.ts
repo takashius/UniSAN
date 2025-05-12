@@ -28,7 +28,20 @@ export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
       await ERDEAxios.post('/san/join', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sanJoined'] });
+      queryClient.invalidateQueries({ queryKey: ['availableSan'] });
+    },
+  });
+};
+
+export const usePaymentSan = (): UseMutationResult<void, Error, JoinSanData> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, JoinSanData>({
+    mutationFn: async (data: JoinSanData) => {
+      await ERDEAxios.post('/transaction', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sanDetail'] });
     },
   });
 };

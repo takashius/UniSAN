@@ -106,12 +106,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
   },
-  amountReceived: {
-    color: "#10b981", // Verde
-  },
-  amountPaid: {
-    color: "#ff7f50", // Naranja
-  },
   viewAllButton: {
     flexDirection: "row",
     alignItems: "center",

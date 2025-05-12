@@ -27,6 +27,14 @@ const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
         <Text style={styles.historyItemTitle}>
           {item.san.name}
         </Text>
+        <Text
+          style={[
+            styles.historyItemAmount,
+            styles.amountPaid
+          ]}
+        >
+          + ${item.amount}
+        </Text>
       </View>
       <View style={styles.historyItemFooter}>
         <Text style={styles.historyItemDate}>{item.date}</Text>

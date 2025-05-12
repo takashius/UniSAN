@@ -48,6 +48,12 @@ const transactionsStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  amountReceived: {
+    color: '#10b981', // Verde
+  },
+  amountPaid: {
+    color: '#ff7f50', // Naranja
+  },
 });
 
 export default transactionsStyles;

@@ -113,6 +113,7 @@
     "upcomingPayments": "Upcoming Payments",
     "turn": "Turn {{current}} of {{total}}",
     "paymentDate": "Payment Date:",
+    "noPaymentDate": "There are no payment dates yet",
     "earlyPaymentButton": "Make Early Payment",
     "PaymentButton": "Make Payment",
     "noSans": "You don't have any active SAN yet.",

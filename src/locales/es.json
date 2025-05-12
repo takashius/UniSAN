@@ -114,6 +114,7 @@
     "upcomingPayments": "Próximos pagos",
     "turn": "Turno {{current}} de {{total}}",
     "paymentDate": "Fecha de pago:",
+    "noPaymentDate": "Aún no hay fechas de pago",
     "earlyPaymentButton": "Realizar pago anticipado",
     "PaymentButton": "Realizar pago",
     "noSans": "Aún no tienes ningún SAN activo.",

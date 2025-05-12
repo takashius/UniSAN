@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback, Platform } from "react-native";
+import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { TextInput, Portal, Dialog, Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,7 @@ const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }
 
   return (
     <View>
-      <TouchableWithoutFeedback onPress={() => setShowPicker(true)}>
+      <Pressable onPress={() => setShowPicker(true)} >
         <TextInput
           label={label}
           onPress={() => setShowPicker(true)}
@@ -31,10 +31,10 @@ const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }
           activeUnderlineColor="#ff7f50"
           textColor="black"
           placeholder={t("common.selectDate")}
-          editable={false}
+          editable={false} // Asegura que no sea editable para evitar errores
           style={styles.input}
         />
-      </TouchableWithoutFeedback>
+      </Pressable>
 
       {showPicker && (
         Platform.OS === "ios" ? (

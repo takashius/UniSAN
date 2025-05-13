@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useSanDetail } from "../services/san";
 import generalStyles from "../styles/general";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
+import AvatarView from "../components/ui/AvatarView";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
@@ -146,7 +147,7 @@ const SANDetails: React.FC = () => {
                     ]}
                   >
                     <View style={styles.avatarContainer}>
-                      <Text style={styles.avatarText}>{member.photo}</Text>
+                      <AvatarView name={member.name!} lastName={member?.lastName} photo={member?.photo} />
                     </View>
                     <View style={styles.memberInfo}>
                       <Text style={styles.memberName}>

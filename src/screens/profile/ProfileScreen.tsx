@@ -40,7 +40,7 @@ const Profile = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, { marginBottom: 16 }]}>
           <View style={styles.profileHeader}>
-            <AvatarView user={user!} />
+            <AvatarView name={user?.user.name!} lastName={user?.user?.lastName} photo={user?.user?.photo} mini={true} />
             <View style={styles.profileInfo}>
               <View style={styles.profileRow}>
                 <Text style={styles.profileName}>{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>

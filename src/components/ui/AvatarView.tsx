@@ -2,7 +2,14 @@ import { View, StyleSheet, Image, Text } from 'react-native'
 import React from 'react'
 import { Account } from '../../types';
 
-const AvatarView = ({ user }: { user: Account }) => {
+interface Avatar {
+  name: string;
+  lastName?: string;
+  photo?: string;
+  mini?: boolean
+}
+
+const AvatarView: React.FC<Avatar> = ({ name, lastName, photo, mini = false }) => {
   const getInitials = (name: string, lastName?: string) => {
     if (!name) return "??";
 
@@ -18,11 +25,11 @@ const AvatarView = ({ user }: { user: Account }) => {
 
   return (
     <View style={styles.profileRow}>
-      {user?.user.photo ? (
-        <Image source={{ uri: user.user.photo }} style={styles.profileImage} />
+      {photo ? (
+        <Image source={{ uri: photo }} style={[mini ? styles.profileImage : styles.profileImageMini]} />
       ) : (
-        <View style={styles.initialsContainer}>
-          <Text style={styles.initialsText}>{getInitials(user?.user.name, user?.user.lastName)}</Text>
+        <View style={[styles.initialsContainer, mini ? styles.profileImage : styles.profileImageMini]}>
+          <Text style={[styles.initialsText, mini ? styles.font : styles.fontMini]}>{getInitials(name, lastName)}</Text>
         </View>
       )}
     </View>
@@ -46,17 +53,24 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
   },
+  profileImageMini: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
   initialsContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
     backgroundColor: "#ffe4cf",
     justifyContent: "center",
     alignItems: "center",
   },
   initialsText: {
-    fontSize: 24,
     fontWeight: "bold",
     color: "#ff7f50",
   },
+  font: {
+    fontSize: 24,
+  },
+  fontMini: {
+    fontSize: 18,
+  }
 });

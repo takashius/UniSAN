@@ -34,6 +34,11 @@ const generalStyles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     zIndex: 10,
   },
+  errorText: {
+    color: "#ff4d4d",
+    fontSize: 16,
+    textAlign: "center",
+  },
 });
 
 export default generalStyles;

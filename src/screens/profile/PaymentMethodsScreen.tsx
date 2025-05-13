@@ -73,7 +73,7 @@ const PaymentMethods: React.FC = () => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{t("errors.loading")}</Text>
+        <Text style={generalStyles.errorText}>{t("errors.loading")}</Text>
       </View>
     );
   }
@@ -221,11 +221,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f3f4f6",
     padding: 16,
-  },
-  errorText: {
-    color: "#ff4d4d",
-    fontSize: 16,
-    textAlign: "center",
   },
   sectionHeader: {
     flexDirection: "row",

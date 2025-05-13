@@ -7,7 +7,16 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import ERDEAxios from './ERDEAxios';
-import { Account, LoginResponse, Login, Image, Recovery } from '../types';
+import {
+  Account,
+  LoginResponse,
+  Login,
+  Image,
+  Recovery,
+  UserProfileResponse,
+  ProfileUpdateData,
+} from '../types';
+import SecureStoreManager from '../components/AsyncStorageManager';
 
 export const useLogin = (): UseMutationResult<LoginResponse, unknown, Login> => {
   return useMutation<LoginResponse, unknown, Login>({
@@ -26,6 +35,18 @@ export const useAccount = (): UseQueryResult<Account, Error> => {
     queryFn: () => {
       return ERDEAxios.get<Account>('/user/account').then(response => response.data);
     },
+  });
+};
+
+export const useUserProfile = () => {
+  return useQuery<UserProfileResponse, Error>({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const response = await ERDEAxios.get<UserProfileResponse>(`/user/profile`);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: previousData => previousData,
   });
 };
 
@@ -66,22 +87,35 @@ export const useRecoveryTwo = () => {
 export const useUploadImage = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (data: Image) => {
-      localStorage.setItem('contentType', 'true');
+    mutationFn: async (data: Image) => {
+      await SecureStoreManager.setItem<string>('contentType', 'true');
       var formData = new FormData();
       formData.append('image', data.image);
       formData.append('imageType', data.imageType);
-      return ERDEAxios.post('/company/upload', formData);
+      return ERDEAxios.post('/user/upload', formData);
     },
-    onSuccess: () => {
-      localStorage.removeItem('contentType');
+    onSuccess: async () => {
+      await SecureStoreManager.removeItem('contentType');
       queryClient.invalidateQueries({ queryKey: ['myAccount'] });
     },
-    onError: error => {
+    onError: async error => {
       console.log('error useUploadImage', error);
-      localStorage.removeItem('contentType');
+      await SecureStoreManager.removeItem('contentType');
     },
   });
 
   return mutation;
+};
+
+export const useUpdateUser = (): UseMutationResult<
+  ProfileUpdateData,
+  Error,
+  { data: ProfileUpdateData }
+> => {
+  return useMutation<ProfileUpdateData, Error, { data: ProfileUpdateData }>({
+    mutationFn: async ({ data }) => {
+      const response = await ERDEAxios.patch(`/user/`, data);
+      return response.data;
+    },
+  });
 };

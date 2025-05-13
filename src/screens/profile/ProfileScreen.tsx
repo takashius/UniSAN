@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Camera, Edit2, ChevronRight, LogOut, Settings, CreditCard, User } from "lucide-react-native";
+import { ChevronRight, LogOut, Settings, CreditCard, User } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { useLogout } from "../../services/auth";
 import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import generalStyles from "../../styles/general";
+import AvatarView from "../../components/ui/AvatarView";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -39,20 +40,10 @@ const Profile = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, { marginBottom: 16 }]}>
           <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>MG</Text>
-              </View>
-              <TouchableOpacity style={styles.cameraButton}>
-                <Camera size={16} color="#fff" />
-              </TouchableOpacity>
-            </View>
+            <AvatarView user={user!} />
             <View style={styles.profileInfo}>
               <View style={styles.profileRow}>
                 <Text style={styles.profileName}>{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>
-                <TouchableOpacity>
-                  <Edit2 size={16} color="#888" />
-                </TouchableOpacity>
               </View>
               <Text style={styles.profileEmail}>{user?.user.email}</Text>
               <Text style={styles.profileLevel}>{t("Profile.level", { level: user?.user.level ? user?.user.level : 1, type: t("Profile.levelType.initial") })}</Text>
@@ -147,30 +138,6 @@ const styles = StyleSheet.create({
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  avatarContainer: {
-    position: "relative",
-  },
-  avatar: {
-    height: 80,
-    width: 80,
-    borderRadius: 40,
-    backgroundColor: "#ffe4cf",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ff7f50",
-  },
-  cameraButton: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#ff7f50",
-    borderRadius: 16,
-    padding: 6,
   },
   profileInfo: {
     flex: 1,

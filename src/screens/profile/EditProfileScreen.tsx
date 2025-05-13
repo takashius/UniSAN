@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import { Controller, useForm } from "react-hook-form";
 import { ProfileFormData, ProfileUpdateData } from "../../types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditProfile: React.FC = () => {
   const uploadMutation = useUploadImage();
@@ -19,6 +20,8 @@ const EditProfile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [idImage, setIdImage] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({ queryKey: ["uploadImage"] });
 
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
@@ -77,10 +80,9 @@ const EditProfile: React.FC = () => {
     });
   };
 
-
   const handleImagePicker = async (imageType: string) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       quality: 1,
     });
@@ -90,11 +92,13 @@ const EditProfile: React.FC = () => {
       const imageData = {
         image: {
           uri: result.assets[0].uri,
-          type: result.assets[0].type,
+          type: "image/jpeg",
           name: "uploaded_image.jpg",
         },
         imageType,
       };
+
+
       uploadMutation.mutate(imageData, {
         onSuccess: (response) => {
           if (imageType === 'photo') {
@@ -117,6 +121,7 @@ const EditProfile: React.FC = () => {
           });
         },
       });
+
     }
   };
 
@@ -133,8 +138,8 @@ const EditProfile: React.FC = () => {
           <Card.Content style={styles.centerContent}>
             <View style={styles.profileImageContainer}>
               {uploadMutation.isPending && loaderImage === 'photo' ? (
-                <View style={styles.initials}> {/* 🔥 Usamos el mismo estilo de fondo */}
-                  <ActivityIndicator size="large" color="#fff" /> {/* Spinner sobre fondo naranja */}
+                <View style={styles.initials}>
+                  <ActivityIndicator size="large" color="#fff" />
                 </View>
               ) : profileImage ? (
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />

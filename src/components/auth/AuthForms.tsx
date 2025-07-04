@@ -161,7 +161,7 @@ export const RegisterForm = () => {
   const { login } = useUser();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
-  const { refetch, isFetching } = useAccount();
+  const { refetch } = useAccount();
 
   const {
     control,
@@ -177,7 +177,7 @@ export const RegisterForm = () => {
     },
   });
 
-  const password = watch("password"); // Observar el valor de "password"
+  const password = watch("password");
 
   const onSubmit = (data: { name: string; email: string; password: string; confirmPassword: string }) => {
     registerMutate.mutate(

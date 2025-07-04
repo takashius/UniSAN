@@ -2,6 +2,7 @@
   "expo": {
     "name": "UniSAN",
     "slug": "UniSAN",
+    "owner": "erickrecalde",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,15 +21,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.erickhernandez.UniSAN"
+      "package": "com.erDesarrollo.UniSAN"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "19526fb3-cc6e-4e87-a550-c294f8cc0d17"
-      }
     },
     "runtimeVersion": {
       "policy": "appVersion"
@@ -36,6 +32,13 @@
     "updates": {
       "url": "https://u.expo.dev/19526fb3-cc6e-4e87-a550-c294f8cc0d17"
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7af4c271-bb85-42ae-a72e-a0fe3b354d94"
+      }
+    }
   }
 }

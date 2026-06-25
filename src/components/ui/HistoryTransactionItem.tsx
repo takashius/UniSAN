@@ -1,9 +1,9 @@
-import { View, Text, Animated } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
 import { Transaction } from '../../types/transactions'
 import styles from '../../styles/transactions'
 import { useTranslation } from 'react-i18next'
-import { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 
 const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
   const { t } = useTranslation();

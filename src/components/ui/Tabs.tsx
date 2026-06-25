@@ -70,7 +70,7 @@ const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, activeTab, setActiveTa
 
   return (
     <TouchableOpacity
-      onPress={() => setActiveTab(value)}
+      onPress={() => setActiveTab?.(value)}
       style={[styles.tabsTrigger, isActive && styles.activeTab]}
     >
       <Text style={[styles.tabsTriggerText, isActive && styles.activeTabText]}>{children}</Text>

@@ -13,6 +13,13 @@ interface DateInputFieldProps {
 const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }) => {
   const [showPicker, setShowPicker] = useState(false);
   const { t } = useTranslation();
+  const androidPickerProps = Platform.OS === "android"
+    ? {
+      // Force action buttons to match app accent color on Android.
+      positiveButton: { label: t("common.confirm"), textColor: "#ff7f50" },
+      negativeButton: { label: t("common.cancel"), textColor: "#ff7f50" },
+    }
+    : {};
 
   const handleConfirm = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -55,7 +62,13 @@ const DateInputField: React.FC<DateInputFieldProps> = ({ date, label, onChange }
             </Dialog>
           </Portal>
         ) : (
-          <DateTimePicker value={date} mode="date" display="default" onChange={handleConfirm} />
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={handleConfirm}
+            {...(androidPickerProps as any)}
+          />
         )
       )}
     </View>

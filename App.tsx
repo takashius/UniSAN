@@ -3,6 +3,7 @@ import { I18nextProvider } from "react-i18next";
 import { StatusBar } from "expo-status-bar";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider as PaperProvider, MD3LightTheme } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { UserProvider } from './src/context/UserContext';
 import { QueryClient } from "@tanstack/react-query";
@@ -20,17 +21,19 @@ export default function App() {
     },
   };
   return (
-    <QueryClientProvider client={queryClient}>
-      <PaperProvider theme={theme}>
-        <I18nextProvider i18n={i18n}>
-          <UserProvider>
-            <StatusBar style="light" />
-            <AppNavigator />
-            <Toast />
-          </UserProvider>
-        </I18nextProvider>
-      </PaperProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <PaperProvider theme={theme}>
+          <I18nextProvider i18n={i18n}>
+            <UserProvider>
+              <StatusBar style="light" />
+              <AppNavigator />
+              <Toast />
+            </UserProvider>
+          </I18nextProvider>
+        </PaperProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
 

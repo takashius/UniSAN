@@ -10,7 +10,10 @@ interface BankSelectFieldProps {
   onSelectBank: (bankId: string) => void;
 }
 
-const BankSelectField: React.FC<BankSelectFieldProps> = ({ selectedBank, onSelectBank }) => {
+const BankSelectField: React.FC<BankSelectFieldProps> = ({
+  selectedBank,
+  onSelectBank,
+}) => {
   const { t } = useTranslation();
   const { data: banks, isLoading } = useBanks();
   const [menuVisible, setMenuVisible] = useState(false);

@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Provider as PaperProvider } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomTheme from "../utils/CustomTheme";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -30,6 +31,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 const AppNavigator: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useUser();
+  const insets = useSafeAreaInsets();
 
   const SANStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -123,8 +125,9 @@ const AppNavigator: React.FC = () => {
                 backgroundColor: "white",
                 borderTopWidth: 1,
                 borderTopColor: "#f4f4f4",
-                height: 80,
+                height: 56 + insets.bottom + 12,
                 paddingTop: 12,
+                paddingBottom: insets.bottom + 8,
               },
               headerStyle: { backgroundColor: "#ff7f50" },
               headerTintColor: "white",

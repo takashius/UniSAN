@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Menu, HelperText } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Dialog, HelperText, Portal, Text } from "react-native-paper";
 import SelectButton from "./SelectButton";
 import { useBanks } from "../../services/bank";
 import { useTranslation } from "react-i18next";
@@ -20,33 +20,42 @@ const BankSelectField: React.FC<BankSelectFieldProps> = ({
 
   return (
     <View style={styles.container}>
-      <Menu
-        visible={menuVisible}
-        onDismiss={() => setMenuVisible(false)}
-        anchor={
-          <SelectButton
-            value={banks?.find((b) => b._id === selectedBank)?.name || ""}
-            placeholder={t("methodsForm.bankPlaceholder")}
-            onPress={() => setMenuVisible(true)}
-          />
-        }
-      >
-        {isLoading ? (
-          <HelperText type="info">{t("common.loading")}</HelperText>
-        ) : (
-          banks?.map((bank) => (
-            <Menu.Item
-              key={bank._id}
-              title={`(${bank.code}) ${bank.name}`}
-              onPress={() => {
-                onSelectBank(bank._id);
-                setMenuVisible(false);
-              }}
-              titleStyle={styles.menuItem}
-            />
-          ))
-        )}
-      </Menu>
+      <SelectButton
+        value={banks?.find((b) => b._id === selectedBank)?.name || ""}
+        placeholder={t("methodsForm.bankPlaceholder")}
+        onPress={() => setMenuVisible(true)}
+      />
+
+      <Portal>
+        <Dialog
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          style={styles.dialog}
+          theme={{ colors: { backdrop: "#ff7f50" } }}
+        >
+          <Dialog.Title>{t("methodsForm.bankPlaceholder")}</Dialog.Title>
+          <Dialog.Content>
+            {isLoading ? (
+              <HelperText type="info">{t("common.loading")}</HelperText>
+            ) : (
+              <ScrollView style={styles.listContainer}>
+                {banks?.map((bank) => (
+                  <TouchableOpacity
+                    key={bank._id}
+                    onPress={() => {
+                      onSelectBank(bank._id);
+                      setMenuVisible(false);
+                    }}
+                    style={styles.bankItem}
+                  >
+                    <Text style={styles.menuItem}>{`(${bank.code}) ${bank.name}`}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
@@ -56,6 +65,17 @@ export default BankSelectField;
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
+  },
+  dialog: {
+    backgroundColor: "#fff",
+  },
+  listContainer: {
+    maxHeight: 280,
+  },
+  bankItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
   },
   menuItem: {
     color: "#333",

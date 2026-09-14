@@ -7,6 +7,7 @@ import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
 import { useJoinSan, usePaymentSan } from "../../services/san";
+import { useReceivingAccounts } from "../../services/settings";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
@@ -25,6 +26,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, isJoin
   const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
   const { setUser } = useUser();
+  const { data: receivingAccounts = [] } = useReceivingAccounts();
 
   const onSubmit = (data: PaymentFormData) => {
     const payload = {
@@ -96,20 +98,43 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, isJoin
         theme={{ colors: { backdrop: "#ff7f50" } }}
       >
         <Dialog.Title style={styles.dialogTitle}>{t("Payment.title")}</Dialog.Title>
+        <Dialog.ScrollArea style={styles.scrollArea}>
         <Dialog.Content>
           <View style={styles.paymentDetails}>
-            <View style={styles.detailRow}>
-              <HelperText type="info">{t("Payment.bank")}:</HelperText>
-              <HelperText type="info">Bancamiga</HelperText>
-            </View>
-            <View style={styles.detailRow}>
-              <HelperText type="info">{t("Payment.phone")}:</HelperText>
-              <HelperText type="info">04125557916</HelperText>
-            </View>
-            <View style={styles.detailRow}>
-              <HelperText type="info">{t("Payment.documentID")}:</HelperText>
-              <HelperText type="info">13952494</HelperText>
-            </View>
+            {receivingAccounts.length === 0 ? (
+              <HelperText type="info">{t("Payment.noReceivingAccounts")}</HelperText>
+            ) : (
+              receivingAccounts.map((account) => (
+                <View key={account._id} style={styles.accountBlock}>
+                  <View style={styles.detailRow}>
+                    <HelperText type="info">{t("Payment.bank")}:</HelperText>
+                    <HelperText type="info">
+                      {account.bankCode ? `(${account.bankCode}) ${account.bankName}` : account.bankName}
+                    </HelperText>
+                  </View>
+                  {!!account.holderName && (
+                    <View style={styles.detailRow}>
+                      <HelperText type="info">{t("Payment.holder")}:</HelperText>
+                      <HelperText type="info">{account.holderName}</HelperText>
+                    </View>
+                  )}
+                  <View style={styles.detailRow}>
+                    <HelperText type="info">{t("Payment.phone")}:</HelperText>
+                    <HelperText type="info">{account.phone}</HelperText>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <HelperText type="info">{t("Payment.documentID")}:</HelperText>
+                    <HelperText type="info">{account.documentId}</HelperText>
+                  </View>
+                  {!!account.accountNumber && (
+                    <View style={styles.detailRow}>
+                      <HelperText type="info">{t("Payment.accountNumber")}:</HelperText>
+                      <HelperText type="info">{account.accountNumber}</HelperText>
+                    </View>
+                  )}
+                </View>
+              ))
+            )}
             <View style={styles.detailRow}>
               <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
               <HelperText type="info" style={styles.highlightAmount}>${amount}</HelperText>
@@ -182,6 +207,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ open, amount, san, isJoin
             )}
           />
         </Dialog.Content>
+        </Dialog.ScrollArea>
         <Dialog.Actions>
           <Button
             textColor="#ff7f50"
@@ -215,11 +241,21 @@ const styles = StyleSheet.create({
     color: "#ff7f50",
     fontSize: 18,
   },
+  scrollArea: {
+    maxHeight: 420,
+    paddingHorizontal: 0,
+  },
   paymentDetails: {
     backgroundColor: "#f4f4f4",
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
+  },
+  accountBlock: {
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e5e5",
   },
   detailRow: {
     flexDirection: "row",

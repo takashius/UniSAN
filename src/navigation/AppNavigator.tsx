@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Provider as PaperProvider } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -24,10 +24,10 @@ import { useTranslation } from "react-i18next";
 import { ChatStackParamList, ProfileStackParamList, SANStackParamList, AuthStackParamList, TabParamList } from "../types/navigation";
 import { CHAT_ENABLED } from "../config/features";
 
-const SanStack = createStackNavigator<SANStackParamList>();
-const AuthStack = createStackNavigator<AuthStackParamList>();
-const Chat = createStackNavigator<ChatStackParamList>();
-const ProfileStackNav = createStackNavigator<ProfileStackParamList>();
+const SanStack = createNativeStackNavigator<SANStackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+const Chat = createNativeStackNavigator<ChatStackParamList>();
+const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {

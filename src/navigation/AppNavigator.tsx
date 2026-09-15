@@ -21,12 +21,13 @@ import PaymentMethods from "../screens/profile/PaymentMethodsScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
-import { ChatStackParamList, ProfileStackParamList, SANStackParamList, TabParamList } from "../types/navigation";
+import { ChatStackParamList, ProfileStackParamList, SANStackParamList, AuthStackParamList, TabParamList } from "../types/navigation";
 import { CHAT_ENABLED } from "../config/features";
 
-const Stack = createStackNavigator<SANStackParamList>();
+const SanStack = createStackNavigator<SANStackParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
 const Chat = createStackNavigator<ChatStackParamList>();
-const Profile = createStackNavigator<ProfileStackParamList>();
+const ProfileStackNav = createStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
@@ -35,16 +36,16 @@ const AppNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
 
   const SANStack = () => (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Explorer" component={ExplorerScreen} />
-      <Stack.Screen name="SANDetails" component={SANDetails} />
-    </Stack.Navigator>
+    <SanStack.Navigator screenOptions={{ headerShown: false }}>
+      <SanStack.Screen name="ExplorerHome" component={ExplorerScreen} />
+      <SanStack.Screen name="SANDetails" component={SANDetails} />
+    </SanStack.Navigator>
   );
 
   const ProfileStack = () => (
-    <Profile.Navigator>
-      <Profile.Screen
-        name="Profile"
+    <ProfileStackNav.Navigator>
+      <ProfileStackNav.Screen
+        name="ProfileHome"
         component={ProfileScreen}
         options={{
           headerTitle: t("Navigation.profile"),
@@ -52,7 +53,7 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
-      <Profile.Screen
+      <ProfileStackNav.Screen
         name="Preference"
         component={PreferencesScreen}
         options={{
@@ -61,7 +62,7 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
-      <Profile.Screen
+      <ProfileStackNav.Screen
         name="EditProfile"
         component={EditProfile}
         options={{
@@ -70,7 +71,7 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
-      <Profile.Screen
+      <ProfileStackNav.Screen
         name="PaymentMethods"
         component={PaymentMethods}
         options={{
@@ -79,7 +80,7 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
-    </Profile.Navigator>
+    </ProfileStackNav.Navigator>
   );
 
   const ChatStack = () => (
@@ -167,17 +168,18 @@ const AppNavigator: React.FC = () => {
               name="Profile"
               component={ProfileStack}
               options={{
-                headerShown: false
+                headerShown: false,
+                tabBarLabel: t("Navigation.profile"),
               }} />
           </Tab.Navigator>
         ) : (
-          <Stack.Navigator>
-            <Stack.Screen
+          <AuthStack.Navigator>
+            <AuthStack.Screen
               name="Login"
               component={LoginScreen}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
+            <AuthStack.Screen
               name="RecoveryPasswordStep1"
               component={EmailStepScreen}
               options={{
@@ -186,7 +188,7 @@ const AppNavigator: React.FC = () => {
                 headerTintColor: "white",
               }}
             />
-            <Stack.Screen
+            <AuthStack.Screen
               name="RecoveryPasswordStep2"
               component={VerificationStep}
               options={{
@@ -195,7 +197,7 @@ const AppNavigator: React.FC = () => {
                 headerTintColor: "white",
               }}
             />
-          </Stack.Navigator>
+          </AuthStack.Navigator>
         )}
       </NavigationContainer>
     </PaperProvider>

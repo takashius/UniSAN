@@ -1,8 +1,11 @@
-export type SANStackParamList = {
-  Explorer: undefined;
+export type AuthStackParamList = {
   Login: undefined;
   RecoveryPasswordStep1: undefined;
-  RecoveryPasswordStep2: undefined;
+  RecoveryPasswordStep2: { email: string };
+};
+
+export type SANStackParamList = {
+  ExplorerHome: undefined;
   SANDetails: { id: string };
 };
 
@@ -12,7 +15,7 @@ export type ChatStackParamList = {
 };
 
 export type ProfileStackParamList = {
-  Profile: undefined;
+  ProfileHome: undefined;
   Preference: undefined;
   EditProfile: undefined;
   PaymentMethods: undefined;

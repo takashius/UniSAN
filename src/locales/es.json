@@ -255,11 +255,13 @@
     "formSubmitted": "Formulario enviado exitosamente"
   },
   "Payment": {
-    "title": "Datos de pago",
+    "title": "Registrar pago",
+    "joinTitle": "Unirse al SAN",
     "referenceNumber": "Número de referencia",
     "amount": "Monto exacto",
     "paymentDate": "Fecha de pago",
     "confirmPayment": "Confirmar pago",
+    "confirmJoin": "Confirmar unión",
     "bank": "Banco",
     "phone": "Teléfono",
     "documentID": "Cédula",
@@ -267,6 +269,8 @@
     "accountNumber": "Número de cuenta",
     "noReceivingAccounts": "No hay cuentas de cobro configuradas. Contacta a un administrador.",
     "amountToPay": "Monto a pagar",
+    "copyData": "Copiar datos",
+    "copySuccess": "Datos copiados",
     "paymentSuccessTitle": "Pago exitoso",
     "paymentSuccessMessage": "Su pago ha sido procesado exitosamente.",
     "paymentErrorTitle": "Pago fallido",

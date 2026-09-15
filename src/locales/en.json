@@ -254,11 +254,13 @@
     "formSubmitted": "Form successfully submitted"
   },
   "Payment": {
-    "title": "Payment details",
+    "title": "Register payment",
+    "joinTitle": "Join the SAN",
     "referenceNumber": "Reference number",
     "amount": "Amount",
     "paymentDate": "Payment Date",
     "confirmPayment": "Confirm Payment",
+    "confirmJoin": "Confirm join",
     "bank": "Bank",
     "phone": "Phone number",
     "documentID": "Document ID",
@@ -266,6 +268,8 @@
     "accountNumber": "Account number",
     "noReceivingAccounts": "There are no receiving accounts yet. Contact an administrator.",
     "amountToPay": "Amount to pay",
+    "copyData": "Copy data",
+    "copySuccess": "Data copied",
     "paymentSuccessTitle": "Payment Successful",
     "paymentSuccessMessage": "Your payment has been processed successfully.",
     "paymentErrorTitle": "Payment Failed",

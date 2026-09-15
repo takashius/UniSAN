@@ -102,6 +102,7 @@ const SANCard: React.FC<SANCardProps> = ({
         open={dialogOpen}
         amount={amount / membersPerSan}
         san={id}
+        isJoin
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}
       />

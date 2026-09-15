@@ -14,7 +14,10 @@
       "buildNumber": "3",
       "googleServicesFile": "./assets/GoogleService-Info.plist",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification",
+          "remote-notification"
+        ]
       },
       "entitlements": {
         "aps-environment": "production"
@@ -29,6 +32,9 @@
       "versionCode": 3,
       "googleServicesFile": "./assets/google-services.json",
       "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",
         "POST_NOTIFICATIONS"
@@ -64,6 +70,12 @@
       "expo-font"
     ],
     "extra": {
+      "eas": {
+        "projectId": "b6c2ab1a-535f-4b61-a21b-71f06624c6e0"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b6c2ab1a-535f-4b61-a21b-71f06624c6e0"
     }
   }
 }

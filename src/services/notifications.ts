@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import { isRunningInExpoGo } from "expo";
+import Constants from "expo-constants";
 import ERDEAxios from "./ERDEAxios";
 import SecureStoreManager from "../components/AsyncStorageManager";
 
@@ -47,7 +48,7 @@ export async function setNotificationsPreference(enabled: boolean) {
     return null;
   }
   try {
-    await ERDEAxios.post("/user/updateDeviceToken", { deviceToken: "" });
+    await ERDEAxios.post("/user/updateDeviceToken", { expoPushToken: "" });
   } catch (error) {
     console.log("No se pudo limpiar el token de notificaciones", error);
   }
@@ -83,10 +84,15 @@ export async function registerAndSyncPushToken() {
   }
 
   try {
-    const tokenResponse = await Notifications.getDevicePushTokenAsync();
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ||
+      Constants.easConfig?.projectId;
+    const tokenResponse = await Notifications.getExpoPushTokenAsync(
+      projectId ? { projectId } : undefined
+    );
     const token = tokenResponse.data;
     if (!token) return null;
-    await ERDEAxios.post("/user/updateDeviceToken", { deviceToken: token });
+    await ERDEAxios.post("/user/updateDeviceToken", { expoPushToken: token });
     return token;
   } catch {
     console.log("No se pudo registrar el token de notificaciones");

@@ -9,6 +9,9 @@ import { UserProvider } from './src/context/UserContext';
 import { QueryClient } from "@tanstack/react-query";
 import i18n from "./src/locales/i18n";
 import Toast from 'react-native-toast-message';
+import { configureNotificationHandler } from './src/services/notifications';
+
+configureNotificationHandler();
 
 export default function App() {
   const queryClient = new QueryClient();

@@ -3,19 +3,36 @@
     "name": "UniSAN",
     "slug": "UniSAN",
     "owner": "erickrecalde",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "unisan",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.erickhernandez.UniSAN",
+      "buildNumber": "3",
+      "googleServicesFile": "./assets/GoogleService-Info.plist",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "entitlements": {
+        "aps-environment": "production"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.erDesarrollo.UniSAN"
+      "package": "com.erickhernandez.UniSAN",
+      "versionCode": 3,
+      "googleServicesFile": "./assets/google-services.json",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,6 +44,14 @@
       "url": "https://u.expo.dev/19526fb3-cc6e-4e87-a550-c294f8cc0d17"
     },
     "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#ff7f50",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": true
+        }
+      ],
       "expo-secure-store",
       "@react-native-community/datetimepicker",
       [

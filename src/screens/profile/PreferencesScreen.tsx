@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { Appbar, Card, Switch, Menu, Divider, Button } from "react-native-paper";
-import { ChevronLeft, Bell, Globe } from "lucide-react-native";
+import { Card, Switch, Menu, Divider, Button } from "react-native-paper";
+import { Bell, Globe } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import generalStyles from "../../styles/general";
+import {
+  areNotificationsEnabled,
+  setNotificationsPreference,
+} from "../../services/notifications";
 
 const Preferences: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState<string>("es");
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
   const [menuVisible, setMenuVisible] = useState(false);
+
+  useEffect(() => {
+    void areNotificationsEnabled().then(setNotificationsEnabled);
+  }, []);
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
@@ -19,6 +27,7 @@ const Preferences: React.FC = () => {
 
   const handleNotificationsChange = (checked: boolean) => {
     setNotificationsEnabled(checked);
+    void setNotificationsPreference(checked);
     alert(checked ? t("alerts.notificationsOn") : t("alerts.notificationsOff"));
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -23,6 +23,7 @@ import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
 import { ChatStackParamList, ProfileStackParamList, SANStackParamList, AuthStackParamList, TabParamList } from "../types/navigation";
 import { CHAT_ENABLED } from "../config/features";
+import { registerAndSyncPushToken } from "../services/notifications";
 
 const SanStack = createNativeStackNavigator<SANStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -34,6 +35,11 @@ const AppNavigator: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useUser();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (!user) return;
+    void registerAndSyncPushToken();
+  }, [user]);
 
   const SANStack = () => (
     <SanStack.Navigator screenOptions={{ headerShown: false }}>

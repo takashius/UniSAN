@@ -7,6 +7,7 @@ import SecureStoreManager from "../components/AsyncStorageManager";
 import { useAccount } from "../services/auth";
 import { useUser } from "../context/UserContext";
 import FullScreenLoader from "../components/ui/FullScreenLoader";
+import { registerAndSyncPushToken } from "../services/notifications";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ const LoginScreen = () => {
           const user = await refetch();
           if (!cancelled && user.data) {
             login(user.data);
+            void registerAndSyncPushToken();
           }
         }
       } finally {

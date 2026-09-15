@@ -11,6 +11,7 @@ import Toast from 'react-native-toast-message';
 import errorToast from '../ui/ErrorToast';
 import SecureStoreManager from '../AsyncStorageManager';
 import FullScreenLoader from '../ui/FullScreenLoader';
+import { registerAndSyncPushToken } from '../../services/notifications';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
@@ -39,6 +40,7 @@ export const LoginForm = () => {
             const user = await refetch();
             if (user.data) {
               login(user.data);
+              void registerAndSyncPushToken();
               Toast.show({
                 type: 'success',
                 text1: t("auth.loginSuccessTitle"),
@@ -203,6 +205,7 @@ export const RegisterForm = () => {
             const user = await refetch();
             if (user.data) {
               login(user.data);
+              void registerAndSyncPushToken();
               Toast.show({
                 type: 'success',
                 text1: t("auth.registerSuccessTitle"),

@@ -49,7 +49,7 @@ const ChatList: React.FC = () => {
             >
               <TouchableOpacity
                 style={styles.chatButton}
-                onPress={() => navigation.navigate("ChatDetail", { params: { id: chat.id } })}
+                onPress={() => navigation.navigate("ChatDetail", { id: chat.id })}
               >
                 <View style={styles.chatHeader}>
                   <Text style={styles.chatName}>{chat.name}</Text>

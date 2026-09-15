@@ -257,7 +257,7 @@
     "title": "Register payment",
     "joinTitle": "Join the SAN",
     "referenceNumber": "Reference number",
-    "amount": "Amount",
+    "amount": "Exact amount (Bs)",
     "paymentDate": "Payment Date",
     "confirmPayment": "Confirm Payment",
     "confirmJoin": "Confirm join",

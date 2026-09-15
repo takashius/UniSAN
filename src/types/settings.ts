@@ -33,6 +33,7 @@ export interface BcvFxRates {
   eur: number;
   currency: 'usd' | 'eur';
   rate: number;
+  date?: string;
   updatedAt: string;
   stale?: boolean;
 }

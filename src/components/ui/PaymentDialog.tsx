@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Pressable, ScrollView, Text, useWindowDimensions } from "react-native";
 import { Button, TextInput, Portal, HelperText } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
@@ -15,7 +15,7 @@ import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
-import { formatBs, formatUsd, usdToBs } from "../../utils/fx";
+import { usdToBs } from "../../utils/fx";
 
 const formatPagoMovilCopy = (account: ReceivingAccount, amount: number) => {
   const bankCode = String(account.bankCode || "").trim();
@@ -34,10 +34,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   onPaymentRegistered,
 }) => {
   const { height } = useWindowDimensions();
-  const { control, handleSubmit, reset, watch } = useForm<PaymentFormData>({
+  const { control, handleSubmit, reset, watch, setValue } = useForm<PaymentFormData>({
     defaultValues: {
       paymentDate: new Date(),
-      amount: amount,
+      amount: 0,
       referenceNumber: "",
     },
   });
@@ -47,12 +47,24 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const queryClient = useQueryClient();
   const { setUser } = useUser();
   const { data: receivingAccounts = [] } = useReceivingAccounts();
-  const { data: fx, isLoading: fxLoading, isError: fxError } = useBcvRate(open);
+  const { data: fx, isError: fxError } = useBcvRate(open);
   const isPending = joinSan.isPending || paymentSan.isPending;
-  const watchedAmount = Number(watch("amount") || amount);
-  const usdAmount = Number.isFinite(watchedAmount) ? watchedAmount : 0;
-  const bsAmount = fx?.rate ? usdToBs(usdAmount, fx.rate) : null;
-  const rateLabel = fx?.currency === "eur" ? "EUR" : "USD";
+  const watchedAmount = Number(watch("amount"));
+  const bsAmount = Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
+
+  useEffect(() => {
+    if (!open) return;
+    reset({
+      paymentDate: new Date(),
+      amount: 0,
+      referenceNumber: "",
+    });
+  }, [open, reset]);
+
+  useEffect(() => {
+    if (!open || !fx?.rate) return;
+    setValue("amount", usdToBs(amount, fx.rate));
+  }, [open, fx?.rate, amount, setValue]);
 
   const copyAccountData = async (account: ReceivingAccount) => {
     if (bsAmount == null) {
@@ -73,7 +85,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     const payload = {
       san,
       bank: data.sourceBank,
-      amount: data.amount,
+      amount,
+      amountBs: Number(data.amount),
       operationReference: data.referenceNumber,
       date: data.paymentDate.toLocaleDateString(),
     };
@@ -192,26 +205,6 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                     </View>
                   ))
                 )}
-                <View style={styles.detailRow}>
-                  <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
-                  <View style={styles.amountStack}>
-                    <HelperText type="info" style={styles.highlightAmount}>
-                      {formatUsd(usdAmount)}
-                    </HelperText>
-                    <HelperText type="info" style={styles.bsAmount}>
-                      {fxLoading && bsAmount == null
-                        ? t("Payment.fxLoading")
-                        : bsAmount != null
-                          ? formatBs(bsAmount)
-                          : t("Payment.fxUnavailable")}
-                    </HelperText>
-                  </View>
-                </View>
-                {fx?.rate ? (
-                  <HelperText type="info" style={styles.rateHint}>
-                    {t("Payment.bcvRate", { currency: rateLabel, rate: formatBs(fx.rate).replace("Bs ", "") })}
-                  </HelperText>
-                ) : null}
                 {fxError ? (
                   <HelperText type="error">{t("Payment.fxUnavailable")}</HelperText>
                 ) : null}
@@ -249,20 +242,13 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                   <View style={styles.field}>
                     <TextInput
                       label={t("Payment.amount")}
-                      value={value ? value.toString() : amount.toString()}
+                      value={!value ? "" : String(value)}
                       activeUnderlineColor="#ff7f50"
                       textColor="black"
                       keyboardType="numeric"
-                      placeholder={amount.toString()}
                       onChangeText={onChange}
                       style={formStyles.input}
                     />
-                    <HelperText type="info">{t("Payment.amountUsdHint")}</HelperText>
-                    {bsAmount != null ? (
-                      <HelperText type="info">
-                        {t("Payment.amountBsHint", { amount: formatBs(bsAmount) })}
-                      </HelperText>
-                    ) : null}
                     {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                   </View>
                 )}
@@ -303,6 +289,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 onPress={handleSubmit(onSubmit)}
                 style={formStyles.confirmButton}
                 loading={isPending}
+                disabled={!fx?.rate}
               >
                 {isJoin ? t("Payment.confirmJoin") : t("Payment.confirmPayment")}
               </Button>
@@ -381,20 +368,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 4,
-  },
-  highlightAmount: {
-    color: "#ff7f50",
-    fontWeight: "bold",
-  },
-  amountStack: {
-    alignItems: "flex-end",
-  },
-  bsAmount: {
-    color: "#ff7f50",
-    fontWeight: "bold",
-  },
-  rateHint: {
-    marginTop: 4,
   },
   field: {
     marginBottom: 8,

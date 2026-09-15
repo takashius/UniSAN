@@ -258,7 +258,7 @@
     "title": "Registrar pago",
     "joinTitle": "Unirse al SAN",
     "referenceNumber": "Número de referencia",
-    "amount": "Monto exacto",
+    "amount": "Monto exacto (Bs)",
     "paymentDate": "Fecha de pago",
     "confirmPayment": "Confirmar pago",
     "confirmJoin": "Confirmar unión",

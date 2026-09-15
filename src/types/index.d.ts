@@ -114,6 +114,7 @@ export interface JoinSanData {
   san: string;
   bank: string;
   amount: number;
+  amountBs?: number;
   date: string;
   operationReference: string;
 }

@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.erickhernandez.UniSAN",
-      "versionCode": 3,
+      "versionCode": 4,
       "googleServicesFile": "./assets/google-services.json",
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",

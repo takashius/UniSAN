@@ -5,6 +5,8 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from "react-i18next";
 import PaymentDialog from "./PaymentDialog";
+import { useSanSettings } from "../../services/settings";
+import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
 
 interface SANCardProps {
   id: string;
@@ -32,6 +34,8 @@ const SANCard: React.FC<SANCardProps> = ({
   const { t } = useTranslation();
   const navigation: any = useNavigation();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { data: settings } = useSanSettings();
+  const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
 
   return (
     <Animated.View
@@ -55,7 +59,7 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
             <Text style={styles.detailText}>
-              {hasOpenSpot && !external ? position : `${usersCount}/10`}
+              {hasOpenSpot && !external ? position : `${usersCount}/${membersPerSan}`}
             </Text>
           </View>
           <View style={styles.detailItem}>
@@ -96,7 +100,7 @@ const SANCard: React.FC<SANCardProps> = ({
       <View style={styles.bottomBorder} />
       <PaymentDialog
         open={dialogOpen}
-        amount={amount / 10}
+        amount={amount / membersPerSan}
         san={id}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}

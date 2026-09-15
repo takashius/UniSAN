@@ -58,16 +58,17 @@
   "UserLevel": {
     "currentLevel": "Current Level",
     "level": "Level {{level}}",
-    "level1": "Beginner",
-    "level2": "Intermediate",
-    "level3": "Advanced",
+    "levelType": {
+      "initial": "Beginner",
+      "intermediate": "Intermediate",
+      "max": "Max"
+    },
     "points": "{{points}} points",
     "nextLevelPoints": "{{nextLevelPoints}} points",
     "pointsToNextLevel": "You need {{remaining}} more points to reach the next level",
+    "maxLevelReached": "You reached the maximum level",
     "benefitsTitle": "Benefits of your level:",
-    "benefit1": "Access to SANs up to ${{amount}}",
-    "benefit2": "Simultaneous participation in {{count}} SANs",
-    "benefit3": "Priority in turn selection"
+    "benefitCap": "Access to SANs up to ${{amount}}"
   },
   "EmailStepScreen": {
     "requiredField": "Required Field",
@@ -163,7 +164,7 @@
     "levelType": {
       "initial": "Beginner",
       "intermediate": "Intermediate",
-      "advanced": "Advanced"
+      "max": "Max"
     },
     "statistics": "Statistics",
     "sansParticipated": "SANs Participated",

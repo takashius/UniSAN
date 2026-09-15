@@ -2,31 +2,46 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import { useUser } from "../../context/UserContext";
+import { useSanSettings } from "../../services/settings";
+import {
+  formatAmount,
+  getLevelType,
+  getMaxCap,
+  getMaxLevel,
+  getPointsThreshold,
+} from "../../utils/levels";
 
-interface UserLevelProps {
-  level: number;
-  points: number;
-  nextLevelPoints: number;
-}
-
-const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints }) => {
+const UserLevel: React.FC = () => {
   const { t } = useTranslation();
-  const progress = (points / nextLevelPoints) * 100;
+  const { user } = useUser();
+  const { data: settings } = useSanSettings();
+
+  const level = user?.user.level || 1;
+  const points = user?.user.points || 0;
+  const maxLevel = settings?.levels?.length ? getMaxLevel(settings.levels) : null;
+  const levelType = getLevelType(level, maxLevel);
+  const maxCap = getMaxCap(settings?.levels, level);
+  const threshold = user?.user.nextLevelPoints ?? getPointsThreshold(settings, level);
+  const remaining =
+    user?.user.pointsNeeded ?? (threshold == null ? null : Math.max(0, threshold - points));
+  const isMaxLevel =
+    user?.user.pointsNeeded === null || (maxLevel != null && level >= maxLevel);
+  const progress = isMaxLevel
+    ? 100
+    : !threshold
+      ? 0
+      : Math.min(100, Math.max(0, (points / threshold) * 100));
+
   const progressValue = useSharedValue(0);
 
   React.useEffect(() => {
     progressValue.value = withTiming(progress, { duration: 1000 });
-  }, [progress]);
+  }, [progress, progressValue]);
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressValue.value}%`,
   }));
-
-  const badgeStyles: { [key: number]: any } = {
-    1: styles.badgeLevel1,
-    2: styles.badgeLevel2,
-    3: styles.badgeLevel3,
-  };
 
   return (
     <View style={styles.container}>
@@ -35,10 +50,17 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
           <Text style={styles.subtitle}>{t("UserLevel.currentLevel")}</Text>
           <View style={styles.levelRow}>
             <Text style={styles.levelTitle}>{t("UserLevel.level", { level })}</Text>
-            <View style={[styles.badge, badgeStyles[level]]}>
-              <Text style={styles.badgeText}>
-                {level === 1 ? t("UserLevel.level1") : level === 2 ? t("UserLevel.level2") : t("UserLevel.level3")}
-              </Text>
+            <View
+              style={[
+                styles.badge,
+                levelType === "initial"
+                  ? styles.badgeInitial
+                  : levelType === "max"
+                    ? styles.badgeMax
+                    : styles.badgeIntermediate,
+              ]}
+            >
+              <Text style={styles.badgeText}>{t(`UserLevel.levelType.${levelType}`)}</Text>
             </View>
           </View>
         </View>
@@ -50,45 +72,33 @@ const UserLevel: React.FC<UserLevelProps> = ({ level, points, nextLevelPoints })
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
           <Text style={styles.progressLabel}>{t("UserLevel.points", { points })}</Text>
-          <Text style={styles.progressLabel}>{t("UserLevel.nextLevelPoints", { nextLevelPoints })}</Text>
+          {!isMaxLevel && threshold != null && (
+            <Text style={styles.progressLabel}>
+              {t("UserLevel.nextLevelPoints", { nextLevelPoints: threshold })}
+            </Text>
+          )}
         </View>
         <View style={styles.progressBarContainer}>
           <Animated.View style={[styles.progressBar, progressStyle]} />
         </View>
         <Text style={styles.progressText}>
-          {t("UserLevel.pointsToNextLevel", {
-            remaining: nextLevelPoints - points,
-          })}
+          {isMaxLevel
+            ? t("UserLevel.maxLevelReached")
+            : t("UserLevel.pointsToNextLevel", { remaining: remaining ?? 0 })}
         </Text>
       </View>
 
-      <View style={styles.benefits}>
-        <Text style={styles.benefitsTitle}>{t("UserLevel.benefitsTitle")}</Text>
-        <View style={styles.benefitItem}>
-          <View style={styles.bulletPoint} />
-          <Text style={styles.benefitText}>
-            {t("UserLevel.benefit1", {
-              amount: level === 1 ? "100" : level === 2 ? "200" : "300",
-            })}
-          </Text>
-        </View>
-        {level >= 2 && (
+      {maxCap != null && (
+        <View style={styles.benefits}>
+          <Text style={styles.benefitsTitle}>{t("UserLevel.benefitsTitle")}</Text>
           <View style={styles.benefitItem}>
             <View style={styles.bulletPoint} />
             <Text style={styles.benefitText}>
-              {t("UserLevel.benefit2", {
-                count: level === 2 ? 2 : 3,
-              })}
+              {t("UserLevel.benefitCap", { amount: formatAmount(maxCap) })}
             </Text>
           </View>
-        )}
-        {level >= 3 && (
-          <View style={styles.benefitItem}>
-            <View style={styles.bulletPoint} />
-            <Text style={styles.benefitText}>{t("UserLevel.benefit3")}</Text>
-          </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -130,14 +140,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 12,
   },
-  badgeLevel1: {
-    backgroundColor: "#e0f2fe", // Azul claro
+  badgeInitial: {
+    backgroundColor: "#e0f2fe",
   },
-  badgeLevel2: {
-    backgroundColor: "#fff7e0", // Amarillo claro
+  badgeIntermediate: {
+    backgroundColor: "#fff7e0",
   },
-  badgeLevel3: {
-    backgroundColor: "#ffe0e0", // Rojo claro
+  badgeMax: {
+    backgroundColor: "#ffe0e0",
   },
   badgeText: {
     fontSize: 12,
@@ -208,5 +218,6 @@ const styles = StyleSheet.create({
   benefitText: {
     fontSize: 14,
     color: "#333",
+    flex: 1,
   },
 });

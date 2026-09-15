@@ -10,12 +10,20 @@ import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import generalStyles from "../../styles/general";
 import AvatarView from "../../components/ui/AvatarView";
+import { useSanSettings } from "../../services/settings";
+import { getLevelType, getMaxLevel } from "../../utils/levels";
 
 const Profile = () => {
   const { t } = useTranslation();
   const { user, logout } = useUser();
   const logoutMutate = useLogout();
   const navigation: any = useNavigation();
+  const { data: settings } = useSanSettings();
+  const level = user?.user.level ? user.user.level : 1;
+  const levelType = getLevelType(
+    level,
+    settings?.levels?.length ? getMaxLevel(settings.levels) : null
+  );
 
   const handleLogout = () => {
     logoutMutate.mutate(undefined,
@@ -46,16 +54,18 @@ const Profile = () => {
                 <Text style={styles.profileName}>{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>
               </View>
               <Text style={styles.profileEmail}>{user?.user.email}</Text>
-              <Text style={styles.profileLevel}>{t("Profile.level", { level: user?.user.level ? user?.user.level : 1, type: t("Profile.levelType.initial") })}</Text>
+              <Text style={styles.profileLevel}>
+                {t("Profile.level", {
+                  level,
+                  type: t(`Profile.levelType.${levelType}`),
+                })}
+              </Text>
             </View>
           </View>
         </Animated.View>
 
         <View style={generalStyles.section}>
-          <UserLevel
-            level={user?.user.level ? user?.user.level : 1}
-            points={user?.user.points ? user?.user.points : 0}
-            nextLevelPoints={user?.user.pointsNeeded ? user?.user.pointsNeeded : 0} />
+          <UserLevel />
         </View>
 
         <View style={generalStyles.section}>

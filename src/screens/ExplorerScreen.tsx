@@ -10,11 +10,15 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import SANCard from "../components/ui/SANCard";
 import { useTranslation } from "react-i18next";
 import { useAvailableSan } from "../services/san";
+import { useSanSettings } from "../services/settings";
 import generalStyles from "../styles/general";
+import { DEFAULT_MEMBERS_PER_SAN } from "../utils/levels";
 
 const Explorer: React.FC = () => {
   const { t } = useTranslation();
   const { data: availableSANs, isLoading } = useAvailableSan();
+  const { data: settings } = useSanSettings();
+  const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
 
   return (
     <View style={styles.container}>
@@ -42,7 +46,7 @@ const Explorer: React.FC = () => {
                     frequency={san.frequency}
                     position={0}
                     startDate={san.createdAt}
-                    hasOpenSpot={san.members.length < 12}
+                    hasOpenSpot={san.members.length < membersPerSan}
                     external={false}
                   />
                 </Animated.View>

@@ -59,16 +59,17 @@
   "UserLevel": {
     "currentLevel": "Nivel actual",
     "level": "Nivel {{level}}",
-    "level1": "Inicial",
-    "level2": "Intermedio",
-    "level3": "Avanzado",
+    "levelType": {
+      "initial": "Inicial",
+      "intermediate": "Intermedio",
+      "max": "Máximo"
+    },
     "points": "{{points}} puntos",
     "nextLevelPoints": "{{nextLevelPoints}} puntos",
     "pointsToNextLevel": "Te faltan {{remaining}} puntos para llegar al siguiente nivel",
+    "maxLevelReached": "Alcanzaste el nivel máximo",
     "benefitsTitle": "Beneficios de tu nivel:",
-    "benefit1": "Acceso a SANs de hasta ${{amount}}",
-    "benefit2": "Participación simultánea en {{count}} SANs",
-    "benefit3": "Prioridad en la selección de turnos"
+    "benefitCap": "Acceso a SANs de hasta ${{amount}}"
   },
   "EmailStepScreen": {
     "requiredField": "Campo requerido",
@@ -164,7 +165,7 @@
     "levelType": {
       "initial": "Inicial",
       "intermediate": "Intermedio",
-      "advanced": "Avanzado"
+      "max": "Máximo"
     },
     "statistics": "Estadísticas",
     "sansParticipated": "SANs Participados",

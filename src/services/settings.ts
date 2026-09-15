@@ -1,28 +1,27 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import ERDEAxios from './ERDEAxios';
+import type { ReceivingAccount, SanSettings } from '../types/settings';
 
-export interface ReceivingAccount {
-  _id: string;
-  bankName: string;
-  bankCode: string;
-  holderName?: string;
-  documentId: string;
-  phone: string;
-  accountNumber?: string;
-  accountType?: 'ahorro' | 'corriente' | null;
-  active: boolean;
-}
+export const SAN_SETTINGS_KEY = ['sanSettings'] as const;
 
-interface SanSettingsResponse {
-  receivingAccounts?: ReceivingAccount[];
-}
+const fetchSanSettings = async (): Promise<SanSettings> => {
+  const { data } = await ERDEAxios.get<SanSettings>('/setting');
+  return data;
+};
+
+export const useSanSettings = (): UseQueryResult<SanSettings, Error> => {
+  return useQuery({
+    queryKey: SAN_SETTINGS_KEY,
+    queryFn: fetchSanSettings,
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
 export const useReceivingAccounts = (): UseQueryResult<ReceivingAccount[], Error> => {
   return useQuery({
-    queryKey: ['receivingAccounts'],
-    queryFn: async () => {
-      const { data } = await ERDEAxios.get<SanSettingsResponse>('/setting');
-      return (data.receivingAccounts ?? []).filter((item) => item.active !== false);
-    },
+    queryKey: SAN_SETTINGS_KEY,
+    queryFn: fetchSanSettings,
+    staleTime: 5 * 60 * 1000,
+    select: (data) => (data.receivingAccounts ?? []).filter((item) => item.active !== false),
   });
 };

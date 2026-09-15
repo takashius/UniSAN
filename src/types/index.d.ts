@@ -56,7 +56,8 @@ export interface UserAccount {
   email: string;
   points: number;
   level: number;
-  pointsNeeded: number;
+  pointsNeeded: number | null;
+  nextLevelPoints: number | null;
 }
 
 export interface Statistics {

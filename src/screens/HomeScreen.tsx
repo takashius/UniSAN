@@ -51,10 +51,7 @@ const HomeScreen = () => {
           <GetWelcomeMessage />
         </Animated.View>
 
-        <UserLevel
-          level={user?.user.level ? user?.user.level : 1}
-          points={user?.user.points ? user?.user.points : 0}
-          nextLevelPoints={user?.user.pointsNeeded ? user?.user.pointsNeeded : 0} />
+        <UserLevel />
 
         <View style={styles.section}>
           {user?.sans.length === 0 ? (

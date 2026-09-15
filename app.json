@@ -2,7 +2,7 @@
   "expo": {
     "name": "UniSAN",
     "slug": "UniSAN",
-    "owner": "erickrecalde",
+    "owner": "erdesarrollo",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -40,9 +40,6 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "updates": {
-      "url": "https://u.expo.dev/19526fb3-cc6e-4e87-a550-c294f8cc0d17"
-    },
     "plugins": [
       [
         "expo-notifications",
@@ -67,9 +64,6 @@
       "expo-font"
     ],
     "extra": {
-      "eas": {
-        "projectId": "7af4c271-bb85-42ae-a72e-a0fe3b354d94"
-      }
     }
   }
 }

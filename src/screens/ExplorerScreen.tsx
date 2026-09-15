@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
@@ -57,34 +56,6 @@ const Explorer: React.FC = () => {
             </View>
           )}
         </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("Explorer.recommendedSANs")}</Text>
-          <Animated.View
-            entering={FadeInDown.duration(400)}
-            style={generalStyles.card}
-          >
-            <View style={styles.recommendedCardHeader}>
-              <View style={styles.emojiContainer}>
-                <Text style={styles.emoji}>💰</Text>
-              </View>
-              <View>
-                <Text style={styles.recommendedTitle}>{t("Explorer.recommendedTitle")}</Text>
-                <Text style={styles.recommendedSubtitle}>
-                  $500 · {t("Explorer.monthly")} · 12 {t("Explorer.participants")}
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.recommendedDescription}>
-              {t("Explorer.recommendedDescription")}
-            </Text>
-            <TouchableOpacity style={styles.disabledButton} disabled>
-              <Text style={styles.disabledButtonText}>
-                {t("Explorer.upgradeToJoin")}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
       </ScrollView>
     </View>
   );
@@ -96,10 +67,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   section: {
     marginTop: 16,
@@ -120,43 +87,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  recommendedCardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  emojiContainer: {
-    backgroundColor: "#ffdcb2",
-    height: 48,
-    width: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  emoji: {
-    fontSize: 24,
-  },
-  recommendedTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  recommendedSubtitle: {
-    fontSize: 14,
-    color: "#666",
-  },
-  recommendedDescription: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 12,
-  },
-  disabledButton: {
-    backgroundColor: "#e5e5e5",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  disabledButtonText: {
-    color: "#999",
-  }
 });

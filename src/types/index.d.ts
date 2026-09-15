@@ -76,6 +76,7 @@ export interface San {
   frequency: string;
   paymentDates: Date[];
   isActive: boolean;
+  isOpen?: boolean;
   active: boolean;
   members: string[];
   createdAt: string;

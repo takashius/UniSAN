@@ -95,6 +95,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       joinSan.mutate(payload, {
         onSuccess: async () => {
           queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+          queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+          await queryClient.refetchQueries({ queryKey: ["availableSan"] });
           try {
             const updatedUser = await queryClient.fetchQuery({
               queryKey: ["myAccount"],

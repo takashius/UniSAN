@@ -13,6 +13,8 @@ export const useAvailableSan = (): UseQueryResult<San[], Error> => {
   return useQuery<San[], Error>({
     queryKey: ['availableSan'],
     retry: false,
+    staleTime: 0,
+    refetchOnMount: 'always',
     queryFn: async () => {
       const response = await ERDEAxios.get<San[]>('/san/available');
       return response.data;
@@ -29,6 +31,7 @@ export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['availableSan'] });
+      queryClient.invalidateQueries({ queryKey: ['sanDetail'] });
     },
   });
 };

@@ -37,6 +37,15 @@ const SANCard: React.FC<SANCardProps> = ({
   const { data: settings } = useSanSettings();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
 
+  const openSanDetails = () => {
+    const routeNames: string[] = navigation.getState()?.routeNames ?? [];
+    if (routeNames.includes("SANDetails")) {
+      navigation.navigate("SANDetails", { id });
+      return;
+    }
+    navigation.navigate("Explorer", { screen: "SANDetails", params: { id } });
+  };
+
   return (
     <Animated.View
       entering={FadeInDown.duration(400)}
@@ -84,7 +93,7 @@ const SANCard: React.FC<SANCardProps> = ({
           )}
 
           {external ?
-            <TouchableOpacity style={styles.detailsLink} onPress={() => navigation.navigate("Explorer", { screen: "SANDetails", params: { id } })}>
+            <TouchableOpacity style={styles.detailsLink} onPress={openSanDetails}>
               <Text style={styles.linkText}>{t("SANCard.details")}</Text>
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>

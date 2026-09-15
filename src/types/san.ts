@@ -1,9 +1,12 @@
+export type MemberPaymentStatus = 'none' | 'pending' | 'validated' | 'rejected';
+
 export interface SanMember {
   id: string;
   name: string;
   lastName: string;
   photo: string;
   position: number;
+  currentPaymentStatus?: MemberPaymentStatus;
   hasPaidCurrentTurn: boolean;
   hasReceivedMoney: boolean;
 }

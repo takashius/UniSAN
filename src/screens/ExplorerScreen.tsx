@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -7,18 +7,30 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { useFocusEffect } from "@react-navigation/native";
 import SANCard from "../components/ui/SANCard";
 import { useTranslation } from "react-i18next";
 import { useAvailableSan } from "../services/san";
 import { useSanSettings } from "../services/settings";
+import { useUser } from "../context/UserContext";
 import generalStyles from "../styles/general";
 import { DEFAULT_MEMBERS_PER_SAN } from "../utils/levels";
 
 const Explorer: React.FC = () => {
   const { t } = useTranslation();
-  const { data: availableSANs, isLoading } = useAvailableSan();
+  const { user } = useUser();
+  const { data: availableSANs, isLoading, refetch } = useAvailableSan();
   const { data: settings } = useSanSettings();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+
+  useFocusEffect(
+    useCallback(() => {
+      void refetch();
+    }, [refetch])
+  );
+
+  const isMemberOf = (sanId: string) =>
+    (user?.sans ?? []).some((item) => String(item.id) === String(sanId));
 
   return (
     <View style={styles.container}>
@@ -46,8 +58,13 @@ const Explorer: React.FC = () => {
                     frequency={san.frequency}
                     position={0}
                     startDate={san.createdAt}
-                    hasOpenSpot={san.members.length < membersPerSan}
-                    external={false}
+                    usersCount={san.members?.length ?? 0}
+                    hasOpenSpot={
+                      isMemberOf(san._id)
+                        ? Boolean(san.isOpen)
+                        : (san.members?.length ?? 0) < membersPerSan
+                    }
+                    external={isMemberOf(san._id)}
                   />
                 </Animated.View>
               ))}

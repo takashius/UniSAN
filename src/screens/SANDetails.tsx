@@ -14,6 +14,7 @@ import {
   MessageCircle,
   CheckCircle,
   XCircle,
+  Clock,
 } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -146,7 +147,8 @@ const SANDetails: React.FC = () => {
                     key={member.id}
                     style={[
                       styles.memberItem,
-                      (sanDetails.currentTurn ? sanDetails.currentTurn : 0) === member.position && styles.currentMember,
+                      (sanDetails.currentTurn != null &&
+                        sanDetails.currentTurn === member.position) && styles.currentMember,
                     ]}
                   >
                     <View style={styles.avatarContainer}>
@@ -161,11 +163,26 @@ const SANDetails: React.FC = () => {
 
                     <View style={styles.paymentStatusContainer}>
                       <View style={styles.paymentStatus}>
-                        {member.hasPaidCurrentTurn ? (
+                        {member.currentPaymentStatus === "validated" ||
+                        (!member.currentPaymentStatus && member.hasPaidCurrentTurn) ? (
                           <>
                             <CheckCircle size={16} color="#10B981" />
                             <Text style={[styles.paymentStatusText, styles.paidStatus]}>
                               {t("SANDetails.paid")}
+                            </Text>
+                          </>
+                        ) : member.currentPaymentStatus === "pending" ? (
+                          <>
+                            <Clock size={16} color="#D97706" />
+                            <Text style={[styles.paymentStatusText, styles.awaitingStatus]}>
+                              {t("SANDetails.awaitingApproval")}
+                            </Text>
+                          </>
+                        ) : member.currentPaymentStatus === "rejected" ? (
+                          <>
+                            <XCircle size={16} color="#EF4444" />
+                            <Text style={[styles.paymentStatusText, styles.pendingStatus]}>
+                              {t("SANDetails.rejected")}
                             </Text>
                           </>
                         ) : (
@@ -183,7 +200,8 @@ const SANDetails: React.FC = () => {
                           {t("SANDetails.completed")}
                         </Text>
                       )}
-                      {(sanDetails.currentTurn ? sanDetails.currentTurn : 0) === member.position && (
+                      {sanDetails.currentTurn != null &&
+                        sanDetails.currentTurn === member.position && (
                         <Text style={[styles.statusBadge, styles.currentBadge]}>
                           {t("SANDetails.current")}
                         </Text>
@@ -436,6 +454,9 @@ const styles = StyleSheet.create({
   },
   pendingStatus: {
     color: "#EF4444",
+  },
+  awaitingStatus: {
+    color: "#D97706",
   },
 
 

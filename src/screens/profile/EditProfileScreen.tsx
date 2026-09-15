@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 import { Controller, useForm } from "react-hook-form";
 import { ProfileFormData, ProfileUpdateData } from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
+import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 const EditProfile: React.FC = () => {
   const uploadMutation = useUploadImage();
@@ -127,11 +128,7 @@ const EditProfile: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {isFetching && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={isFetching || updateMutation.isPending} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Profile Image */}
         <Card style={generalStyles.cardMin}>
@@ -337,7 +334,7 @@ const EditProfile: React.FC = () => {
           mode="contained"
           style={styles.saveButton}
           onPress={handleSubmit(onSubmit)}
-          loading={updateMutation.isPending}
+          disabled={updateMutation.isPending}
         >
           Guardar Cambios
         </Button>

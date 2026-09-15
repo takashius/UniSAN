@@ -17,6 +17,7 @@ import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
 import { formatUsd, usdToBs } from "../../utils/fx";
+import FullScreenLoader from "./FullScreenLoader";
 
 const formatPagoMovilCopy = (account: ReceivingAccount, amount: number) => {
   const bankCode = String(account.bankCode || "").trim();
@@ -162,7 +163,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   }
 
   return (
-    <Portal>
+    <>
+      <FullScreenLoader visible={isPending} />
+      <Portal>
       <View style={styles.overlayRoot}>
         <Pressable style={styles.backdrop} onPress={onDismiss} />
         <View style={styles.center} pointerEvents="box-none">
@@ -310,8 +313,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 mode="contained"
                 onPress={handleSubmit(onSubmit)}
                 style={formStyles.confirmButton}
-                loading={isPending}
-                disabled={!fx?.rate}
+                disabled={isPending || !fx?.rate}
               >
                 {isJoin ? t("Payment.confirmJoin") : t("Payment.confirmPayment")}
               </Button>
@@ -320,6 +322,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
         </View>
       </View>
     </Portal>
+    </>
   );
 };
 

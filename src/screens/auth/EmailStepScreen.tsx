@@ -7,6 +7,7 @@ import { ArrowLeft, Mail } from "lucide-react-native";
 import { useRecoveryOne } from "../../services/auth";
 import Toast from "react-native-toast-message";
 import errorToast from "../../components/ui/ErrorToast";
+import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 interface VerificationStepProps {
   navigation: any;
@@ -52,6 +53,7 @@ const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <FullScreenLoader visible={recoveryMutate.isPending} />
       {/* Ícono */}
       <View style={styles.iconContainer}>
         <Mail size={32} color="#ff7f50" />
@@ -110,7 +112,7 @@ const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
           onPress={handleSubmit(onSubmit)}
           style={styles.primaryButton}
           contentStyle={styles.buttonContent}
-          loading={recoveryMutate.isPending}
+          disabled={recoveryMutate.isPending}
           icon="arrow-right"
         >
           {t("EmailStepScreen.sendCodeButton")}

@@ -10,6 +10,7 @@ import { useLogin, useRegister, useAccount } from '../../services/auth';
 import Toast from 'react-native-toast-message';
 import errorToast from '../ui/ErrorToast';
 import SecureStoreManager from '../AsyncStorageManager';
+import FullScreenLoader from '../ui/FullScreenLoader';
 
 export const LoginForm = () => {
   const { t } = useTranslation();
@@ -17,7 +18,9 @@ export const LoginForm = () => {
   const { login } = useUser();
   const loginMutate = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
-  const { refetch, isFetching } = useAccount();
+  const [completingLogin, setCompletingLogin] = React.useState(false);
+  const { refetch } = useAccount();
+  const isBusy = loginMutate.isPending || completingLogin;
 
   const {
     control,
@@ -26,28 +29,35 @@ export const LoginForm = () => {
   } = useForm<{ email: string; password: string }>();
 
   const onSubmit = (data: { email: string; password: string }) => {
+    setCompletingLogin(true);
     loginMutate.mutate(
       { email: data.email, password: data.password },
       {
         onSuccess: async (responseData) => {
-          await SecureStoreManager.setItem<string>("Token", responseData.token);
-          const user = await refetch();
-          if (user.data) {
-            login(user.data);
-            Toast.show({
-              type: 'success',
-              text1: t("auth.loginSuccessTitle"),
-              text2: t("auth.loginSuccessMessage")
-            });
-          } else {
-            Toast.show({
-              type: 'error',
-              text1: t("auth.loginErrorTitle"),
-              text2: t("auth.loginErrorMessage")
-            });
+          try {
+            await SecureStoreManager.setItem<string>("Token", responseData.token);
+            const user = await refetch();
+            if (user.data) {
+              login(user.data);
+              Toast.show({
+                type: 'success',
+                text1: t("auth.loginSuccessTitle"),
+                text2: t("auth.loginSuccessMessage")
+              });
+            } else {
+              setCompletingLogin(false);
+              Toast.show({
+                type: 'error',
+                text1: t("auth.loginErrorTitle"),
+                text2: t("auth.loginErrorMessage")
+              });
+            }
+          } catch {
+            setCompletingLogin(false);
           }
         },
         onError: (error) => {
+          setCompletingLogin(false);
           Toast.show({
             type: 'error',
             text1: t("auth.loginErrorTitle"),
@@ -61,6 +71,7 @@ export const LoginForm = () => {
 
   return (
     <View style={styles.container}>
+      <FullScreenLoader visible={isBusy} />
       {/* Campo de correo */}
       <View style={styles.inputContainer}>
         <Controller
@@ -143,7 +154,7 @@ export const LoginForm = () => {
         style={styles.button}
         contentStyle={styles.buttonContent}
         onPress={handleSubmit(onSubmit)}
-        loading={loginMutate.isPending || isFetching}
+        disabled={isBusy}
         icon={({ size, color }) => (
           <ArrowRight size={size} color={color} />
         )}
@@ -162,6 +173,8 @@ export const RegisterForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
   const { refetch } = useAccount();
+  const [completingRegister, setCompletingRegister] = React.useState(false);
+  const isBusy = registerMutate.isPending || completingRegister;
 
   const {
     control,
@@ -180,28 +193,35 @@ export const RegisterForm = () => {
   const password = watch("password");
 
   const onSubmit = (data: { name: string; email: string; password: string; confirmPassword: string }) => {
+    setCompletingRegister(true);
     registerMutate.mutate(
       { name: data.name, email: data.email, password: data.password },
       {
         onSuccess: async (response) => {
-          await SecureStoreManager.setItem<string>("Token", response.token);
-          const user = await refetch();
-          if (user.data) {
-            login(user.data);
-            Toast.show({
-              type: 'success',
-              text1: t("auth.registerSuccessTitle"),
-              text2: t("auth.registerSuccessMessage")
-            });
-          } else {
-            Toast.show({
-              type: 'error',
-              text1: t("auth.registerErrorTitle"),
-              text2: t("auth.registerErrorMessage")
-            });
+          try {
+            await SecureStoreManager.setItem<string>("Token", response.token);
+            const user = await refetch();
+            if (user.data) {
+              login(user.data);
+              Toast.show({
+                type: 'success',
+                text1: t("auth.registerSuccessTitle"),
+                text2: t("auth.registerSuccessMessage")
+              });
+            } else {
+              setCompletingRegister(false);
+              Toast.show({
+                type: 'error',
+                text1: t("auth.registerErrorTitle"),
+                text2: t("auth.registerErrorMessage")
+              });
+            }
+          } catch {
+            setCompletingRegister(false);
           }
         },
         onError: (error) => {
+          setCompletingRegister(false);
           Toast.show({
             type: 'error',
             text1: t("auth.registerErrorTitle"),
@@ -215,6 +235,7 @@ export const RegisterForm = () => {
 
   return (
     <View style={styles.container}>
+      <FullScreenLoader visible={isBusy} />
       {/* Campo de Nombre */}
       <View style={styles.inputContainer}>
         <Controller
@@ -331,7 +352,7 @@ export const RegisterForm = () => {
         style={styles.button}
         contentStyle={styles.buttonContent}
         onPress={handleSubmit(onSubmit)}
-        loading={registerMutate.isPending}
+        disabled={isBusy}
         icon={({ size, color }) => (
           <ArrowRight size={size} color={color} />
         )}

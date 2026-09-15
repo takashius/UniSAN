@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Pressable, ScrollView, Text } from "react-native";
-import { Button, TextInput, HelperText, Portal, ActivityIndicator } from "react-native-paper";
+import { View, StyleSheet, Pressable, ScrollView, Text, ActivityIndicator } from "react-native";
+import { Button, TextInput, HelperText, Portal } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useCreatePaymentMethod, useUpdatePaymentMethod } from "../../services/paymentMethod";
@@ -334,8 +334,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   loadingContainer: {
-    padding: 20,
+    padding: 24,
+    minHeight: 72,
     alignItems: "center",
+    justifyContent: "center",
   },
   actions: {
     flexDirection: "row",

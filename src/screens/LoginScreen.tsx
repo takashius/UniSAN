@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
 import { LoginForm, RegisterForm } from "../components/auth/AuthForms";
@@ -6,35 +6,42 @@ import { useTranslation } from "react-i18next";
 import SecureStoreManager from "../components/AsyncStorageManager";
 import { useAccount } from "../services/auth";
 import { useUser } from "../context/UserContext";
-import { ActivityIndicator } from "react-native-paper";
-import generalStyles from "../styles/general";
+import FullScreenLoader from "../components/ui/FullScreenLoader";
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const { refetch, isFetching } = useAccount();
+  const { refetch } = useAccount();
   const { login } = useUser();
+  const [restoringSession, setRestoringSession] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadUser = async () => {
-      const token = await SecureStoreManager.getItem<string>("Token");
-      if (token) {
-        const user = await refetch();
-        if (user.data) {
-          login(user.data);
+      try {
+        const token = await SecureStoreManager.getItem<string>("Token");
+        if (token) {
+          const user = await refetch();
+          if (!cancelled && user.data) {
+            login(user.data);
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setRestoringSession(false);
         }
       }
-    }
+    };
 
-    loadUser();
-  }, [])
+    void loadUser();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
-      {isFetching && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={restoringSession} />
       <View style={styles.header}>
         <Image
           source={require("../../assets/logo-naranja.png")}

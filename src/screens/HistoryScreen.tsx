@@ -5,10 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Platform,
 } from "react-native";
-import { Calendar, ChevronRight } from "lucide-react-native";
+import { Calendar, Receipt } from "lucide-react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useTransactionsHistory } from "../services/transactions";
@@ -16,6 +15,7 @@ import HistoryTransactionItem from "../components/ui/HistoryTransactionItem";
 import generalStyles from "../styles/general";
 import { Dialog, Portal, Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import FullScreenLoader from "../components/ui/FullScreenLoader";
 
 const History = () => {
   const { t } = useTranslation();
@@ -27,11 +27,7 @@ const History = () => {
   return (
     <View style={styles.container}>
 
-      {isLoading && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={isLoading} />
 
       <ScrollView contentContainerStyle={generalStyles.mainContent}>
         <View style={generalStyles.section}>
@@ -43,18 +39,34 @@ const History = () => {
             </TouchableOpacity>
           </View>
 
-          <Animated.View entering={FadeIn.duration(400)} style={generalStyles.card}>
-            {data?.transactions && data.transactions.length > 0 &&
+          {data?.transactions && data.transactions.length > 0 ? (
+            <Animated.View entering={FadeIn.duration(400)} style={generalStyles.card}>
               <View>
-                {data?.transactions.map((item, index) => (
+                {data.transactions.map((item, index) => (
                   <HistoryTransactionItem
                     key={item._id + index}
                     item={item}
                   />
                 ))}
               </View>
-            }
-          </Animated.View>
+            </Animated.View>
+          ) : !isLoading ? (
+            <View style={styles.noContent}>
+              <View style={styles.noContentIcon}>
+                <Receipt size={32} color="#ff7f50" />
+              </View>
+              <Text style={styles.noContentTitle}>
+                {date
+                  ? t("ActivityScreen.noPaymentsForDate")
+                  : t("ActivityScreen.noPayments")}
+              </Text>
+              <Text style={styles.noContentText}>
+                {date
+                  ? t("ActivityScreen.noPaymentsForDateMessage")
+                  : t("ActivityScreen.noPaymentsMessage")}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         <View style={generalStyles.section}>
@@ -153,6 +165,7 @@ const styles = StyleSheet.create({
   noContent: {
     alignItems: "center",
     paddingVertical: 32,
+    paddingHorizontal: 24,
   },
   noContentIcon: {
     backgroundColor: "#fde4cf",
@@ -171,5 +184,6 @@ const styles = StyleSheet.create({
   noContentText: {
     fontSize: 14,
     color: "#666",
+    textAlign: "center",
   },
 });

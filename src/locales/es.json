@@ -160,7 +160,11 @@
     "completedSANs": "SANs completados",
     "viewAll": "Ver todos",
     "noCompletedSANs": "No hay SANs completados",
-    "noCompletedSANsMessage": "Cuando completes tu primer SAN, aparecerá aquí."
+    "noCompletedSANsMessage": "Cuando completes tu primer SAN, aparecerá aquí.",
+    "noPayments": "Aún no tienes pagos",
+    "noPaymentsMessage": "Cuando realices tu primer pago, el historial aparecerá aquí.",
+    "noPaymentsForDate": "No hay pagos en esta fecha",
+    "noPaymentsForDateMessage": "Prueba con otra fecha para ver si hay movimientos."
   },
   "Profile": {
     "level": "Nivel {{level}} · {{type}}",

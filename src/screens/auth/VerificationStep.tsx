@@ -8,6 +8,7 @@ import { InputOTP } from "../../components/ui/InputOtp";
 import { useRecoveryTwo } from "../../services/auth";
 import Toast from "react-native-toast-message";
 import errorToast from "../../components/ui/ErrorToast";
+import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 interface VerificationStepProps {
   route: any;
@@ -73,6 +74,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
 
   return (
     <View style={styles.container}>
+      <FullScreenLoader visible={recoveryMutate.isPending} />
       {/* Title and Subtitle */}
       <Text style={styles.title}>{t("VerificationStep.title")}</Text>
       <Text style={styles.subtitle}>{t("VerificationStep.subtitle")}</Text>
@@ -181,7 +183,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
           onPress={handleSubmit(onSubmit)}
           style={styles.primaryButton}
           contentStyle={styles.buttonContent}
-          loading={recoveryMutate.isPending}
+          disabled={recoveryMutate.isPending}
           icon="arrow-right"
         >
           {t("VerificationStep.updateButton")}

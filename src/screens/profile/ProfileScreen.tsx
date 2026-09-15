@@ -6,12 +6,12 @@ import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../context/UserContext";
 import { useLogout } from "../../services/auth";
-import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import generalStyles from "../../styles/general";
 import AvatarView from "../../components/ui/AvatarView";
 import { useSanSettings } from "../../services/settings";
 import { getLevelType, getMaxLevel } from "../../utils/levels";
+import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -39,11 +39,7 @@ const Profile = () => {
   }
   return (
     <View style={styles.container}>
-      {logoutMutate.isPending && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={logoutMutate.isPending} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, { marginBottom: 16 }]}>

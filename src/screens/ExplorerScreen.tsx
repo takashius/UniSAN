@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
@@ -15,6 +14,7 @@ import { useSanSettings } from "../services/settings";
 import { useUser } from "../context/UserContext";
 import generalStyles from "../styles/general";
 import { DEFAULT_MEMBERS_PER_SAN } from "../utils/levels";
+import FullScreenLoader from "../components/ui/FullScreenLoader";
 
 const Explorer: React.FC = () => {
   const { t } = useTranslation();
@@ -35,11 +35,7 @@ const Explorer: React.FC = () => {
   return (
     <View style={styles.container}>
 
-      {isLoading && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={isLoading} />
       <ScrollView contentContainerStyle={generalStyles.mainContent}>
 
         <View style={styles.section}>

@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import {
   Calendar,
   Users,
@@ -24,6 +17,7 @@ import generalStyles from "../styles/general";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 import AvatarView from "../components/ui/AvatarView";
 import { CHAT_ENABLED } from "../config/features";
+import FullScreenLoader from "../components/ui/FullScreenLoader";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
@@ -34,11 +28,7 @@ const SANDetails: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {isLoading && (
-        <View style={generalStyles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ff4d4d" />
-        </View>
-      )}
+      <FullScreenLoader visible={isLoading} />
 
       {!sanDetails && !isLoading ? (
         <View style={styles.noResults}>

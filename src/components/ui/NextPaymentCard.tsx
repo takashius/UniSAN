@@ -6,10 +6,18 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-na
 import { NextPaymentProps } from "../../types/payment";
 import PaymentDialog from "./PaymentDialog";
 import generalStyles from "../../styles/general";
+import { useBcvRate, useSanSettings } from "../../services/settings";
+import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
+import { formatBs, formatUsd, usdToBs } from "../../utils/fx";
 
 const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, amount, nextPaymentDate, lastPaidTurn }) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { data: settings } = useSanSettings();
+  const { data: fx } = useBcvRate();
+  const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+  const installment = amount / membersPerSan;
+  const bsAmount = fx?.rate ? usdToBs(installment, fx.rate) : null;
 
   // Animación
   const fadeAnim = useSharedValue(0);
@@ -29,16 +37,26 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, am
           <View style={nextPaymentStyles.paymentCardHeader}>
             <View>
               <Text style={nextPaymentStyles.cardTitle}>{name}</Text>
-              <Text style={nextPaymentStyles.cardSubtitle}>{t("HomeScreen.turn", { current: 3, total: 10 })}</Text>
+              <Text style={nextPaymentStyles.cardSubtitle}>{t("HomeScreen.turn", { current: currentTurn ?? 1, total: membersPerSan })}</Text>
             </View>
-            <Text style={nextPaymentStyles.cardAmount}>${amount}</Text>
+            <View style={nextPaymentStyles.cardAmountWrap}>
+              <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
+              {bsAmount != null ? (
+                <Text style={nextPaymentStyles.cardAmountBs}>{formatBs(bsAmount)}</Text>
+              ) : null}
+            </View>
           </View>
           :
           <View style={nextPaymentStyles.paymentCardHeader}>
             <Text style={nextPaymentStyles.cardTitle}>
-              {t("HomeScreen.turn", { current: (currentTurn ?? 0) + 1, total: 10 })}
+              {t("HomeScreen.turn", { current: (currentTurn ?? 0) + 1, total: membersPerSan })}
             </Text>
-            <Text style={nextPaymentStyles.cardAmount}>${amount}</Text>
+            <View style={nextPaymentStyles.cardAmountWrap}>
+              <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
+              {bsAmount != null ? (
+                <Text style={nextPaymentStyles.cardAmountBs}>{formatBs(bsAmount)}</Text>
+              ) : null}
+            </View>
           </View>
         }
 
@@ -58,7 +76,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, am
 
       <PaymentDialog
         open={dialogOpen}
-        amount={amount / 10}
+        amount={installment}
         san={id}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}

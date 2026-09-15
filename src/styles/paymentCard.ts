@@ -14,10 +14,19 @@ const nextPaymentStyles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
   },
+  cardAmountWrap: {
+    alignItems: 'flex-end',
+  },
   cardAmount: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#ff7f50',
+  },
+  cardAmountBs: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#ff7f50',
+    marginTop: 2,
   },
   paymentDetails: {
     flexDirection: 'row',

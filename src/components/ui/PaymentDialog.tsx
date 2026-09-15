@@ -9,12 +9,13 @@ import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
 import { useJoinSan, usePaymentSan } from "../../services/san";
-import { useReceivingAccounts } from "../../services/settings";
+import { useBcvRate, useReceivingAccounts } from "../../services/settings";
 import { ReceivingAccount } from "../../types/settings";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
+import { formatBs, formatUsd, usdToBs } from "../../utils/fx";
 
 const formatPagoMovilCopy = (account: ReceivingAccount, amount: number) => {
   const bankCode = String(account.bankCode || "").trim();
@@ -46,11 +47,22 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const queryClient = useQueryClient();
   const { setUser } = useUser();
   const { data: receivingAccounts = [] } = useReceivingAccounts();
+  const { data: fx, isLoading: fxLoading, isError: fxError } = useBcvRate(open);
   const isPending = joinSan.isPending || paymentSan.isPending;
   const watchedAmount = Number(watch("amount") || amount);
+  const usdAmount = Number.isFinite(watchedAmount) ? watchedAmount : 0;
+  const bsAmount = fx?.rate ? usdToBs(usdAmount, fx.rate) : null;
+  const rateLabel = fx?.currency === "eur" ? "EUR" : "USD";
 
   const copyAccountData = async (account: ReceivingAccount) => {
-    await Clipboard.setStringAsync(formatPagoMovilCopy(account, watchedAmount));
+    if (bsAmount == null) {
+      Toast.show({
+        type: "error",
+        text1: t("Payment.fxUnavailable"),
+      });
+      return;
+    }
+    await Clipboard.setStringAsync(formatPagoMovilCopy(account, bsAmount));
     Toast.show({
       type: "success",
       text1: t("Payment.copySuccess"),
@@ -182,10 +194,27 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 )}
                 <View style={styles.detailRow}>
                   <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
-                  <HelperText type="info" style={styles.highlightAmount}>
-                    ${amount}
-                  </HelperText>
+                  <View style={styles.amountStack}>
+                    <HelperText type="info" style={styles.highlightAmount}>
+                      {formatUsd(usdAmount)}
+                    </HelperText>
+                    <HelperText type="info" style={styles.bsAmount}>
+                      {fxLoading && bsAmount == null
+                        ? t("Payment.fxLoading")
+                        : bsAmount != null
+                          ? formatBs(bsAmount)
+                          : t("Payment.fxUnavailable")}
+                    </HelperText>
+                  </View>
                 </View>
+                {fx?.rate ? (
+                  <HelperText type="info" style={styles.rateHint}>
+                    {t("Payment.bcvRate", { currency: rateLabel, rate: formatBs(fx.rate).replace("Bs ", "") })}
+                  </HelperText>
+                ) : null}
+                {fxError ? (
+                  <HelperText type="error">{t("Payment.fxUnavailable")}</HelperText>
+                ) : null}
               </View>
 
               <Controller
@@ -228,6 +257,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                       onChangeText={onChange}
                       style={formStyles.input}
                     />
+                    <HelperText type="info">{t("Payment.amountUsdHint")}</HelperText>
+                    {bsAmount != null ? (
+                      <HelperText type="info">
+                        {t("Payment.amountBsHint", { amount: formatBs(bsAmount) })}
+                      </HelperText>
+                    ) : null}
                     {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                   </View>
                 )}
@@ -350,6 +385,16 @@ const styles = StyleSheet.create({
   highlightAmount: {
     color: "#ff7f50",
     fontWeight: "bold",
+  },
+  amountStack: {
+    alignItems: "flex-end",
+  },
+  bsAmount: {
+    color: "#ff7f50",
+    fontWeight: "bold",
+  },
+  rateHint: {
+    marginTop: 4,
   },
   field: {
     marginBottom: 8,

@@ -24,7 +24,17 @@ export interface SanSettings {
   levels: SanLevel[];
   pointsThresholds: Record<string, number>;
   receivingAccounts: ReceivingAccount[];
+  fxCurrency?: 'usd' | 'eur';
   updatedAt?: string;
+}
+
+export interface BcvFxRates {
+  usd: number;
+  eur: number;
+  currency: 'usd' | 'eur';
+  rate: number;
+  updatedAt: string;
+  stale?: boolean;
 }
 
 export type LevelType = 'initial' | 'intermediate' | 'max';

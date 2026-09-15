@@ -22,6 +22,7 @@ import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
 import { ChatStackParamList, ProfileStackParamList, SANStackParamList, TabParamList } from "../types/navigation";
+import { CHAT_ENABLED } from "../config/features";
 
 const Stack = createStackNavigator<SANStackParamList>();
 const Chat = createStackNavigator<ChatStackParamList>();
@@ -140,12 +141,14 @@ const AppNavigator: React.FC = () => {
                 tabBarLabel: t("Navigation.home"),
                 headerTitle: t("Navigation.home"),
               }} />
-            <Tab.Screen
-              name="Chat"
-              component={ChatStack}
-              options={{
-                tabBarLabel: t("Navigation.chat")
-              }} />
+            {CHAT_ENABLED ? (
+              <Tab.Screen
+                name="Chat"
+                component={ChatStack}
+                options={{
+                  tabBarLabel: t("Navigation.chat")
+                }} />
+            ) : null}
             <Tab.Screen
               name="Explorer"
               component={SANStack}

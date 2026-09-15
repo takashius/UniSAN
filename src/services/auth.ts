@@ -18,6 +18,13 @@ import {
 } from '../types';
 import SecureStoreManager from '../components/AsyncStorageManager';
 
+export const ACCOUNT_QUERY_KEY = ['myAccount'] as const;
+
+export async function fetchAccount(): Promise<Account> {
+  const response = await ERDEAxios.get<Account>('/user/account');
+  return response.data;
+}
+
 export const useLogin = (): UseMutationResult<LoginResponse, unknown, Login> => {
   return useMutation<LoginResponse, unknown, Login>({
     mutationFn: async (data: Login) => {
@@ -29,12 +36,10 @@ export const useLogin = (): UseMutationResult<LoginResponse, unknown, Login> => 
 
 export const useAccount = (): UseQueryResult<Account, Error> => {
   return useQuery<Account, Error>({
-    queryKey: ['myAccount'],
+    queryKey: ACCOUNT_QUERY_KEY,
     retry: false,
     enabled: false,
-    queryFn: () => {
-      return ERDEAxios.get<Account>('/user/account').then(response => response.data);
-    },
+    queryFn: fetchAccount,
   });
 };
 

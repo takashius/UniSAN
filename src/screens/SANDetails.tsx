@@ -22,6 +22,7 @@ import { useSanDetail } from "../services/san";
 import generalStyles from "../styles/general";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 import AvatarView from "../components/ui/AvatarView";
+import { CHAT_ENABLED } from "../config/features";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
@@ -71,15 +72,17 @@ const SANDetails: React.FC = () => {
                   </View>
                 </View>
 
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity style={styles.primaryButton}>
-                    <MessageCircle size={16} color="#fff" />
-                    <Text style={styles.buttonText}>{t("SANDetails.groupChat")}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.secondaryButton}>
-                    <Info size={16} color="#888" />
-                  </TouchableOpacity>
-                </View>
+                {CHAT_ENABLED ? (
+                  <View style={styles.buttonRow}>
+                    <TouchableOpacity style={styles.primaryButton}>
+                      <MessageCircle size={16} color="#fff" />
+                      <Text style={styles.buttonText}>{t("SANDetails.groupChat")}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.secondaryButton}>
+                      <Info size={16} color="#888" />
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
               </View>
             </Animated.View>
 

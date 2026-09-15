@@ -9,13 +9,14 @@ import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
 import { useJoinSan, usePaymentSan } from "../../services/san";
+import { fetchAccount } from "../../services/auth";
 import { useBcvRate, useReceivingAccounts } from "../../services/settings";
 import { ReceivingAccount } from "../../types/settings";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
-import { usdToBs } from "../../utils/fx";
+import { formatUsd, usdToBs } from "../../utils/fx";
 
 const formatPagoMovilCopy = (account: ReceivingAccount, amount: number) => {
   const bankCode = String(account.bankCode || "").trim();
@@ -94,9 +95,15 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       joinSan.mutate(payload, {
         onSuccess: async () => {
           queryClient.invalidateQueries({ queryKey: ["availableSan"] });
-          await queryClient.refetchQueries({ queryKey: ["myAccount"] });
-          const updatedUser = await queryClient.ensureQueryData({ queryKey: ["myAccount"] });
-          setUser(updatedUser);
+          try {
+            const updatedUser = await queryClient.fetchQuery({
+              queryKey: ["myAccount"],
+              queryFn: fetchAccount,
+            });
+            setUser(updatedUser);
+          } catch (error) {
+            console.log(error);
+          }
           Toast.show({
             type: "success",
             text1: t("Payment.paymentSuccessTitle"),
@@ -115,6 +122,15 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     } else {
       paymentSan.mutate(payload, {
         onSuccess: async () => {
+          try {
+            const updatedUser = await queryClient.fetchQuery({
+              queryKey: ["myAccount"],
+              queryFn: fetchAccount,
+            });
+            setUser(updatedUser);
+          } catch (error) {
+            console.log(error);
+          }
           Toast.show({
             type: "success",
             text1: t("Payment.paymentSuccessTitle"),
@@ -205,6 +221,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                     </View>
                   ))
                 )}
+                <View style={styles.detailRow}>
+                  <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
+                  <Text style={styles.highlightAmount}>{formatUsd(amount)}</Text>
+                </View>
                 {fxError ? (
                   <HelperText type="error">{t("Payment.fxUnavailable")}</HelperText>
                 ) : null}
@@ -367,7 +387,14 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 4,
+  },
+  highlightAmount: {
+    color: "#ff7f50",
+    fontWeight: "bold",
+    fontSize: 16,
+    paddingRight: 12,
   },
   field: {
     marginBottom: 8,

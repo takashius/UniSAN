@@ -12,6 +12,7 @@ import AvatarView from "../../components/ui/AvatarView";
 import { useSanSettings } from "../../services/settings";
 import { getLevelType, getMaxLevel } from "../../utils/levels";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
+import { unregisterCurrentPushToken } from "../../services/notifications";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -26,17 +27,17 @@ const Profile = () => {
   );
 
   const handleLogout = () => {
-    logoutMutate.mutate(undefined,
-      {
+    void unregisterCurrentPushToken().finally(() => {
+      logoutMutate.mutate(undefined, {
         onSuccess: () => {
           logout();
         },
         onError: (error) => {
-          console.log('Error:', error)
+          console.log("Error:", error);
         },
-      }
-    );
-  }
+      });
+    });
+  };
   return (
     <View style={styles.container}>
       <FullScreenLoader visible={logoutMutate.isPending} />

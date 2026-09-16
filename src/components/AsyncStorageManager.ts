@@ -7,7 +7,8 @@ type SecureStoreKey =
   | "responseType"
   | "User"
   | "notificationsEnabled"
-  | "rememberedEmail";
+  | "rememberedEmail"
+  | "expoPushToken";
 
 class SecureStoreManager {
   /**

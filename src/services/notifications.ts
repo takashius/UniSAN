@@ -39,19 +39,49 @@ export async function areNotificationsEnabled() {
   return stored !== false;
 }
 
+export async function unregisterCurrentPushToken() {
+  const stored = await SecureStoreManager.getItem<string>("expoPushToken");
+  const token = stored || (await readCurrentExpoPushToken());
+  if (!token) {
+    await SecureStoreManager.removeItem("expoPushToken");
+    return;
+  }
+  try {
+    await ERDEAxios.post("/user/updateDeviceToken", {
+      expoPushToken: token,
+      remove: true,
+    });
+  } catch (error) {
+    console.log("No se pudo quitar el token de notificaciones", error);
+  }
+  await SecureStoreManager.removeItem("expoPushToken");
+}
+
+async function readCurrentExpoPushToken() {
+  if (!canUseRemotePush()) {
+    return null;
+  }
+  try {
+    const Notifications = await loadNotifications();
+    if (!Notifications) return null;
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ||
+      Constants.easConfig?.projectId;
+    const tokenResponse = await Notifications.getExpoPushTokenAsync(
+      projectId ? { projectId } : undefined
+    );
+    return tokenResponse.data || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function setNotificationsPreference(enabled: boolean) {
   await SecureStoreManager.setItem("notificationsEnabled", enabled);
   if (enabled) {
     return registerAndSyncPushToken();
   }
-  if (!canUseRemotePush()) {
-    return null;
-  }
-  try {
-    await ERDEAxios.post("/user/updateDeviceToken", { expoPushToken: "" });
-  } catch (error) {
-    console.log("No se pudo limpiar el token de notificaciones", error);
-  }
+  await unregisterCurrentPushToken();
   return null;
 }
 
@@ -92,6 +122,7 @@ export async function registerAndSyncPushToken() {
     );
     const token = tokenResponse.data;
     if (!token) return null;
+    await SecureStoreManager.setItem("expoPushToken", token);
     await ERDEAxios.post("/user/updateDeviceToken", { expoPushToken: token });
     return token;
   } catch {

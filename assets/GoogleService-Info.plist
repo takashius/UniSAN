@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.erickhernandez.UniSAN</string>
+	<string>com.erdesarrollo.unisan</string>
 	<key>PROJECT_ID</key>
 	<string>unisan-e3923</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:301734436877:ios:df7346449a2b0e7d9d3544</string>
+	<string>1:301734436877:ios:aeb8248ff15542519d3544</string>
 </dict>
 </plist>

@@ -10,7 +10,7 @@
     "scheme": "unisan",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.erickhernandez.UniSAN",
+      "bundleIdentifier": "com.erdesarrollo.unisan",
       "buildNumber": "3",
       "googleServicesFile": "./assets/GoogleService-Info.plist",
       "infoPlist": {
@@ -28,7 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.erickhernandez.UniSAN",
+      "package": "com.erdesarrollo.unisan",
       "versionCode": 4,
       "googleServicesFile": "./assets/google-services.json",
       "permissions": [

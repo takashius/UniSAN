@@ -31,6 +31,7 @@
     "passwordLabel": "Contraseña",
     "passwordPlaceholder": "Contraseña",
     "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+    "rememberUser": "Recordar usuario",
     "loginButton": "Iniciar sesión",
     "registerErrorTitle": "Error en el registro",
     "registerSuccessTitle": "Registro exitoso",

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useUser } from '../../context/UserContext';
-import { Button, TextInput } from 'react-native-paper';
+import { Button, Checkbox, TextInput } from 'react-native-paper';
 import { useLogin, useRegister, useAccount } from '../../services/auth';
 import Toast from 'react-native-toast-message';
 import errorToast from '../ui/ErrorToast';
@@ -20,17 +20,53 @@ export const LoginForm = () => {
   const loginMutate = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [completingLogin, setCompletingLogin] = React.useState(false);
+  const [hasRememberedEmail, setHasRememberedEmail] = React.useState(false);
+  const passwordInputRef = React.useRef<any>(null);
   const { refetch } = useAccount();
   const isBusy = loginMutate.isPending || completingLogin;
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
-  } = useForm<{ email: string; password: string }>();
+  } = useForm<{ email: string; password: string; rememberEmail: boolean }>({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberEmail: true,
+    },
+  });
 
-  const onSubmit = (data: { email: string; password: string }) => {
+  React.useEffect(() => {
+    let cancelled = false;
+    const loadRememberedEmail = async () => {
+      const saved = await SecureStoreManager.getItem<string>("rememberedEmail");
+      if (cancelled || !saved) return;
+      setValue("email", saved);
+      setValue("rememberEmail", true);
+      setHasRememberedEmail(true);
+      requestAnimationFrame(() => {
+        passwordInputRef.current?.focus();
+      });
+    };
+    void loadRememberedEmail();
+    return () => {
+      cancelled = true;
+    };
+  }, [setValue]);
+
+  const persistRememberedEmail = async (email: string, remember: boolean) => {
+    if (remember) {
+      await SecureStoreManager.setItem("rememberedEmail", email.trim());
+    } else {
+      await SecureStoreManager.removeItem("rememberedEmail");
+    }
+  };
+
+  const onSubmit = (data: { email: string; password: string; rememberEmail: boolean }) => {
     setCompletingLogin(true);
+    void persistRememberedEmail(data.email, data.rememberEmail);
     loginMutate.mutate(
       { email: data.email, password: data.password },
       {
@@ -96,6 +132,8 @@ export const LoginForm = () => {
               onChangeText={onChange}
               keyboardType="email-address"
               autoCapitalize="none"
+              autoComplete="email"
+              textContentType="username"
               error={errors.email ? true : false}
             />
           )}
@@ -121,12 +159,16 @@ export const LoginForm = () => {
             }}
             render={({ field: { onChange, value } }) => (
               <TextInput
+                ref={passwordInputRef}
                 label={t("auth.passwordPlaceholder")}
                 value={value}
                 onChangeText={onChange}
                 activeUnderlineColor="#ff7f50"
                 textColor="black"
                 secureTextEntry={!showPassword}
+                autoComplete="password"
+                textContentType="password"
+                autoFocus={hasRememberedEmail}
                 right={showPassword ?
                   <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
                   : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
@@ -142,13 +184,34 @@ export const LoginForm = () => {
           </Text>
         )}
 
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("RecoveryPasswordStep1");
-          }}
-        >
-          <Text style={styles.link}>{t("auth.forgotPasswordLink")}</Text>
-        </TouchableOpacity>
+        <View style={styles.optionsRow}>
+          <Controller
+            control={control}
+            name="rememberEmail"
+            render={({ field: { onChange, value } }) => (
+              <TouchableOpacity
+                style={styles.rememberRow}
+                onPress={() => onChange(!value)}
+                activeOpacity={0.7}
+              >
+                <Checkbox
+                  status={value ? "checked" : "unchecked"}
+                  onPress={() => onChange(!value)}
+                  color="#ff7f50"
+                  uncheckedColor="#888888"
+                />
+                <Text style={styles.rememberLabel}>{t("auth.rememberUser")}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("RecoveryPasswordStep1");
+            }}
+          >
+            <Text style={styles.link}>{t("auth.forgotPasswordLink")}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Button
@@ -397,8 +460,24 @@ const styles = StyleSheet.create({
     right: 12,
     top: "25%",
   },
-  link: {
+  optionsRow: {
     marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  rememberRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: -8,
+  },
+  rememberLabel: {
+    fontSize: 13,
+    color: "#333333",
+  },
+  link: {
     fontSize: 12,
     color: '#ff7f50',
     textDecorationLine: 'underline',

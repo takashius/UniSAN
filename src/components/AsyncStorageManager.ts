@@ -1,7 +1,13 @@
 import * as SecureStore from "expo-secure-store";
 
 // Definición de tipos
-type SecureStoreKey = "Token" | "contentType" | "responseType" | "User" | "notificationsEnabled";
+type SecureStoreKey =
+  | "Token"
+  | "contentType"
+  | "responseType"
+  | "User"
+  | "notificationsEnabled"
+  | "rememberedEmail";
 
 class SecureStoreManager {
   /**

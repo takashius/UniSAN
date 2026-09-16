@@ -16,6 +16,8 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification",
+          "remote-notification",
+          "remote-notification",
           "remote-notification"
         ]
       },
@@ -32,6 +34,12 @@
       "versionCode": 4,
       "googleServicesFile": "./assets/google-services.json",
       "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",
         "POST_NOTIFICATIONS",
@@ -71,11 +79,11 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "b6c2ab1a-535f-4b61-a21b-71f06624c6e0"
+        "projectId": "917cc6e1-7415-4bc4-b7ea-4fa144b910a1"
       }
     },
     "updates": {
-      "url": "https://u.expo.dev/b6c2ab1a-535f-4b61-a21b-71f06624c6e0"
+      "url": "https://u.expo.dev/917cc6e1-7415-4bc4-b7ea-4fa144b910a1"
     }
   }
 }

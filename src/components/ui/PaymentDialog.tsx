@@ -47,6 +47,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   });
   const { t } = useTranslation();
   const [receiptUri, setReceiptUri] = useState<string | null>(null);
+  const [completing, setCompleting] = useState(false);
   const joinSan = useJoinSan();
   const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
@@ -54,7 +55,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const { data: receivingAccounts = [] } = useReceivingAccounts();
   const { data: fx, isError: fxError } = useBcvRate(open);
   const sanRate = rateForSan(fx, fxCurrency);
-  const isPending = joinSan.isPending || paymentSan.isPending;
+  const isBusy = joinSan.isPending || paymentSan.isPending || completing;
   const watchedAmount = Number(watch("amount"));
   const bsAmount = Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
 
@@ -107,6 +108,38 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     }
   };
 
+  const closeAfterSuccess = async () => {
+    try {
+      if (isJoin) {
+        await queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+        await queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+        await queryClient.refetchQueries({ queryKey: ["availableSan"] });
+      } else {
+        await queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+      }
+      try {
+        const updatedUser = await queryClient.fetchQuery({
+          queryKey: ["myAccount"],
+          queryFn: fetchAccount,
+        });
+        setUser(updatedUser);
+      } catch (error) {
+        console.log(error);
+      }
+      Toast.show({
+        type: "success",
+        text1: t("Payment.paymentSuccessTitle"),
+        text2: t("Payment.paymentSuccessMessage"),
+      });
+      onPaymentRegistered?.();
+      reset();
+      setReceiptUri(null);
+      onDismiss();
+    } finally {
+      setCompleting(false);
+    }
+  };
+
   const onSubmit = (data: PaymentFormData) => {
     const payload = {
       san,
@@ -125,70 +158,26 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
           }
         : {}),
     };
+    setCompleting(true);
+    const callbacks = {
+      onSuccess: () => {
+        void closeAfterSuccess();
+      },
+      onError: (error: unknown) => {
+        setCompleting(false);
+        console.log(error);
+        Toast.show({
+          type: "error",
+          text1: t("Payment.paymentErrorTitle"),
+          text2: t("Payment.paymentErrorMessage"),
+        });
+      },
+    };
     if (isJoin) {
-      joinSan.mutate(payload, {
-        onSuccess: async () => {
-          queryClient.invalidateQueries({ queryKey: ["availableSan"] });
-          queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
-          await queryClient.refetchQueries({ queryKey: ["availableSan"] });
-          try {
-            const updatedUser = await queryClient.fetchQuery({
-              queryKey: ["myAccount"],
-              queryFn: fetchAccount,
-            });
-            setUser(updatedUser);
-          } catch (error) {
-            console.log(error);
-          }
-          Toast.show({
-            type: "success",
-            text1: t("Payment.paymentSuccessTitle"),
-            text2: t("Payment.paymentSuccessMessage"),
-          });
-        },
-        onError: (error) => {
-          console.log(error);
-          Toast.show({
-            type: "error",
-            text1: t("Payment.paymentErrorTitle"),
-            text2: t("Payment.paymentErrorMessage"),
-          });
-        },
-      });
-    } else {
-      paymentSan.mutate(payload, {
-        onSuccess: async () => {
-          try {
-            const updatedUser = await queryClient.fetchQuery({
-              queryKey: ["myAccount"],
-              queryFn: fetchAccount,
-            });
-            setUser(updatedUser);
-          } catch (error) {
-            console.log(error);
-          }
-          Toast.show({
-            type: "success",
-            text1: t("Payment.paymentSuccessTitle"),
-            text2: t("Payment.paymentSuccessMessage"),
-          });
-        },
-        onError: (error) => {
-          console.log(error);
-          Toast.show({
-            type: "error",
-            text1: t("Payment.paymentErrorTitle"),
-            text2: t("Payment.paymentErrorMessage"),
-          });
-        },
-      });
+      joinSan.mutate(payload, callbacks);
+      return;
     }
-
-    if (onPaymentRegistered) {
-      onPaymentRegistered();
-    }
-    reset();
-    onDismiss();
+    paymentSan.mutate(payload, callbacks);
   };
 
   if (!open) {
@@ -197,10 +186,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
   return (
     <>
-      <FullScreenLoader visible={isPending} />
+      <FullScreenLoader visible={isBusy} />
       <Portal>
       <View style={styles.overlayRoot}>
-        <Pressable style={styles.backdrop} onPress={onDismiss} />
+        <Pressable style={styles.backdrop} onPress={isBusy ? undefined : onDismiss} />
         <View style={styles.center} pointerEvents="box-none">
           <View style={[styles.card, { maxHeight: height * 0.9 }]}>
             <Text style={styles.dialogTitle}>
@@ -380,6 +369,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 mode="outlined"
                 onPress={onDismiss}
                 style={formStyles.cancelButton}
+                disabled={isBusy}
               >
                 {t("common.cancel")}
               </Button>
@@ -387,7 +377,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 mode="contained"
                 onPress={handleSubmit(onSubmit)}
                 style={formStyles.confirmButton}
-                disabled={isPending || !sanRate}
+                disabled={isBusy || !sanRate}
               >
                 {isJoin ? t("Payment.confirmJoin") : t("Payment.confirmPayment")}
               </Button>

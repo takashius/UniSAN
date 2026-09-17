@@ -141,6 +141,7 @@
     "turnsRemaining": "Te faltan {{remaining}} turnos para recibir el fondo",
     "membersTitle": "Participantes y turnos",
     "availableTurn": "Turno disponible",
+    "unassignedTurn": "Por asignar",
     "turn": "Turno {{turn}}",
     "completed": "Completado",
     "current": "Actual",
@@ -149,7 +150,7 @@
     "awaitingApproval": "Por validar",
     "rejected": "Pago rechazado",
     "paid": "Pagado",
-    "awaitMessage": "Este SAN aún está en proceso de formación. Los números de turno serán asignados de manera aleatoria una vez que todos los participantes se hayan unido. En ese momento, también se establecerán las fechas de pago para cada turno. ¡Solo falta completar los cupos!"
+    "awaitMessage": "Este SAN aún está en proceso de formación. Algunos números de turno pueden estar asignados de antemano; el resto se sorteará cuando se completen los cupos. En ese momento también se fijarán las fechas de pago. ¡Solo falta completar el grupo!"
   },
   "ActivityScreen": {
     "recentActivity": "Actividad reciente",
@@ -264,7 +265,15 @@
   "Payment": {
     "title": "Registrar pago",
     "joinTitle": "Unirse al SAN",
-    "referenceNumber": "Número de referencia",
+    "referenceNumber": "Número de referencia del pago",
+    "referenceNumberHint": "Es el código de la transferencia o pago móvil que aparece en el comprobante de tu banco (no el número de teléfono ni la cédula).",
+    "referenceNumberPlaceholder": "Ej: 123456789012",
+    "receiptOptional": "Captura del pago (opcional)",
+    "receiptHint": "Adjunta la captura de pantalla del comprobante para agilizar la validación.",
+    "attachReceipt": "Adjuntar captura",
+    "changeReceipt": "Cambiar captura",
+    "removeReceipt": "Quitar",
+    "photoPermissionDenied": "Necesitamos acceso a tus fotos para adjuntar el comprobante.",
     "amount": "Monto exacto (Bs)",
     "paymentDate": "Fecha de pago",
     "confirmPayment": "Confirmar pago",

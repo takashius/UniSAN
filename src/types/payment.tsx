@@ -13,7 +13,6 @@ export interface PaymentFormData {
   paymentDate: Date;
   amount: number;
   referenceNumber: string;
-  proofImage?: FileList;
 }
 
 export interface NextPaymentProps {

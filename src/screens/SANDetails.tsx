@@ -149,7 +149,11 @@ const SANDetails: React.FC = () => {
                       <Text style={styles.memberName}>
                         {member.name || t("SANDetails.availableTurn")}
                       </Text>
-                      <Text style={styles.memberTurn}>{t("SANDetails.turn", { turn: member.position })}</Text>
+                      <Text style={styles.memberTurn}>
+                        {member.position
+                          ? t("SANDetails.turn", { turn: member.position })
+                          : t("SANDetails.unassignedTurn")}
+                      </Text>
                     </View>
 
                     <View style={styles.paymentStatusContainer}>

@@ -140,6 +140,7 @@
     "turnsRemaining": "You need to wait {{remaining}} turns to receive the fund",
     "membersTitle": "Participants and Turns",
     "availableTurn": "Available Turn",
+    "unassignedTurn": "Unassigned",
     "turn": "Turn {{turn}}",
     "completed": "Completed",
     "current": "Current",
@@ -148,7 +149,7 @@
     "awaitingApproval": "Awaiting approval",
     "rejected": "Payment rejected",
     "paid": "Paid",
-    "awaitMessage": "This SAN is still in the development process. Shift numbers will be randomly assigned once all participants have joined. At that time, payment dates for each shift will also be established. All that's left is to fill the quota!"
+    "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the group fills. Payment dates are set at that time too."
   },
   "ActivityScreen": {
     "recentActivity": "Recent Activity",
@@ -263,7 +264,15 @@
   "Payment": {
     "title": "Register payment",
     "joinTitle": "Join the SAN",
-    "referenceNumber": "Reference number",
+    "referenceNumber": "Bank payment reference",
+    "referenceNumberHint": "This is the confirmation code from your bank transfer or Pago Móvil receipt (not your phone number or ID).",
+    "referenceNumberPlaceholder": "E.g. 123456789012",
+    "receiptOptional": "Payment screenshot (optional)",
+    "receiptHint": "Attach a screenshot of the receipt to speed up validation.",
+    "attachReceipt": "Attach screenshot",
+    "changeReceipt": "Change screenshot",
+    "removeReceipt": "Remove",
+    "photoPermissionDenied": "We need access to your photos to attach the receipt.",
     "amount": "Exact amount (Bs)",
     "paymentDate": "Payment Date",
     "confirmPayment": "Confirm Payment",

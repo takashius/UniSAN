@@ -121,6 +121,11 @@ export interface JoinSanData {
   amountBs?: number;
   date: string;
   operationReference: string;
+  proofImage?: {
+    uri: string;
+    name?: string;
+    type?: string;
+  };
 }
 
 export interface UserProfileResponse {

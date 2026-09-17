@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, Pressable, ScrollView, Text, useWindowDimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Pressable, ScrollView, Text, Image, useWindowDimensions } from "react-native";
 import { Button, TextInput, Portal, HelperText } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import * as Clipboard from "expo-clipboard";
-import { Copy } from "lucide-react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Copy, ImagePlus, X } from "lucide-react-native";
 import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
@@ -45,6 +46,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     },
   });
   const { t } = useTranslation();
+  const [receiptUri, setReceiptUri] = useState<string | null>(null);
   const joinSan = useJoinSan();
   const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
@@ -63,6 +65,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       amount: 0,
       referenceNumber: "",
     });
+    setReceiptUri(null);
   }, [open, reset]);
 
   useEffect(() => {
@@ -85,6 +88,25 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     });
   };
 
+  const pickReceipt = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Toast.show({
+        type: "error",
+        text1: t("Payment.photoPermissionDenied"),
+      });
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      quality: 0.7,
+    });
+    if (!result.canceled && result.assets[0]?.uri) {
+      setReceiptUri(result.assets[0].uri);
+    }
+  };
+
   const onSubmit = (data: PaymentFormData) => {
     const payload = {
       san,
@@ -93,6 +115,15 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       amountBs: Number(data.amount),
       operationReference: data.referenceNumber,
       date: data.paymentDate.toLocaleDateString(),
+      ...(receiptUri
+        ? {
+            proofImage: {
+              uri: receiptUri,
+              name: "payment_receipt.jpg",
+              type: "image/jpeg",
+            },
+          }
+        : {}),
     };
     if (isJoin) {
       joinSan.mutate(payload, {
@@ -293,14 +324,55 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                       activeUnderlineColor="#ff7f50"
                       textColor="black"
                       keyboardType="numeric"
-                      placeholder="Ej: 123456789"
+                      placeholder={t("Payment.referenceNumberPlaceholder")}
                       onChangeText={onChange}
                       style={formStyles.input}
                     />
+                    <HelperText type="info">{t("Payment.referenceNumberHint")}</HelperText>
                     {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
                   </View>
                 )}
               />
+
+              <View style={styles.field}>
+                <HelperText type="info">{t("Payment.receiptOptional")}</HelperText>
+                <HelperText type="info">{t("Payment.receiptHint")}</HelperText>
+                {receiptUri ? (
+                  <View style={styles.receiptPreview}>
+                    <Image source={{ uri: receiptUri }} style={styles.receiptImage} />
+                    <View style={styles.receiptActions}>
+                      <Button
+                        mode="outlined"
+                        compact
+                        textColor="#ff7f50"
+                        onPress={() => void pickReceipt()}
+                        style={styles.receiptButton}
+                      >
+                        {t("Payment.changeReceipt")}
+                      </Button>
+                      <Button
+                        mode="text"
+                        compact
+                        textColor="#888"
+                        onPress={() => setReceiptUri(null)}
+                        icon={({ size, color }) => <X size={size} color={color} />}
+                      >
+                        {t("Payment.removeReceipt")}
+                      </Button>
+                    </View>
+                  </View>
+                ) : (
+                  <Button
+                    mode="outlined"
+                    textColor="#ff7f50"
+                    onPress={() => void pickReceipt()}
+                    style={styles.receiptButton}
+                    icon={({ size, color }) => <ImagePlus size={size} color={color} />}
+                  >
+                    {t("Payment.attachReceipt")}
+                  </Button>
+                )}
+              </View>
             </ScrollView>
             <View style={styles.actions}>
               <Button
@@ -405,6 +477,25 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 8,
+  },
+  receiptPreview: {
+    marginTop: 8,
+  },
+  receiptImage: {
+    width: "100%",
+    height: 160,
+    borderRadius: 8,
+    backgroundColor: "#f4f4f4",
+  },
+  receiptActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  receiptButton: {
+    borderColor: "#ff7f50",
+    marginTop: 8,
   },
   actions: {
     flexDirection: "row",

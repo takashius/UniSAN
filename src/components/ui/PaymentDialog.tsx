@@ -16,7 +16,7 @@ import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "../../context/UserContext";
-import { formatUsd, usdToBs } from "../../utils/fx";
+import { formatUsd, rateForSan, usdToBs } from "../../utils/fx";
 import FullScreenLoader from "./FullScreenLoader";
 
 const formatPagoMovilCopy = (account: ReceivingAccount, amount: number) => {
@@ -31,6 +31,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   open,
   amount,
   san,
+  fxCurrency,
   isJoin = false,
   onDismiss,
   onPaymentRegistered,
@@ -50,6 +51,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const { setUser } = useUser();
   const { data: receivingAccounts = [] } = useReceivingAccounts();
   const { data: fx, isError: fxError } = useBcvRate(open);
+  const sanRate = rateForSan(fx, fxCurrency);
   const isPending = joinSan.isPending || paymentSan.isPending;
   const watchedAmount = Number(watch("amount"));
   const bsAmount = Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
@@ -64,9 +66,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   }, [open, reset]);
 
   useEffect(() => {
-    if (!open || !fx?.rate) return;
-    setValue("amount", usdToBs(amount, fx.rate));
-  }, [open, fx?.rate, amount, setValue]);
+    if (!open || !sanRate) return;
+    setValue("amount", usdToBs(amount, sanRate));
+  }, [open, sanRate, amount, setValue]);
 
   const copyAccountData = async (account: ReceivingAccount) => {
     if (bsAmount == null) {
@@ -313,7 +315,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                 mode="contained"
                 onPress={handleSubmit(onSubmit)}
                 style={formStyles.confirmButton}
-                disabled={isPending || !fx?.rate}
+                disabled={isPending || !sanRate}
               >
                 {isJoin ? t("Payment.confirmJoin") : t("Payment.confirmPayment")}
               </Button>

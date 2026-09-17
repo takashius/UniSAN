@@ -55,6 +55,7 @@ const Explorer: React.FC = () => {
                     position={0}
                     startDate={san.createdAt}
                     usersCount={san.members?.length ?? 0}
+                    fxCurrency={san.fxCurrency}
                     hasOpenSpot={
                       isMemberOf(san._id)
                         ? Boolean(san.isOpen)

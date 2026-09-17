@@ -17,6 +17,7 @@ export interface SanDetail {
   amount: number;
   startDate: string | null;
   frequency: string;
+  fxCurrency?: 'usd' | 'eur' | null;
   isActive: boolean;
   isOpen: boolean;
   currentTurn: number | null;

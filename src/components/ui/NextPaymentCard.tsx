@@ -8,16 +8,25 @@ import PaymentDialog from "./PaymentDialog";
 import generalStyles from "../../styles/general";
 import { useBcvRate, useSanSettings } from "../../services/settings";
 import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
-import { formatBs, formatUsd, usdToBs } from "../../utils/fx";
+import { formatBs, formatUsd, rateForSan, usdToBs } from "../../utils/fx";
 
-const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, amount, nextPaymentDate, lastPaidTurn }) => {
+const NextPaymentCard: React.FC<NextPaymentProps> = ({
+  id,
+  name,
+  currentTurn,
+  amount,
+  nextPaymentDate,
+  lastPaidTurn,
+  fxCurrency,
+}) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
   const { data: fx } = useBcvRate();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
   const installment = amount / membersPerSan;
-  const bsAmount = fx?.rate ? usdToBs(installment, fx.rate) : null;
+  const sanRate = rateForSan(fx, fxCurrency);
+  const bsAmount = sanRate ? usdToBs(installment, sanRate) : null;
 
   // Animación
   const fadeAnim = useSharedValue(0);
@@ -78,6 +87,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({ id, name, currentTurn, am
         open={dialogOpen}
         amount={installment}
         san={id}
+        fxCurrency={fxCurrency}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}
       />

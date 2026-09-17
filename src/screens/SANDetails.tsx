@@ -126,6 +126,7 @@ const SANDetails: React.FC = () => {
                 amount={sanDetails.amount}
                 nextPaymentDate={sanDetails.nextPaymentDate}
                 lastPaidTurn={sanDetails.lastPaidTurn!}
+                fxCurrency={sanDetails.fxCurrency}
               />
             </View>
 

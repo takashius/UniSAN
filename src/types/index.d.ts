@@ -74,6 +74,7 @@ export interface San {
   name: string;
   amount: number;
   frequency: string;
+  fxCurrency?: 'usd' | 'eur' | null;
   paymentDates: Date[];
   isActive: boolean;
   isOpen?: boolean;
@@ -90,6 +91,7 @@ export interface SanMin {
   amount: number;
   startDate: string;
   frequency: string;
+  fxCurrency?: 'usd' | 'eur' | null;
   position: number;
 }
 
@@ -97,6 +99,7 @@ export interface NextPayment {
   id: string;
   sanName: string;
   sanAmount: number;
+  fxCurrency?: 'usd' | 'eur' | null;
   paymentAmount: number;
   nextPaymentDate: string;
   lastPaidTurn: number;

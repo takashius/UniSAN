@@ -3,6 +3,7 @@ export interface PaymentDialogProps {
   onDismiss: () => void;
   amount: number;
   san: string;
+  fxCurrency?: 'usd' | 'eur' | null;
   isJoin?: boolean;
   onPaymentRegistered?: () => void;
 }
@@ -22,4 +23,5 @@ export interface NextPaymentProps {
   amount: number;
   nextPaymentDate: string | null;
   lastPaidTurn: number;
+  fxCurrency?: 'usd' | 'eur' | null;
 }

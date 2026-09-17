@@ -18,6 +18,7 @@ interface SANCardProps {
   hasOpenSpot?: boolean;
   usersCount?: number;
   external?: boolean;
+  fxCurrency?: 'usd' | 'eur' | null;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -30,6 +31,7 @@ const SANCard: React.FC<SANCardProps> = ({
   hasOpenSpot = false,
   usersCount = 0,
   external = true,
+  fxCurrency,
 }) => {
   const { t } = useTranslation();
   const navigation: any = useNavigation();
@@ -111,6 +113,7 @@ const SANCard: React.FC<SANCardProps> = ({
         open={dialogOpen}
         amount={amount / membersPerSan}
         san={id}
+        fxCurrency={fxCurrency}
         isJoin
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}

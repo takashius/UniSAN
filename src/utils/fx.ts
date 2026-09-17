@@ -5,6 +5,27 @@ export function usdToBs(usdAmount: number, rate: number): number {
   return Math.round(usd * fx * 100) / 100;
 }
 
+export type FxCurrency = 'usd' | 'eur';
+
+export function rateForSan(
+  fx:
+    | {
+        usd: number;
+        eur: number;
+        currency: FxCurrency;
+        rate: number;
+      }
+    | undefined,
+  sanFx?: FxCurrency | null
+): number | null {
+  if (!fx) return null;
+  const currency = sanFx === 'usd' || sanFx === 'eur' ? sanFx : fx.currency;
+  const rate = currency === 'eur' ? Number(fx.eur) : Number(fx.usd);
+  if (Number.isFinite(rate) && rate > 0) return rate;
+  const fallback = Number(fx.rate);
+  return Number.isFinite(fallback) && fallback > 0 ? fallback : null;
+}
+
 export function formatUsd(amount: number): string {
   const value = Number(amount);
   if (!Number.isFinite(value)) return '$0.00';

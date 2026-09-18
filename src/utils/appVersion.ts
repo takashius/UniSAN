@@ -1,17 +1,8 @@
-import { Platform } from "react-native";
-import Constants from "expo-constants";
 import * as Updates from "expo-updates";
+import appConfig from "../../config.json";
 
 export function getAppVersion(): string {
-  return Constants.expoConfig?.version || "0.0.0";
-}
-
-export function getNativeBuild(): string {
-  if (Platform.OS === "ios") {
-    return String(Constants.expoConfig?.ios?.buildNumber || "");
-  }
-  const code = Constants.expoConfig?.android?.versionCode;
-  return code != null ? String(code) : "";
+  return appConfig.version || "0.0.0";
 }
 
 export function getBundleCreatedAt(): Date | null {

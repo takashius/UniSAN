@@ -185,8 +185,7 @@
     "preferences": "Preferencias",
     "edit": "Editar perfil",
     "logout": "Cerrar Sesión",
-    "appVersion": "v{{version}}",
-    "appVersionBuild": "v{{version}} ({{build}})"
+    "appVersion": "v{{version}}"
   },
   "Navigation": {
     "home": "Inicio",

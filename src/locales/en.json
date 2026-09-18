@@ -184,8 +184,7 @@
     "preferences": "Preferences",
     "edit": "Edit profile",
     "logout": "Log Out",
-    "appVersion": "v{{version}}",
-    "appVersionBuild": "v{{version}} ({{build}})"
+    "appVersion": "v{{version}}"
   },
   "Navigation": {
     "home": "Home",

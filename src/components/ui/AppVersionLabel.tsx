@@ -5,21 +5,17 @@ import {
   formatBundleTimestamp,
   getAppVersion,
   getBundleCreatedAt,
-  getNativeBuild,
 } from "../../utils/appVersion";
 
 const AppVersionLabel = () => {
   const { t } = useTranslation();
-  const appVersion = getAppVersion();
-  const nativeBuild = getNativeBuild();
   const createdAt = getBundleCreatedAt();
-  const versionLabel = nativeBuild
-    ? t("Profile.appVersionBuild", { version: appVersion, build: nativeBuild })
-    : t("Profile.appVersion", { version: appVersion });
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.version}>{versionLabel}</Text>
+      <Text style={styles.version}>
+        {t("Profile.appVersion", { version: getAppVersion() })}
+      </Text>
       {createdAt ? (
         <Text style={styles.date}>{formatBundleTimestamp(createdAt)}</Text>
       ) : null}

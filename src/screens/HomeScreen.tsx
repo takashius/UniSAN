@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useCallback, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import SANCard from "../components/ui/SANCard";
@@ -14,11 +14,17 @@ import { fetchAccount } from "../services/auth";
 const HomeScreen = () => {
   const { t } = useTranslation();
   const { user, setUser } = useUser();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refreshAccount = useCallback(async () => {
+    const account = await fetchAccount();
+    setUser(account);
+  }, [setUser]);
 
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
-      const refreshAccount = async () => {
+      const load = async () => {
         try {
           const account = await fetchAccount();
           if (!cancelled) setUser(account);
@@ -26,12 +32,23 @@ const HomeScreen = () => {
           console.log(error);
         }
       };
-      void refreshAccount();
+      void load();
       return () => {
         cancelled = true;
       };
     }, [setUser])
   );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshAccount();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const GetWelcomeMessage = () => {
     const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
@@ -63,7 +80,17 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
 
-      <ScrollView contentContainerStyle={generalStyles.mainContent}>
+      <ScrollView
+        contentContainerStyle={generalStyles.mainContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            colors={["#ff7f50"]}
+            tintColor="#ff7f50"
+          />
+        }
+      >
         <Animated.View style={[generalStyles.card, { marginVertical: 16 }]} entering={FadeInDown.duration(400)}>
           <Text style={styles.welcomeTitle}>
             {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>

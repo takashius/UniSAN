@@ -27,6 +27,9 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   const installment = amount / membersPerSan;
   const sanRate = rateForSan(fx, fxCurrency);
   const bsAmount = sanRate ? usdToBs(installment, sanRate) : null;
+  const paymentTurn = currentTurn && currentTurn > 0 ? currentTurn : 1;
+  const paidIndex = lastPaidTurn ?? -1;
+  const alreadyPaidThisTurn = paidIndex + 1 >= paymentTurn;
 
   // Animación
   const fadeAnim = useSharedValue(0);
@@ -46,7 +49,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
           <View style={nextPaymentStyles.paymentCardHeader}>
             <View>
               <Text style={nextPaymentStyles.cardTitle}>{name}</Text>
-              <Text style={nextPaymentStyles.cardSubtitle}>{t("HomeScreen.turn", { current: currentTurn ?? 1, total: membersPerSan })}</Text>
+              <Text style={nextPaymentStyles.cardSubtitle}>{t("HomeScreen.turn", { current: paymentTurn, total: membersPerSan })}</Text>
             </View>
             <View style={nextPaymentStyles.cardAmountWrap}>
               <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
@@ -58,7 +61,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
           :
           <View style={nextPaymentStyles.paymentCardHeader}>
             <Text style={nextPaymentStyles.cardTitle}>
-              {t("HomeScreen.turn", { current: (currentTurn ?? 0) + 1, total: membersPerSan })}
+              {t("HomeScreen.turn", { current: paymentTurn, total: membersPerSan })}
             </Text>
             <View style={nextPaymentStyles.cardAmountWrap}>
               <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
@@ -76,7 +79,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
 
         <TouchableOpacity style={nextPaymentStyles.paymentButton} onPress={() => setDialogOpen(true)}>
           <Text style={nextPaymentStyles.buttonText}>
-            {(lastPaidTurn ?? 0) + 1 > (currentTurn ?? 0)
+            {alreadyPaidThisTurn
               ? t("HomeScreen.earlyPaymentButton")
               : t("HomeScreen.PaymentButton")}
           </Text>

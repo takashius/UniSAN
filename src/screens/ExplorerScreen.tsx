@@ -1,9 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,6 +23,7 @@ const Explorer: React.FC = () => {
   const { data: availableSANs, isLoading, refetch } = useAvailableSan();
   const { data: settings } = useSanSettings();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -29,14 +31,33 @@ const Explorer: React.FC = () => {
     }, [refetch])
   );
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const isMemberOf = (sanId: string) =>
     (user?.sans ?? []).some((item) => String(item.id) === String(sanId));
 
   return (
     <View style={styles.container}>
 
-      <FullScreenLoader visible={isLoading} />
-      <ScrollView contentContainerStyle={generalStyles.mainContent}>
+      <FullScreenLoader visible={isLoading && !refreshing} />
+      <ScrollView
+        contentContainerStyle={generalStyles.mainContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            colors={["#ff7f50"]}
+            tintColor="#ff7f50"
+          />
+        }
+      >
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("Explorer.availableSANs")}</Text>

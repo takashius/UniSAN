@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
 import {
   Calendar,
   Users,
@@ -24,11 +24,21 @@ const SANDetails: React.FC = () => {
   const navigation: any = useNavigation();
   const route = useRoute();
   const { id } = route.params as { id: string };
-  const { data: sanDetails, isLoading } = useSanDetail(id);
+  const { data: sanDetails, isLoading, refetch } = useSanDetail(id);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <FullScreenLoader visible={isLoading} />
+      <FullScreenLoader visible={isLoading && !refreshing} />
 
       {!sanDetails && !isLoading ? (
         <View style={styles.noResults}>
@@ -36,7 +46,17 @@ const SANDetails: React.FC = () => {
         </View>
       ) : (
         <>{sanDetails &&
-          <ScrollView contentContainerStyle={styles.content}>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => void onRefresh()}
+                colors={["#ff7f50"]}
+                tintColor="#ff7f50"
+              />
+            }
+          >
             <Animated.View entering={FadeInDown.duration(400)} style={generalStyles.cardMin}>
               <View style={styles.cardContent}>
                 <View style={styles.cardHeader}>
@@ -122,7 +142,7 @@ const SANDetails: React.FC = () => {
 
               <NextPaymentCard
                 id={sanDetails.id}
-                currentTurn={sanDetails.currentTurn}
+                currentTurn={sanDetails.nextPaymentTurn ?? sanDetails.currentTurn}
                 amount={sanDetails.amount}
                 nextPaymentDate={sanDetails.nextPaymentDate}
                 lastPaidTurn={sanDetails.lastPaidTurn!}

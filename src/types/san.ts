@@ -21,6 +21,7 @@ export interface SanDetail {
   isActive: boolean;
   isOpen: boolean;
   currentTurn: number | null;
+  nextPaymentTurn?: number | null;
   myTurn: number | null;
   members: SanMember[];
   totalMembers: number;

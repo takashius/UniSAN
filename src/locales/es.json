@@ -117,7 +117,7 @@
     "turn": "Turno {{current}} de {{total}}",
     "paymentDate": "Fecha de pago:",
     "noPaymentDate": "Aún no hay fechas de pago",
-    "earlyPaymentButton": "Realizar pago anticipado",
+    "earlyPaymentButton": "Ya pagaste este turno",
     "PaymentButton": "Realizar pago",
     "noSans": "Aún no tienes ningún SAN activo.",
     "explore": "Explora nuevos SANs"

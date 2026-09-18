@@ -77,7 +77,14 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
           <Text style={nextPaymentStyles.detailsValue}>{nextPaymentDate ?? t("HomeScreen.noPaymentDate")}</Text>
         </View>
 
-        <TouchableOpacity style={nextPaymentStyles.paymentButton} onPress={() => setDialogOpen(true)}>
+        <TouchableOpacity
+          style={[
+            nextPaymentStyles.paymentButton,
+            alreadyPaidThisTurn && { opacity: 0.6 },
+          ]}
+          disabled={alreadyPaidThisTurn}
+          onPress={() => setDialogOpen(true)}
+        >
           <Text style={nextPaymentStyles.buttonText}>
             {alreadyPaidThisTurn
               ? t("HomeScreen.earlyPaymentButton")

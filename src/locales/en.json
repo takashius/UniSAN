@@ -116,7 +116,7 @@
     "turn": "Turn {{current}} of {{total}}",
     "paymentDate": "Payment Date:",
     "noPaymentDate": "There are no payment dates yet",
-    "earlyPaymentButton": "Make Early Payment",
+    "earlyPaymentButton": "You already paid this turn",
     "PaymentButton": "Make Payment",
     "noSans": "You don't have any active SAN yet.",
     "explore": "Explore new SANs"

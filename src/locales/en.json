@@ -123,7 +123,7 @@
   },
   "Explorer": {
     "availableSANs": "Available SANs",
-    "noResults": "No SANs found with that term"
+    "noResults": "There are no SANs available to join right now."
   },
   "SANDetails": {
     "participants": "{{current}}/{{max}} participants",

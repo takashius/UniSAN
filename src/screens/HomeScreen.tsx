@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { useFocusEffect } from "@react-navigation/native";
 import SANCard from "../components/ui/SANCard";
 import UserLevel from "../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
@@ -8,10 +9,29 @@ import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 import generalStyles from "../styles/general";
+import { fetchAccount } from "../services/auth";
 
 const HomeScreen = () => {
   const { t } = useTranslation();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      const refreshAccount = async () => {
+        try {
+          const account = await fetchAccount();
+          if (!cancelled) setUser(account);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      void refreshAccount();
+      return () => {
+        cancelled = true;
+      };
+    }, [setUser])
+  );
 
   const GetWelcomeMessage = () => {
     const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
@@ -54,7 +74,7 @@ const HomeScreen = () => {
         <UserLevel />
 
         <View style={styles.section}>
-          {user?.sans.length === 0 ? (
+          {!user?.sans?.length ? (
             <SANPlaceholder />
           ) : (
             <View style={styles.sectionHeader}>
@@ -67,7 +87,12 @@ const HomeScreen = () => {
               entering={FadeInDown.delay(index * 100).duration(400)}
               style={{ marginBottom: 16 }}
             >
-              <SANCard key={san.id} {...san} />
+              <SANCard
+                key={san.id}
+                {...san}
+                hasOpenSpot={Boolean(san.isOpen ?? san.hasOpenSpot)}
+                external
+              />
             </Animated.View>
           ))}
         </View>

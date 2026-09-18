@@ -93,6 +93,9 @@ export interface SanMin {
   frequency: string;
   fxCurrency?: 'usd' | 'eur' | null;
   position: number;
+  isOpen?: boolean;
+  hasOpenSpot?: boolean;
+  usersCount?: number;
 }
 
 export interface NextPayment {

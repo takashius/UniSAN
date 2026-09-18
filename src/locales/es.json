@@ -124,7 +124,7 @@
   },
   "Explorer": {
     "availableSANs": "SANs disponibles",
-    "noResults": "No se encontraron SANs con ese término"
+    "noResults": "No hay SANs disponibles para unirte en este momento."
   },
   "SANDetails": {
     "participants": "{{current}}/{{max}} participantes",

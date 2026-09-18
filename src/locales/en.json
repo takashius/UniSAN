@@ -119,7 +119,12 @@
     "earlyPaymentButton": "Make Early Payment",
     "PaymentButton": "Make Payment",
     "noSans": "You don't have any active SAN yet.",
-    "explore": "Explore new SANs"
+    "explore": "Explore new SANs",
+    "appVersion": "v{{version}}",
+    "appVersionBuild": "v{{version}} ({{build}})",
+    "embeddedBuild": "native build",
+    "otaBuild": "OTA {{id}}",
+    "otaBuildWithDate": "OTA {{id}} · {{date}}"
   },
   "Explorer": {
     "availableSANs": "Available SANs",
@@ -224,7 +229,7 @@
   "about": {
     "title": "About SAN Organizer",
     "description": "SAN Organizer is an app designed to organize and manage collective savings systems, making participation and tracking of group savings simple and efficient.",
-    "version": "Version: 1.0.0",
+    "version": "Version: {{version}}",
     "rights": "© 2025 SAN Organizer. All rights reserved."
   },
   "methods": {

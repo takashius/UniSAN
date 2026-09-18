@@ -8,6 +8,7 @@ import {
   areNotificationsEnabled,
   setNotificationsPreference,
 } from "../../services/notifications";
+import { getAppVersion } from "../../utils/appVersion";
 
 const Preferences: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -107,7 +108,9 @@ const Preferences: React.FC = () => {
             <Text style={styles.cardSubtitle}>{t("about.description")}</Text>
             <Divider style={styles.divider} />
             <View style={styles.aboutInfo}>
-              <Text style={styles.text}>{t("about.version")}</Text>
+              <Text style={styles.text}>
+                {t("about.version", { version: getAppVersion() })}
+              </Text>
               <Text style={styles.text}>{t("about.rights")}</Text>
             </View>
           </Card.Content>

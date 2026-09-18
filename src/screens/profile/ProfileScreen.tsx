@@ -13,6 +13,7 @@ import { useSanSettings } from "../../services/settings";
 import { getLevelType, getMaxLevel } from "../../utils/levels";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import { unregisterCurrentPushToken } from "../../services/notifications";
+import AppVersionLabel from "../../components/ui/AppVersionLabel";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -126,6 +127,8 @@ const Profile = () => {
             </TouchableOpacity>
           </Animated.View>
         </View>
+
+        <AppVersionLabel />
       </ScrollView>
     </View>
   );

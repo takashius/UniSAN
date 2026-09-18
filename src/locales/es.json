@@ -120,12 +120,7 @@
     "earlyPaymentButton": "Realizar pago anticipado",
     "PaymentButton": "Realizar pago",
     "noSans": "Aún no tienes ningún SAN activo.",
-    "explore": "Explora nuevos SANs",
-    "appVersion": "v{{version}}",
-    "appVersionBuild": "v{{version}} ({{build}})",
-    "embeddedBuild": "versión nativa",
-    "otaBuild": "OTA {{id}}",
-    "otaBuildWithDate": "OTA {{id}} · {{date}}"
+    "explore": "Explora nuevos SANs"
   },
   "Explorer": {
     "availableSANs": "SANs disponibles",
@@ -189,7 +184,9 @@
     "paymentMethods": "Métodos de Pago",
     "preferences": "Preferencias",
     "edit": "Editar perfil",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "appVersion": "v{{version}}",
+    "appVersionBuild": "v{{version}} ({{build}})"
   },
   "Navigation": {
     "home": "Inicio",

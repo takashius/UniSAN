@@ -14,24 +14,19 @@ export function getNativeBuild(): string {
   return code != null ? String(code) : "";
 }
 
-export function getOtaUpdate() {
+export function getBundleCreatedAt(): Date | null {
   try {
-    if (!Updates.isEnabled || Updates.isEmbeddedLaunch || !Updates.updateId) {
-      return null;
-    }
-    return {
-      id: Updates.updateId.replace(/-/g, "").slice(0, 8),
-      createdAt: Updates.createdAt instanceof Date ? Updates.createdAt : null,
-    };
+    return Updates.createdAt instanceof Date ? Updates.createdAt : null;
   } catch {
     return null;
   }
 }
 
-export function formatOtaTimestamp(date: Date): string {
+export function formatBundleTimestamp(date: Date): string {
   return date.toLocaleString("es-VE", {
     day: "2-digit",
     month: "2-digit",
+    year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,

@@ -10,12 +10,6 @@ import SANPlaceholder from "../components/SANPlaceholder";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 import generalStyles from "../styles/general";
 import { fetchAccount } from "../services/auth";
-import {
-  formatOtaTimestamp,
-  getAppVersion,
-  getNativeBuild,
-  getOtaUpdate,
-} from "../utils/appVersion";
 
 const HomeScreen = () => {
   const { t } = useTranslation();
@@ -55,21 +49,6 @@ const HomeScreen = () => {
       setRefreshing(false);
     }
   };
-
-  const appVersion = getAppVersion();
-  const nativeBuild = getNativeBuild();
-  const ota = getOtaUpdate();
-  const versionLabel = nativeBuild
-    ? t("HomeScreen.appVersionBuild", { version: appVersion, build: nativeBuild })
-    : t("HomeScreen.appVersion", { version: appVersion });
-  const otaLabel = ota
-    ? ota.createdAt
-      ? t("HomeScreen.otaBuildWithDate", {
-          id: ota.id,
-          date: formatOtaTimestamp(ota.createdAt),
-        })
-      : t("HomeScreen.otaBuild", { id: ota.id })
-    : t("HomeScreen.embeddedBuild");
 
   const GetWelcomeMessage = () => {
     const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
@@ -164,9 +143,6 @@ const HomeScreen = () => {
             ))}
           </View>
         }
-
-        <Text style={styles.versionText}>{versionLabel}</Text>
-        <Text style={styles.versionSubText}>{otaLabel}</Text>
       </ScrollView>
     </View>
   );
@@ -213,19 +189,6 @@ const styles = StyleSheet.create({
     color: "#ff7f50",
     fontSize: 14,
     marginRight: 4,
-  },
-  versionText: {
-    marginTop: 8,
-    textAlign: "center",
-    fontSize: 12,
-    color: "#9ca3af",
-  },
-  versionSubText: {
-    marginTop: 2,
-    marginBottom: 8,
-    textAlign: "center",
-    fontSize: 11,
-    color: "#9ca3af",
   },
 
 });

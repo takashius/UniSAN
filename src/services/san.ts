@@ -10,7 +10,10 @@ import { San, JoinSanData } from '../types';
 import { SanDetail } from '../types/san';
 import SecureStoreManager from '../components/AsyncStorageManager';
 
-async function postPaymentRequest(url: string, data: JoinSanData) {
+/** Unión paga envía comprobante; unión free solo necesita el id del SAN. */
+export type JoinSanRequest = Pick<JoinSanData, 'san'> & Partial<Omit<JoinSanData, 'san'>>;
+
+async function postPaymentRequest(url: string, data: JoinSanRequest) {
   const { proofImage, ...payload } = data;
   if (!proofImage?.uri) {
     await ERDEAxios.post(url, payload);
@@ -50,11 +53,11 @@ export const useAvailableSan = (): UseQueryResult<San[], Error> => {
   });
 };
 
-export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
+export const useJoinSan = (): UseMutationResult<void, Error, JoinSanRequest> => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, JoinSanData>({
-    mutationFn: async (data: JoinSanData) => {
+  return useMutation<void, Error, JoinSanRequest>({
+    mutationFn: async (data: JoinSanRequest) => {
       await postPaymentRequest('/san/join', data);
     },
     onSuccess: () => {
@@ -65,11 +68,11 @@ export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
   });
 };
 
-export const usePaymentSan = (): UseMutationResult<void, Error, JoinSanData> => {
+export const usePaymentSan = (): UseMutationResult<void, Error, JoinSanRequest> => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, JoinSanData>({
-    mutationFn: async (data: JoinSanData) => {
+  return useMutation<void, Error, JoinSanRequest>({
+    mutationFn: async (data: JoinSanRequest) => {
       await postPaymentRequest('/transaction', data);
     },
     onSuccess: () => {

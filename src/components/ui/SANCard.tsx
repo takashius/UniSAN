@@ -9,7 +9,7 @@ import Toast from "react-native-toast-message";
 import PaymentDialog from "./PaymentDialog";
 import FullScreenLoader from "./FullScreenLoader";
 import { useSanSettings } from "../../services/settings";
-import { useJoinSan } from "../../services/san";
+import { useJoinSan, type JoinSanRequest } from "../../services/san";
 import { fetchAccount } from "../../services/auth";
 import { useUser } from "../../context/UserContext";
 import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
@@ -57,8 +57,9 @@ const SANCard: React.FC<SANCardProps> = ({
       {
         text: t("common.confirm"),
         onPress: () => {
+          const payload: JoinSanRequest = { san: id };
           joinSan.mutate(
-            { san: id },
+            payload,
             {
               onSuccess: async () => {
                 try {

@@ -123,8 +123,8 @@ export interface JoinSanData {
   bank?: string;
   amount?: number;
   amountBs?: number;
-  date: string;
-  operationReference: string;
+  date?: string;
+  operationReference?: string;
   proofImage?: {
     uri: string;
     name?: string;

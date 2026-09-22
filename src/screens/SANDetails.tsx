@@ -100,7 +100,11 @@ const SANDetails: React.FC = () => {
             {!sanDetails.isOpen &&
               <View style={[generalStyles.cardMin, { padding: 16 }]}>
                 <Text style={styles.descriptionTitle}>{t("SANDetails.descriptionTitle")}</Text>
-                <Text style={styles.descriptionText}>{t("SANDetails.awaitMessage")}</Text>
+                <Text style={styles.descriptionText}>
+                  {sanDetails.joinMode === "free"
+                    ? t("SANDetails.freeJoinHint")
+                    : t("SANDetails.awaitMessage")}
+                </Text>
               </View>
             }
 

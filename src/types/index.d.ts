@@ -75,6 +75,7 @@ export interface San {
   amount: number;
   frequency: string;
   fxCurrency?: 'usd' | 'eur' | null;
+  joinMode?: 'paid' | 'free' | null;
   paymentDates: Date[];
   isActive: boolean;
   isOpen?: boolean;
@@ -119,8 +120,8 @@ export interface Account {
 
 export interface JoinSanData {
   san: string;
-  bank: string;
-  amount: number;
+  bank?: string;
+  amount?: number;
   amountBs?: number;
   date: string;
   operationReference: string;

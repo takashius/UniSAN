@@ -55,7 +55,12 @@
     "openSpot": "Disponible para unirse",
     "details": "Ver detalles",
     "join": "Unirse",
-    "waitingForSlots": "Faltan cupos por llenar."
+    "waitingForSlots": "Faltan cupos por llenar.",
+    "freeJoin": "Unirse sin pago",
+    "freeJoinBadge": "Sin pago inicial",
+    "freeJoinConfirmTitle": "Unirse al SAN",
+    "freeJoinConfirm": "Este SAN no pide un pago inicial. ¿Quieres unirte ahora?",
+    "freeJoinSuccess": "Te uniste al SAN. Las cuotas empiezan cuando se complete el grupo."
   },
   "UserLevel": {
     "currentLevel": "Nivel actual",
@@ -150,7 +155,8 @@
     "awaitingApproval": "Por validar",
     "rejected": "Pago rechazado",
     "paid": "Pagado",
-    "awaitMessage": "Este SAN aún está en proceso de formación. Algunos números de turno pueden estar asignados de antemano; el resto se sorteará cuando se completen los cupos. En ese momento también se fijarán las fechas de pago. ¡Solo falta completar el grupo!"
+    "awaitMessage": "Este SAN aún está en proceso de formación. Algunos números de turno pueden estar asignados de antemano; el resto se sorteará cuando se completen los cupos. En ese momento también se fijarán las fechas de pago. ¡Solo falta completar el grupo!",
+    "freeJoinHint": "Puedes unirte sin un pago inicial. Las cuotas se cobran cuando el grupo se complete, según el calendario del SAN."
   },
   "ActivityScreen": {
     "recentActivity": "Actividad reciente",

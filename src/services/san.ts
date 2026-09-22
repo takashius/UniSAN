@@ -60,6 +60,7 @@ export const useJoinSan = (): UseMutationResult<void, Error, JoinSanData> => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['availableSan'] });
       queryClient.invalidateQueries({ queryKey: ['sanDetail'] });
+      queryClient.invalidateQueries({ queryKey: ['myAccount'] });
     },
   });
 };

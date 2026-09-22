@@ -54,7 +54,12 @@
     "openSpot": "Available to join",
     "details": "View details",
     "join": "Join",
-    "waitingForSlots": "There are still places to fill."
+    "waitingForSlots": "There are still places to fill.",
+    "freeJoin": "Join without payment",
+    "freeJoinBadge": "No initial payment",
+    "freeJoinConfirmTitle": "Join SAN",
+    "freeJoinConfirm": "This SAN does not require an initial payment. Do you want to join now?",
+    "freeJoinSuccess": "You joined the SAN. Installments start when the group fills."
   },
   "UserLevel": {
     "currentLevel": "Current Level",
@@ -149,7 +154,8 @@
     "awaitingApproval": "Awaiting approval",
     "rejected": "Payment rejected",
     "paid": "Paid",
-    "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the group fills. Payment dates are set at that time too."
+    "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the group fills. Payment dates are set at that time too.",
+    "freeJoinHint": "You can join without an initial payment. Installments start when the group fills, on this SAN's calendar."
   },
   "ActivityScreen": {
     "recentActivity": "Recent Activity",

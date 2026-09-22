@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Calendar, Users, ChevronRight, PlusCircle } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 import PaymentDialog from "./PaymentDialog";
+import FullScreenLoader from "./FullScreenLoader";
 import { useSanSettings } from "../../services/settings";
+import { useJoinSan } from "../../services/san";
+import { fetchAccount } from "../../services/auth";
+import { useUser } from "../../context/UserContext";
 import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
 
 interface SANCardProps {
@@ -19,6 +25,7 @@ interface SANCardProps {
   usersCount?: number;
   external?: boolean;
   fxCurrency?: 'usd' | 'eur' | null;
+  joinMode?: 'paid' | 'free' | null;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -32,12 +39,56 @@ const SANCard: React.FC<SANCardProps> = ({
   usersCount = 0,
   external = true,
   fxCurrency,
+  joinMode,
 }) => {
   const { t } = useTranslation();
   const navigation: any = useNavigation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+  const isFreeJoin = joinMode === "free";
+  const joinSan = useJoinSan();
+  const queryClient = useQueryClient();
+  const { setUser } = useUser();
+
+  const joinWithoutPayment = () => {
+    Alert.alert(t("SANCard.freeJoinConfirmTitle"), t("SANCard.freeJoinConfirm"), [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("common.confirm"),
+        onPress: () => {
+          joinSan.mutate(
+            { san: id },
+            {
+              onSuccess: async () => {
+                try {
+                  await queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+                  await queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+                  const updatedUser = await queryClient.fetchQuery({
+                    queryKey: ["myAccount"],
+                    queryFn: fetchAccount,
+                  });
+                  setUser(updatedUser);
+                } catch (error) {
+                  console.log(error);
+                }
+                Toast.show({
+                  type: "success",
+                  text1: t("SANCard.freeJoinSuccess"),
+                });
+              },
+              onError: () => {
+                Toast.show({
+                  type: "error",
+                  text1: t("common.error"),
+                });
+              },
+            }
+          );
+        },
+      },
+    ]);
+  };
 
   const openSanDetails = () => {
     const routeNames: string[] = navigation.getState()?.routeNames ?? [];
@@ -59,6 +110,9 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.headerText}>
             <Text style={styles.name}>{sanName}</Text>
             <Text style={styles.period}>{frequency}</Text>
+            {isFreeJoin ? (
+              <Text style={styles.freeJoinBadge}>{t("SANCard.freeJoinBadge")}</Text>
+            ) : null}
           </View>
           <View style={styles.headerAmount}>
             <Text style={styles.amount}>${amount}</Text>
@@ -100,8 +154,13 @@ const SANCard: React.FC<SANCardProps> = ({
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>
             :
-            <TouchableOpacity style={styles.detailsLink} onPress={() => setDialogOpen(true)}>
-              <Text style={styles.linkText}>{t("SANCard.join")}</Text>
+            <TouchableOpacity
+              style={styles.detailsLink}
+              onPress={isFreeJoin ? joinWithoutPayment : () => setDialogOpen(true)}
+            >
+              <Text style={styles.linkText}>
+                {isFreeJoin ? t("SANCard.freeJoin") : t("SANCard.join")}
+              </Text>
               <PlusCircle size={16} color="#ff7f50" />
             </TouchableOpacity>
           }
@@ -109,6 +168,7 @@ const SANCard: React.FC<SANCardProps> = ({
         </View>
       </View>
       <View style={styles.bottomBorder} />
+      <FullScreenLoader visible={joinSan.isPending} />
       <PaymentDialog
         open={dialogOpen}
         amount={amount / membersPerSan}
@@ -155,6 +215,12 @@ const styles = StyleSheet.create({
   period: {
     fontSize: 14,
     color: "#888",
+  },
+  freeJoinBadge: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#059669",
   },
   headerAmount: {
     alignItems: "flex-end",

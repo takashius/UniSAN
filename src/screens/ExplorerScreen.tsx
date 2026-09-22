@@ -77,6 +77,7 @@ const Explorer: React.FC = () => {
                     startDate={san.createdAt}
                     usersCount={san.members?.length ?? 0}
                     fxCurrency={san.fxCurrency}
+                    joinMode={san.joinMode}
                     hasOpenSpot={
                       isMemberOf(san._id)
                         ? Boolean(san.isOpen)

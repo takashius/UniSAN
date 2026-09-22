@@ -141,6 +141,7 @@ const SANDetails: React.FC = () => {
             </View>
 
 
+            {sanDetails.isOpen ? (
             <View style={generalStyles.section}>
               <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
 
@@ -153,6 +154,7 @@ const SANDetails: React.FC = () => {
                 fxCurrency={sanDetails.fxCurrency}
               />
             </View>
+            ) : null}
 
             <View style={generalStyles.section}>
               <Text style={styles.sectionTitle}>{t("SANDetails.membersTitle")}</Text>

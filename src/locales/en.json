@@ -57,8 +57,8 @@
     "waitingForSlots": "There are still places to fill.",
     "freeJoin": "Join without payment",
     "freeJoinBadge": "No initial payment",
-    "freeJoinConfirmTitle": "Join SAN",
-    "freeJoinConfirm": "This SAN does not require an initial payment. Do you want to join now?",
+    "freeJoinConfirmTitle": "Join this SAN",
+    "freeJoinConfirm": "Do you agree to join this SAN? There is no initial payment. Installments start when the group fills.",
     "freeJoinSuccess": "You joined the SAN. Installments start when the group fills."
   },
   "UserLevel": {
@@ -155,7 +155,7 @@
     "rejected": "Payment rejected",
     "paid": "Paid",
     "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the group fills. Payment dates are set at that time too.",
-    "freeJoinHint": "You can join without an initial payment. Installments start when the group fills, on this SAN's calendar."
+    "freeJoinHint": "You can join without an initial payment. Turns can be assigned from the dashboard; the rest are drawn when the group fills. Payment dates are set then. The first installment is due on that first date, and you can pay it early if you want."
   },
   "ActivityScreen": {
     "recentActivity": "Recent Activity",

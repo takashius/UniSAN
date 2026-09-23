@@ -133,11 +133,11 @@
   },
   "ProfileCompletion": {
     "title": "Complete your profile",
-    "subtitle": "We need your middle name, last name, ID number and photos before you can join a SAN.",
+    "subtitle": "We need your middle name, last name, ID number, phone and photos before you can join a SAN.",
     "percent": "{{percent}}% complete",
     "completeNow": "Complete now",
     "joinBlockedTitle": "Incomplete profile",
-    "joinBlockedMessage": "To join a SAN you must complete your profile: middle name, last name, ID number, profile photo and ID photo.",
+    "joinBlockedMessage": "To join a SAN you must complete your profile: middle name, last name, ID number, phone, profile photo and ID photo.",
     "goToProfile": "Go to edit profile"
   },
   "ProfileEdit": {
@@ -147,6 +147,9 @@
     "middleNameRequired": "Middle name is required",
     "lastName": "Last name",
     "lastNameRequired": "Last name is required",
+    "phone": "Phone",
+    "phoneRequired": "Phone number is required",
+    "phoneInvalid": "Enter a valid phone number",
     "minTwo": "Must be at least 2 characters",
     "saveSuccessTitle": "Success",
     "saveSuccessMessage": "Profile updated successfully",

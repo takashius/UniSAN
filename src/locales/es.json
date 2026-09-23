@@ -133,11 +133,11 @@
   },
   "ProfileCompletion": {
     "title": "Completa tu perfil",
-    "subtitle": "Necesitamos tu segundo nombre, apellido, cédula y las fotos para que puedas unirte a un SAN.",
+    "subtitle": "Necesitamos tu segundo nombre, apellido, cédula, teléfono y las fotos para que puedas unirte a un SAN.",
     "percent": "{{percent}}% completado",
     "completeNow": "Completar ahora",
     "joinBlockedTitle": "Perfil incompleto",
-    "joinBlockedMessage": "Para unirte a un SAN debes completar tu perfil: segundo nombre, apellido, número de cédula, foto de perfil y foto de la cédula.",
+    "joinBlockedMessage": "Para unirte a un SAN debes completar tu perfil: segundo nombre, apellido, número de cédula, teléfono, foto de perfil y foto de la cédula.",
     "goToProfile": "Ir a editar perfil"
   },
   "ProfileEdit": {
@@ -147,6 +147,9 @@
     "middleNameRequired": "El segundo nombre es obligatorio",
     "lastName": "Apellido",
     "lastNameRequired": "El apellido es obligatorio",
+    "phone": "Teléfono",
+    "phoneRequired": "El teléfono es obligatorio",
+    "phoneInvalid": "Ingresa un teléfono válido",
     "minTwo": "Debe tener al menos 2 caracteres",
     "saveSuccessTitle": "Éxito",
     "saveSuccessMessage": "Perfil actualizado correctamente",

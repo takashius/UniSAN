@@ -51,7 +51,7 @@ export interface Recovery {
 export interface ProfileCompletion {
   percent: number;
   complete: boolean;
-  missing: Array<'lastName' | 'middleName' | 'documentId' | 'photo' | 'imageDocumentId'>;
+  missing: Array<'lastName' | 'middleName' | 'documentId' | 'phone' | 'photo' | 'imageDocumentId'>;
 }
 
 export interface UserAccount {
@@ -60,6 +60,7 @@ export interface UserAccount {
   photo?: string;
   lastName: string;
   middleName?: string;
+  phone?: string;
   email: string;
   points: number;
   level: number;

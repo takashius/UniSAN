@@ -257,18 +257,26 @@ const EditProfile: React.FC = () => {
               )}
             />
 
-            <Text style={styles.label}>Télefono</Text>
+            <Text style={styles.label}>{t("ProfileEdit.phone")}</Text>
             <Controller
               name="phone"
               control={control}
-              render={({ field }) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  placeholder="4141234567"
-                  inputMode="tel"
-                />
+              rules={{
+                required: t("ProfileEdit.phoneRequired"),
+                validate: (value) =>
+                  String(value || "").replace(/\D/g, "").length >= 10 || t("ProfileEdit.phoneInvalid"),
+              }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextInput
+                    style={fieldState.error ? styles.inputError : styles.input}
+                    onChangeText={field.onChange}
+                    value={field.value}
+                    placeholder="4141234567"
+                    inputMode="tel"
+                  />
+                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                </>
               )}
             />
 

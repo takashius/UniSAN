@@ -230,8 +230,34 @@
     "preferences": "Preferences",
     "edit": "Edit profile",
     "terms": "Terms and conditions",
+    "pendingPayments": "Pending payments",
     "logout": "Log Out",
     "appVersion": "v{{version}}"
+  },
+  "PendingPayments": {
+    "emptyTitle": "No pending payments",
+    "emptyMessage": "When a member registers a payment, it will appear here so you can approve or reject it.",
+    "payer": "Member",
+    "san": "SAN",
+    "bank": "Bank",
+    "amount": "Amount",
+    "baseAmount": "Installment",
+    "lateFee": "Late fee",
+    "reference": "Reference",
+    "turn": "Turn",
+    "timing": "Timing",
+    "date": "Date",
+    "receipt": "Receipt",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectTitle": "Reject payment",
+    "reasonPlaceholder": "Rejection reason",
+    "reasonRequired": "Enter a rejection reason",
+    "approveSuccess": "Payment approved",
+    "rejectSuccess": "Payment rejected",
+    "actionError": "Could not complete the action",
+    "alreadyProcessed": "This payment was already processed.",
+    "loadError": "Could not load the payment."
   },
   "Navigation": {
     "home": "Home",
@@ -243,7 +269,9 @@
     "editProfile": "Edit Profile",
     "paymentMethods": "Payment Methods",
     "recoverPassword": "Recover Password",
-    "terms": "Terms and conditions"
+    "terms": "Terms and conditions",
+    "pendingPayments": "Pending payments",
+    "pendingPaymentDetail": "Payment detail"
   },
   "preferences": {
     "title": "Preferences",

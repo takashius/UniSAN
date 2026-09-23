@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { ChevronRight, LogOut, Settings, CreditCard, User, FileText } from "lucide-react-native";
+import { ChevronRight, LogOut, Settings, CreditCard, User, FileText, ClipboardCheck } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,7 @@ import { getLevelType, getMaxLevel } from "../../utils/levels";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import { unregisterCurrentPushToken } from "../../services/notifications";
 import AppVersionLabel from "../../components/ui/AppVersionLabel";
+import { isAdminRole } from "../../utils/roles";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const Profile = () => {
   const logoutMutate = useLogout();
   const navigation: any = useNavigation();
   const { data: settings } = useSanSettings();
+  const isAdmin = isAdminRole(user?.user.role);
   const level = user?.user.level ? user.user.level : 1;
   const levelType = getLevelType(
     level,
@@ -131,6 +133,18 @@ const Profile = () => {
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
+            {isAdmin ? (
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={() => navigation.navigate("PendingPayments")}
+              >
+                <View style={styles.settingsItemRow}>
+                  <ClipboardCheck size={20} color="#ff7f50" />
+                  <Text style={styles.settingsItemText}>{t("Profile.pendingPayments")}</Text>
+                </View>
+                <ChevronRight size={20} color="#888" />
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity style={[styles.settingsItem, styles.logoutItem]} onPress={handleLogout}>
               <LogOut size={20} color="#ff4d4d" />
               <Text style={styles.logoutText}>{t("Profile.logout")}</Text>

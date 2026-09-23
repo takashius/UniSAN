@@ -19,12 +19,21 @@ import VerificationStep from "../screens/auth/VerificationStep";
 import PreferencesScreen from "../screens/profile/PreferencesScreen";
 import EditProfile from "../screens/profile/EditProfileScreen";
 import PaymentMethods from "../screens/profile/PaymentMethodsScreen";
+import PendingPaymentsScreen from "../screens/admin/PendingPaymentsScreen";
+import PendingPaymentDetailScreen from "../screens/admin/PendingPaymentDetailScreen";
 import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
 import { ChatStackParamList, ProfileStackParamList, SANStackParamList, AuthStackParamList, TabParamList } from "../types/navigation";
 import { CHAT_ENABLED } from "../config/features";
-import { registerAndSyncPushToken } from "../services/notifications";
+import { registerAndSyncPushToken, subscribeAdminPaymentTaps } from "../services/notifications";
+import {
+  consumeQueuedPendingPayment,
+  navigationRef,
+  openPendingPayment,
+  queuePendingPayment,
+} from "./navigationRef";
+import { isAdminRole } from "../utils/roles";
 
 const SanStack = createNativeStackNavigator<SANStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -40,6 +49,25 @@ const AppNavigator: React.FC = () => {
   useEffect(() => {
     if (!user) return;
     void registerAndSyncPushToken();
+  }, [user]);
+
+  useEffect(() => {
+    return subscribeAdminPaymentTaps((id) => {
+      if (user && isAdminRole(user.user.role) && !user.needsTermsAcceptance) {
+        openPendingPayment(id);
+        return;
+      }
+      queuePendingPayment(id);
+    });
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || !isAdminRole(user.user.role) || user.needsTermsAcceptance) return;
+    const queued = consumeQueuedPendingPayment();
+    if (queued) {
+      const timer = setTimeout(() => openPendingPayment(queued), 300);
+      return () => clearTimeout(timer);
+    }
   }, [user]);
 
   const SANStack = () => (
@@ -96,6 +124,24 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
+      <ProfileStackNav.Screen
+        name="PendingPayments"
+        component={PendingPaymentsScreen}
+        options={{
+          headerTitle: t("Navigation.pendingPayments"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
+      <ProfileStackNav.Screen
+        name="PendingPaymentDetail"
+        component={PendingPaymentDetailScreen}
+        options={{
+          headerTitle: t("Navigation.pendingPaymentDetail"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
     </ProfileStackNav.Navigator>
   );
 
@@ -108,7 +154,7 @@ const AppNavigator: React.FC = () => {
 
   return (
     <PaperProvider theme={CustomTheme}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         {user ? (
           user.needsTermsAcceptance ? (
             <TermsScreen mode="accept" />

@@ -230,8 +230,34 @@
     "preferences": "Preferencias",
     "edit": "Editar perfil",
     "terms": "Términos y condiciones",
+    "pendingPayments": "Pagos pendientes",
     "logout": "Cerrar Sesión",
     "appVersion": "v{{version}}"
+  },
+  "PendingPayments": {
+    "emptyTitle": "No hay pagos pendientes",
+    "emptyMessage": "Cuando un participante registre un pago, aparecerá aquí para que lo apruebes o rechaces.",
+    "payer": "Participante",
+    "san": "SAN",
+    "bank": "Banco",
+    "amount": "Monto",
+    "baseAmount": "Cuota",
+    "lateFee": "Recargo",
+    "reference": "Referencia",
+    "turn": "Turno",
+    "timing": "Oportunidad",
+    "date": "Fecha",
+    "receipt": "Comprobante",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "rejectTitle": "Rechazar pago",
+    "reasonPlaceholder": "Motivo del rechazo",
+    "reasonRequired": "Indica el motivo del rechazo",
+    "approveSuccess": "Pago aprobado",
+    "rejectSuccess": "Pago rechazado",
+    "actionError": "No se pudo completar la acción",
+    "alreadyProcessed": "Este pago ya fue procesado.",
+    "loadError": "No se pudo cargar el pago."
   },
   "Navigation": {
     "home": "Inicio",
@@ -243,7 +269,9 @@
     "editProfile": "Editar Perfil",
     "paymentMethods": "Métodos de Pago",
     "recoverPassword": "Recuperar contraseña",
-    "terms": "Términos y condiciones"
+    "terms": "Términos y condiciones",
+    "pendingPayments": "Pagos pendientes",
+    "pendingPaymentDetail": "Detalle del pago"
   },
   "preferences": {
     "title": "Preferencias",

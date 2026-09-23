@@ -21,6 +21,34 @@ async function loadNotifications() {
   return import("expo-notifications");
 }
 
+let consumedLastResponse = false;
+
+function paymentIdFromNotificationResponse(response: any): string | null {
+  const data = response?.notification?.request?.content?.data;
+  if (!data || String(data.eventId) !== "payment.receivedAdmin") return null;
+  const id = data.transactionId ?? data.transaction_id;
+  return id ? String(id) : null;
+}
+
+export function subscribeAdminPaymentTaps(onOpen: (transactionId: string) => void) {
+  let unsubscribe = () => {};
+  void loadNotifications().then(async (Notifications) => {
+    if (!Notifications) return;
+    if (!consumedLastResponse) {
+      consumedLastResponse = true;
+      const last = await Notifications.getLastNotificationResponseAsync();
+      const fromLast = paymentIdFromNotificationResponse(last);
+      if (fromLast) onOpen(fromLast);
+    }
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const id = paymentIdFromNotificationResponse(response);
+      if (id) onOpen(id);
+    });
+    unsubscribe = () => subscription.remove();
+  });
+  return () => unsubscribe();
+}
+
 export function configureNotificationHandler() {
   void loadNotifications().then((Notifications) => {
     Notifications?.setNotificationHandler({

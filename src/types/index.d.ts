@@ -62,6 +62,7 @@ export interface UserAccount {
   middleName?: string;
   phone?: string;
   email: string;
+  role?: string | string[];
   points: number;
   level: number;
   pointsNeeded: number | null;

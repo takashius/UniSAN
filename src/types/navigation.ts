@@ -21,6 +21,8 @@ export type ProfileStackParamList = {
   EditProfile: undefined;
   PaymentMethods: undefined;
   Terms: undefined;
+  PendingPayments: undefined;
+  PendingPaymentDetail: { id: string };
 };
 
 export type TabParamList = {
@@ -28,5 +30,10 @@ export type TabParamList = {
   Chat: undefined;
   Explorer: undefined;
   History: undefined;
-  Profile: undefined;
+  Profile:
+    | {
+        screen?: keyof ProfileStackParamList;
+        params?: ProfileStackParamList[keyof ProfileStackParamList];
+      }
+    | undefined;
 };

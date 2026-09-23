@@ -19,6 +19,7 @@ import {
 import SecureStoreManager from "../components/AsyncStorageManager";
 
 export const ACCOUNT_QUERY_KEY = ["myAccount"] as const;
+export const USER_PROFILE_QUERY_KEY = ["userProfile"] as const;
 
 export async function fetchAccount(): Promise<Account> {
   const response = await ERDEAxios.get<Account>("/user/account");
@@ -49,13 +50,14 @@ export const useAccount = (): UseQueryResult<Account, Error> => {
 
 export const useUserProfile = () => {
   return useQuery<UserProfileResponse, Error>({
-    queryKey: ["userProfile"],
+    queryKey: USER_PROFILE_QUERY_KEY,
     queryFn: async () => {
       const response =
         await ERDEAxios.get<UserProfileResponse>(`/user/profile`);
       return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
+    refetchOnMount: "always",
     placeholderData: (previousData) => previousData,
   });
 };
@@ -119,8 +121,8 @@ export const useUploadImage = () => {
     },
     onSuccess: async () => {
       await SecureStoreManager.removeItem("contentType");
-      queryClient.invalidateQueries({ queryKey: ["myAccount"] });
-      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: USER_PROFILE_QUERY_KEY });
     },
     onError: async (error) => {
       console.warn("error useUploadImage", error);

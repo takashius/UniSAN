@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Pressable,
+  AppState,
 } from "react-native";
 import { Card, Portal, IconButton, Button } from "react-native-paper";
 import {
@@ -21,6 +22,9 @@ import {
 } from "lucide-react-native";
 import generalStyles from "../../styles/general";
 import {
+  ACCOUNT_QUERY_KEY,
+  USER_PROFILE_QUERY_KEY,
+  fetchAccount,
   useUserProfile,
   useUploadImage,
   useUpdateUser,
@@ -35,7 +39,7 @@ import {
 } from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { ACCOUNT_QUERY_KEY, fetchAccount } from "../../services/auth";
+import { useFocusEffect } from "@react-navigation/native";
 import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import ImageSourceSheet from "../../components/ui/ImageSourceSheet";
@@ -56,7 +60,7 @@ const EditProfile: React.FC = () => {
   const { setUser } = useUser();
   const uploadMutation = useUploadImage();
   const updateMutation = useUpdateUser();
-  const { data, isFetching } = useUserProfile();
+  const { data, isFetching, refetch } = useUserProfile();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [loaderImage, setLoaderImage] = useState<string | null>(null);
@@ -80,6 +84,21 @@ const EditProfile: React.FC = () => {
       confirmPassword: "",
     },
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      void refetch();
+    }, [refetch]),
+  );
+
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") {
+        void refetch();
+      }
+    });
+    return () => sub.remove();
+  }, [refetch]);
 
   useEffect(() => {
     if (!data) return;
@@ -113,7 +132,9 @@ const EditProfile: React.FC = () => {
       {
         onSuccess: async () => {
           await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-          await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+          await queryClient.invalidateQueries({
+            queryKey: USER_PROFILE_QUERY_KEY,
+          });
           try {
             setUser(await fetchAccount());
           } catch (error) {
@@ -194,7 +215,9 @@ const EditProfile: React.FC = () => {
             setRejectionReason("");
           }
           await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-          await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+          await queryClient.invalidateQueries({
+            queryKey: USER_PROFILE_QUERY_KEY,
+          });
           try {
             setUser(await fetchAccount());
           } catch (error) {

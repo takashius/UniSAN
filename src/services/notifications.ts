@@ -76,6 +76,42 @@ export function subscribeAdminPaymentTaps(
   return () => unsubscribe();
 }
 
+const DOCUMENT_DECISION_EVENTS = new Set([
+  "document.approved",
+  "document.rejected",
+]);
+
+function eventIdFromData(data?: { eventId?: string } | null): string | null {
+  if (!data?.eventId) return null;
+  return String(data.eventId);
+}
+
+export function subscribeDocumentDecisionNotifications(onDecision: () => void) {
+  let unsubscribe = () => {};
+  void loadNotifications().then((Notifications) => {
+    if (!Notifications) return;
+    const received = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const eventId = eventIdFromData(notification.request.content.data);
+        if (eventId && DOCUMENT_DECISION_EVENTS.has(eventId)) onDecision();
+      },
+    );
+    const tapped = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const eventId = eventIdFromData(
+          response.notification.request.content.data,
+        );
+        if (eventId && DOCUMENT_DECISION_EVENTS.has(eventId)) onDecision();
+      },
+    );
+    unsubscribe = () => {
+      received.remove();
+      tapped.remove();
+    };
+  });
+  return () => unsubscribe();
+}
+
 export function subscribeAdminDocumentTaps(onOpen: (userId: string) => void) {
   let unsubscribe = () => {};
   void loadNotifications().then(async (Notifications) => {

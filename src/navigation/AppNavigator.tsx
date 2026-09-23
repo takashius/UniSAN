@@ -44,7 +44,14 @@ import {
   registerAndSyncPushToken,
   subscribeAdminDocumentTaps,
   subscribeAdminPaymentTaps,
+  subscribeDocumentDecisionNotifications,
 } from "../services/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ACCOUNT_QUERY_KEY,
+  USER_PROFILE_QUERY_KEY,
+  fetchAccount,
+} from "../services/auth";
 import {
   consumeQueuedPendingDocument,
   consumeQueuedPendingPayment,
@@ -64,13 +71,28 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppNavigator: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!user) return;
     void registerAndSyncPushToken();
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.user.id) return;
+    const unsub = subscribeDocumentDecisionNotifications(() => {
+      void queryClient.invalidateQueries({ queryKey: USER_PROFILE_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      void fetchAccount()
+        .then(setUser)
+        .catch((error) => {
+          console.warn(error);
+        });
+    });
+    return unsub;
+  }, [user?.user.id, queryClient, setUser]);
 
   useEffect(() => {
     const unsubPayments = subscribeAdminPaymentTaps((id) => {

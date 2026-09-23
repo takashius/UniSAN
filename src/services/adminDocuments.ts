@@ -2,12 +2,25 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  type QueryClient,
   type UseQueryResult,
 } from "@tanstack/react-query";
 import ERDEAxios from "./ERDEAxios";
 import type { AdminDocument } from "../types/adminDocuments";
+import { ACCOUNT_QUERY_KEY, USER_PROFILE_QUERY_KEY } from "./auth";
 
 export const PENDING_DOCUMENTS_QUERY_KEY = ["adminPendingDocuments"] as const;
+
+function invalidateDocumentReview(queryClient: QueryClient, userId?: string) {
+  void queryClient.invalidateQueries({
+    queryKey: PENDING_DOCUMENTS_QUERY_KEY,
+  });
+  if (userId) {
+    void queryClient.invalidateQueries({ queryKey: ["adminDocument", userId] });
+  }
+  void queryClient.invalidateQueries({ queryKey: USER_PROFILE_QUERY_KEY });
+  void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+}
 
 export const usePendingDocuments = (): UseQueryResult<
   AdminDocument[],
@@ -49,12 +62,7 @@ export const useApproveAdminDocument = () => {
       return response.data;
     },
     onSuccess: (_data, userId) => {
-      void queryClient.invalidateQueries({
-        queryKey: PENDING_DOCUMENTS_QUERY_KEY,
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["adminDocument", userId],
-      });
+      invalidateDocumentReview(queryClient, userId);
     },
   });
 };
@@ -76,12 +84,7 @@ export const useRejectAdminDocument = () => {
       return response.data;
     },
     onSuccess: (_data, vars) => {
-      void queryClient.invalidateQueries({
-        queryKey: PENDING_DOCUMENTS_QUERY_KEY,
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["adminDocument", vars.userId],
-      });
+      invalidateDocumentReview(queryClient, vars.userId);
     },
   });
 };

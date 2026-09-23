@@ -1,5 +1,4 @@
 import {
-  Register,
   useMutation,
   useQuery,
   UseQueryResult,
@@ -13,6 +12,7 @@ import {
   Login,
   Image,
   Recovery,
+  Register,
   UserProfileResponse,
   ProfileUpdateData,
 } from '../types';
@@ -69,6 +69,19 @@ export const useRegister = (): UseMutationResult<any, unknown, Register> => {
     mutationFn: async (data: Register) => {
       const response = await ERDEAxios.post('/user/register', data);
       return response.data;
+    },
+  });
+};
+
+export const useAcceptTerms = (): UseMutationResult<Account, unknown, void> => {
+  const queryClient = useQueryClient();
+  return useMutation<Account, unknown, void>({
+    mutationFn: async () => {
+      const response = await ERDEAxios.post<Account>('/user/accept-terms');
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(ACCOUNT_QUERY_KEY, data);
     },
   });
 };

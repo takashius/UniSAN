@@ -12,7 +12,8 @@
     "confirm": "Confirmar",
     "selectDate": "Selecciona la fecha",
     "selectADate": "Selecciona una fecha",
-    "formSubmitted": "Formulario enviado exitosamente"
+    "formSubmitted": "Formulario enviado exitosamente",
+    "retry": "Reintentar"
   },
   "auth": {
     "password": "Contraseña",
@@ -47,7 +48,10 @@
     "passwordRequired": "La contraseña no debe estar vacia",
     "passwordMinLength": "La contraseña debe tener minimo 7 caracteres",
     "emailInvalid": "El correo debe tener un formato válido",
-    "nameRequired": "El nombre no debe estar vacio"
+    "nameRequired": "El nombre no debe estar vacio",
+    "acceptTermsRequired": "Debes aceptar los términos y condiciones",
+    "acceptTermsLabel": "Acepto los",
+    "termsLink": "términos y condiciones"
   },
   "SANCard": {
     "perTurn": "por turno",
@@ -190,6 +194,7 @@
     "paymentMethods": "Métodos de Pago",
     "preferences": "Preferencias",
     "edit": "Editar perfil",
+    "terms": "Términos y condiciones",
     "logout": "Cerrar Sesión",
     "appVersion": "v{{version}}"
   },
@@ -202,7 +207,8 @@
     "preferences": "Preferencias",
     "editProfile": "Editar Perfil",
     "paymentMethods": "Métodos de Pago",
-    "recoverPassword": "Recuperar contraseña"
+    "recoverPassword": "Recuperar contraseña",
+    "terms": "Términos y condiciones"
   },
   "preferences": {
     "title": "Preferencias",
@@ -305,6 +311,18 @@
     "paymentErrorMessage": "Se produjo un error al procesar tu pago. Inténtalo de nuevo.",
     "early": "Anticipado",
     "ontime": "A Tiempo",
-    "late": "Tarde"
+    "late": "Tarde",
+    "installment": "Cuota",
+    "lateFee": "Recargo por mora",
+    "lateFeeHint": "Han pasado los días de gracia. El recargo se paga junto con esta cuota."
+  },
+  "Terms": {
+    "title": "Términos y condiciones",
+    "version": "Versión {{version}}",
+    "mustAccept": "Para continuar debes leer y aceptar la versión vigente.",
+    "accept": "Aceptar términos",
+    "accepted": "Términos aceptados",
+    "acceptError": "No se pudieron aceptar los términos. Inténtalo de nuevo.",
+    "loadError": "No se pudieron cargar los términos."
   }
 }

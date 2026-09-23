@@ -18,13 +18,17 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   nextPaymentDate,
   lastPaidTurn,
   fxCurrency,
+  paymentAmount,
+  baseAmount,
+  lateFeeAmount,
+  lateFeePercent,
 }) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
   const { data: fx } = useBcvRate();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
-  const installment = amount / membersPerSan;
+  const installment = paymentAmount ?? amount / membersPerSan;
   const sanRate = rateForSan(fx, fxCurrency);
   const bsAmount = sanRate ? usdToBs(installment, sanRate) : null;
   const paymentTurn = currentTurn && currentTurn > 0 ? currentTurn : 1;
@@ -91,6 +95,9 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
         amount={installment}
         san={id}
         fxCurrency={fxCurrency}
+        baseAmount={baseAmount}
+        lateFeeAmount={lateFeeAmount}
+        lateFeePercent={lateFeePercent}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => console.log("Pago registrado!")}
       />

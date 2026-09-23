@@ -5,6 +5,9 @@ export interface PaymentDialogProps {
   san: string;
   fxCurrency?: 'usd' | 'eur' | null;
   isJoin?: boolean;
+  baseAmount?: number;
+  lateFeeAmount?: number;
+  lateFeePercent?: number;
   onPaymentRegistered?: () => void;
 }
 
@@ -23,4 +26,8 @@ export interface NextPaymentProps {
   nextPaymentDate: string | null;
   lastPaidTurn: number;
   fxCurrency?: 'usd' | 'eur' | null;
+  paymentAmount?: number;
+  baseAmount?: number;
+  lateFeeAmount?: number;
+  lateFeePercent?: number;
 }

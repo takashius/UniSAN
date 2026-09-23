@@ -12,6 +12,7 @@ import ChatDetail from "../screens/chat/ChatDetail";
 import HistoryScreen from "../screens/HistoryScreen";
 import ExplorerScreen from "../screens/ExplorerScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
+import TermsScreen from "../screens/legal/TermsScreen";
 import SANDetails from "../screens/SANDetails";
 import EmailStepScreen from "../screens/auth/EmailStepScreen";
 import VerificationStep from "../screens/auth/VerificationStep";
@@ -86,6 +87,15 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
+      <ProfileStackNav.Screen
+        name="Terms"
+        component={TermsScreen}
+        options={{
+          headerTitle: t("Navigation.terms"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
     </ProfileStackNav.Navigator>
   );
 
@@ -100,6 +110,9 @@ const AppNavigator: React.FC = () => {
     <PaperProvider theme={CustomTheme}>
       <NavigationContainer>
         {user ? (
+          user.needsTermsAcceptance ? (
+            <TermsScreen mode="accept" />
+          ) : (
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ color, size }) => {
@@ -178,6 +191,7 @@ const AppNavigator: React.FC = () => {
                 tabBarLabel: t("Navigation.profile"),
               }} />
           </Tab.Navigator>
+          )
         ) : (
           <AuthStack.Navigator>
             <AuthStack.Screen
@@ -199,6 +213,15 @@ const AppNavigator: React.FC = () => {
               component={VerificationStep}
               options={{
                 headerTitle: t("Navigation.recoverPassword"),
+                headerStyle: { backgroundColor: "#ff7f50" },
+                headerTintColor: "white",
+              }}
+            />
+            <AuthStack.Screen
+              name="Terms"
+              component={TermsScreen}
+              options={{
+                headerTitle: t("Navigation.terms"),
                 headerStyle: { backgroundColor: "#ff7f50" },
                 headerTintColor: "white",
               }}

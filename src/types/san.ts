@@ -28,6 +28,11 @@ export interface SanDetail {
   totalMembers: number;
   lastPaidTurn: number | null;
   nextPaymentDate: string | null;
+  paymentAmount?: number;
+  baseAmount?: number;
+  lateFeeAmount?: number;
+  lateFeePercent?: number;
+  paymentStatus?: 'early' | 'ontime' | 'late';
   createdAt: string;
   updatedAt: string | null;
 }

@@ -105,10 +105,21 @@ export interface NextPayment {
   sanAmount: number;
   fxCurrency?: 'usd' | 'eur' | null;
   paymentAmount: number;
+  baseAmount?: number;
+  lateFeeAmount?: number;
+  lateFeePercent?: number;
+  paymentStatus?: 'early' | 'ontime' | 'late';
   nextPaymentDate: string;
   lastPaidTurn: number;
   currentTurn: number | null;
   isOwnTurn: boolean;
+}
+
+export interface Register {
+  name: string;
+  email: string;
+  password: string;
+  acceptedTerms: boolean;
 }
 
 export interface Account {
@@ -116,6 +127,9 @@ export interface Account {
   statistics: Statistics;
   sans: SanMin[];
   nextPayments: NextPayment[];
+  termsVersion?: number;
+  termsAcceptedVersion?: number;
+  needsTermsAcceptance?: boolean;
 }
 
 export interface JoinSanData {

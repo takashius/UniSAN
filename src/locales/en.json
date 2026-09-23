@@ -12,7 +12,8 @@
     "confirm": "Confirm",
     "selectDate": "Select the date",
     "selectADate": "Select a date",
-    "formSubmitted": "Form successfully submitted"
+    "formSubmitted": "Form successfully submitted",
+    "retry": "Try again"
   },
   "auth": {
     "password": "Password",
@@ -46,7 +47,11 @@
     "emailRequired": "The email must not be empty",
     "passwordRequired": "The password must not be empty",
     "passwordMinLength": "The password must be at least 7 characters long",
-    "emailInvalid": "The email must be in a valid format"
+    "emailInvalid": "The email must be in a valid format",
+    "nameRequired": "The name must not be empty",
+    "acceptTermsRequired": "You must accept the terms and conditions",
+    "acceptTermsLabel": "I accept the",
+    "termsLink": "terms and conditions"
   },
   "SANCard": {
     "perTurn": "per turn",
@@ -189,6 +194,7 @@
     "paymentMethods": "Payment Methods",
     "preferences": "Preferences",
     "edit": "Edit profile",
+    "terms": "Terms and conditions",
     "logout": "Log Out",
     "appVersion": "v{{version}}"
   },
@@ -201,7 +207,8 @@
     "preferences": "Preferences",
     "editProfile": "Edit Profile",
     "paymentMethods": "Payment Methods",
-    "recoverPassword": "Recover Password"
+    "recoverPassword": "Recover Password",
+    "terms": "Terms and conditions"
   },
   "preferences": {
     "title": "Preferences",
@@ -304,6 +311,18 @@
     "paymentErrorMessage": "There was an error processing your payment. Please try again.",
     "early": "Early",
     "ontime": "On Time",
-    "late": "Late"
+    "late": "Late",
+    "installment": "Installment",
+    "lateFee": "Late fee",
+    "lateFeeHint": "The grace period has passed. The surcharge is paid with this installment."
+  },
+  "Terms": {
+    "title": "Terms and conditions",
+    "version": "Version {{version}}",
+    "mustAccept": "To continue you must read and accept the current version.",
+    "accept": "Accept terms",
+    "accepted": "Terms accepted",
+    "acceptError": "Could not accept the terms. Please try again.",
+    "loadError": "Could not load the terms."
   }
 }

@@ -34,6 +34,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   san,
   fxCurrency,
   isJoin = false,
+  baseAmount,
+  lateFeeAmount = 0,
+  lateFeePercent = 0,
   onDismiss,
   onPaymentRegistered,
 }) => {
@@ -248,6 +251,22 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                     </View>
                   ))
                 )}
+                {lateFeeAmount > 0 ? (
+                  <>
+                    <View style={styles.detailRow}>
+                      <HelperText type="info">{t("Payment.installment")}:</HelperText>
+                      <HelperText type="info">{formatUsd(baseAmount ?? amount - lateFeeAmount)}</HelperText>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <HelperText type="info">
+                        {t("Payment.lateFee")}
+                        {lateFeePercent ? ` (${lateFeePercent}%)` : ""}:
+                      </HelperText>
+                      <HelperText type="info">{formatUsd(lateFeeAmount)}</HelperText>
+                    </View>
+                    <HelperText type="info">{t("Payment.lateFeeHint")}</HelperText>
+                  </>
+                ) : null}
                 <View style={styles.detailRow}>
                   <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
                   <Text style={styles.highlightAmount}>{formatUsd(amount)}</Text>

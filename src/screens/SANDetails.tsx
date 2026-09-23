@@ -152,6 +152,10 @@ const SANDetails: React.FC = () => {
                 nextPaymentDate={sanDetails.nextPaymentDate}
                 lastPaidTurn={sanDetails.lastPaidTurn!}
                 fxCurrency={sanDetails.fxCurrency}
+                paymentAmount={sanDetails.paymentAmount}
+                baseAmount={sanDetails.baseAmount}
+                lateFeeAmount={sanDetails.lateFeeAmount}
+                lateFeePercent={sanDetails.lateFeePercent}
               />
             </View>
             ) : null}

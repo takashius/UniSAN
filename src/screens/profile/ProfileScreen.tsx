@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { ChevronRight, LogOut, Settings, CreditCard, User } from "lucide-react-native";
+import { ChevronRight, LogOut, Settings, CreditCard, User, FileText } from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
@@ -118,6 +118,16 @@ const Profile = () => {
               <View style={styles.settingsItemRow}>
                 <Settings size={20} color="#ff7f50" />
                 <Text style={styles.settingsItemText}>{t("Profile.preferences")}</Text>
+              </View>
+              <ChevronRight size={20} color="#888" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => navigation.navigate("Terms")}
+            >
+              <View style={styles.settingsItemRow}>
+                <FileText size={20} color="#ff7f50" />
+                <Text style={styles.settingsItemText}>{t("Profile.terms")}</Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>

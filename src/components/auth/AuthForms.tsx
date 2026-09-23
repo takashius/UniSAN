@@ -233,6 +233,7 @@ export const LoginForm = () => {
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
+  const navigation: any = useNavigation();
   const registerMutate = useRegister();
   const { login } = useUser();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -252,15 +253,22 @@ export const RegisterForm = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      acceptedTerms: false,
     },
   });
 
   const password = watch("password");
 
-  const onSubmit = (data: { name: string; email: string; password: string; confirmPassword: string }) => {
+  const onSubmit = (data: {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    acceptedTerms: boolean;
+  }) => {
     setCompletingRegister(true);
     registerMutate.mutate(
-      { name: data.name, email: data.email, password: data.password },
+      { name: data.name, email: data.email, password: data.password, acceptedTerms: data.acceptedTerms },
       {
         onSuccess: async (response) => {
           try {
@@ -412,6 +420,34 @@ export const RegisterForm = () => {
         )}
       </View>
 
+      <View style={styles.inputContainer}>
+        <Controller
+          control={control}
+          name="acceptedTerms"
+          rules={{
+            validate: (value) => value === true || t("auth.acceptTermsRequired"),
+          }}
+          render={({ field: { onChange, value } }) => (
+            <View style={styles.termsRow}>
+              <Checkbox
+                status={value ? "checked" : "unchecked"}
+                onPress={() => onChange(!value)}
+                color="#ff7f50"
+              />
+              <Text style={styles.termsLabel}>
+                {t("auth.acceptTermsLabel")}{" "}
+                <Text style={styles.termsLink} onPress={() => navigation.navigate("Terms")}>
+                  {t("auth.termsLink")}
+                </Text>
+              </Text>
+            </View>
+          )}
+        />
+        {errors.acceptedTerms && (
+          <Text style={styles.errorText}>{String(errors.acceptedTerms.message)}</Text>
+        )}
+      </View>
+
       {/* Botón de Registro */}
       <Button
         mode="contained"
@@ -476,6 +512,22 @@ const styles = StyleSheet.create({
   rememberLabel: {
     fontSize: 13,
     color: "#333333",
+  },
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginLeft: -8,
+  },
+  termsLabel: {
+    flex: 1,
+    fontSize: 13,
+    color: "#333333",
+    paddingTop: 8,
+  },
+  termsLink: {
+    color: "#ff7f50",
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
   link: {
     fontSize: 12,

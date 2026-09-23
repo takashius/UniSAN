@@ -139,6 +139,10 @@ const HomeScreen = () => {
                 nextPaymentDate={payment.nextPaymentDate}
                 lastPaidTurn={payment.lastPaidTurn!}
                 fxCurrency={payment.fxCurrency}
+                paymentAmount={payment.paymentAmount}
+                baseAmount={payment.baseAmount}
+                lateFeeAmount={payment.lateFeeAmount}
+                lateFeePercent={payment.lateFeePercent}
               />
             ))}
           </View>

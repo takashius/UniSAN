@@ -2,6 +2,7 @@ export type AuthStackParamList = {
   Login: undefined;
   RecoveryPasswordStep1: undefined;
   RecoveryPasswordStep2: { email: string };
+  Terms: undefined;
 };
 
 export type SANStackParamList = {
@@ -19,6 +20,7 @@ export type ProfileStackParamList = {
   Preference: undefined;
   EditProfile: undefined;
   PaymentMethods: undefined;
+  Terms: undefined;
 };
 
 export type TabParamList = {

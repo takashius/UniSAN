@@ -12,6 +12,7 @@ import { useSanSettings } from "../../services/settings";
 import { useJoinSan, type JoinSanRequest } from "../../services/san";
 import { fetchAccount } from "../../services/auth";
 import { useUser } from "../../context/UserContext";
+import { guardJoinWithProfile } from "../../utils/profileCompletion";
 import { DEFAULT_MEMBERS_PER_SAN } from "../../utils/levels";
 
 interface SANCardProps {
@@ -49,9 +50,12 @@ const SANCard: React.FC<SANCardProps> = ({
   const isFreeJoin = joinMode === "free";
   const joinSan = useJoinSan();
   const queryClient = useQueryClient();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+
+  const ensureProfile = () => guardJoinWithProfile(user, navigation, t);
 
   const joinWithoutPayment = () => {
+    if (!ensureProfile()) return;
     Alert.alert(t("SANCard.freeJoinConfirmTitle"), t("SANCard.freeJoinConfirm"), [
       { text: t("common.cancel"), style: "cancel" },
       {
@@ -157,7 +161,14 @@ const SANCard: React.FC<SANCardProps> = ({
             :
             <TouchableOpacity
               style={styles.detailsLink}
-              onPress={isFreeJoin ? joinWithoutPayment : () => setDialogOpen(true)}
+              onPress={
+                isFreeJoin
+                  ? joinWithoutPayment
+                  : () => {
+                      if (!ensureProfile()) return;
+                      setDialogOpen(true);
+                    }
+              }
             >
               <Text style={styles.linkText}>
                 {isFreeJoin ? t("SANCard.freeJoin") : t("SANCard.join")}

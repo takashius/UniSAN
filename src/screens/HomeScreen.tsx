@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
+import ProfileCompletionCard from "../components/ui/ProfileCompletionCard";
 import generalStyles from "../styles/general";
 import { fetchAccount } from "../services/auth";
 
@@ -97,6 +98,8 @@ const HomeScreen = () => {
           </Text>
           <GetWelcomeMessage />
         </Animated.View>
+
+        <ProfileCompletionCard />
 
         <UserLevel />
 

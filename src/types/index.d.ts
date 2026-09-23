@@ -48,11 +48,18 @@ export interface Recovery {
   newPass: string;
 }
 
+export interface ProfileCompletion {
+  percent: number;
+  complete: boolean;
+  missing: Array<'lastName' | 'middleName' | 'documentId' | 'photo' | 'imageDocumentId'>;
+}
+
 export interface UserAccount {
   id: string;
   name: string;
   photo?: string;
   lastName: string;
+  middleName?: string;
   email: string;
   points: number;
   level: number;
@@ -130,6 +137,7 @@ export interface Account {
   termsVersion?: number;
   termsAcceptedVersion?: number;
   needsTermsAcceptance?: boolean;
+  profileCompletion?: ProfileCompletion;
 }
 
 export interface JoinSanData {
@@ -150,6 +158,7 @@ export interface UserProfileResponse {
   id: string;
   name: string;
   lastName: string;
+  middleName?: string;
   photo: string | null;
   phone: string;
   email: string;
@@ -159,6 +168,7 @@ export interface UserProfileResponse {
 
 export interface ProfileFormData {
   firstName: string;
+  middleName: string;
   lastName: string;
   identityNumber: string;
   phone: string;
@@ -170,6 +180,7 @@ export interface ProfileFormData {
 export interface ProfileUpdateData {
   name: string;
   lastName: string;
+  middleName: string;
   documentId: string;
   phone: string;
   password?: string;

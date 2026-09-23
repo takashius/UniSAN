@@ -131,6 +131,33 @@
     "noSans": "Aún no tienes ningún SAN activo.",
     "explore": "Explora nuevos SANs"
   },
+  "ProfileCompletion": {
+    "title": "Completa tu perfil",
+    "subtitle": "Necesitamos tu segundo nombre, apellido, cédula y las fotos para que puedas unirte a un SAN.",
+    "percent": "{{percent}}% completado",
+    "completeNow": "Completar ahora",
+    "joinBlockedTitle": "Perfil incompleto",
+    "joinBlockedMessage": "Para unirte a un SAN debes completar tu perfil: segundo nombre, apellido, número de cédula, foto de perfil y foto de la cédula.",
+    "goToProfile": "Ir a editar perfil"
+  },
+  "ProfileEdit": {
+    "firstName": "Nombre",
+    "middleName": "Segundo nombre",
+    "middleNamePlaceholder": "Ej. José",
+    "middleNameRequired": "El segundo nombre es obligatorio",
+    "lastName": "Apellido",
+    "lastNameRequired": "El apellido es obligatorio",
+    "minTwo": "Debe tener al menos 2 caracteres",
+    "saveSuccessTitle": "Éxito",
+    "saveSuccessMessage": "Perfil actualizado correctamente",
+    "uploadSuccessTitle": "Éxito",
+    "uploadSuccessMessage": "Imagen subida correctamente",
+    "idPhoto": "Foto de Cédula",
+    "whyNeeded": "¿Por qué necesitamos esto?",
+    "whyTitle": "Verificación de identidad",
+    "whyBody": "Necesitamos una foto de tu cédula para verificar tu identidad y cumplir con nuestras políticas de seguridad. Esta información es confidencial y solo se utilizará para fines de verificación.",
+    "whyDismiss": "Entendido"
+  },
   "Explorer": {
     "availableSANs": "SANs disponibles",
     "noResults": "No hay SANs disponibles para unirte en este momento."

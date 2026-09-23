@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Image, Text, TextInput, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
-import { Card, Dialog, Portal, IconButton, Button } from "react-native-paper";
+import { View, StyleSheet, Image, Text, TextInput, ScrollView, ActivityIndicator, TouchableOpacity, Pressable } from "react-native";
+import { Card, Portal, IconButton, Button } from "react-native-paper";
 import { Camera, Eye, EyeOff, Upload } from "lucide-react-native";
 import generalStyles from "../../styles/general";
 import { useUserProfile, useUploadImage, useUpdateUser } from "../../services/auth";
@@ -9,9 +9,14 @@ import Toast from "react-native-toast-message";
 import { Controller, useForm } from "react-hook-form";
 import { ProfileFormData, ProfileUpdateData } from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { ACCOUNT_QUERY_KEY, fetchAccount } from "../../services/auth";
+import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 const EditProfile: React.FC = () => {
+  const { t } = useTranslation();
+  const { setUser } = useUser();
   const uploadMutation = useUploadImage();
   const updateMutation = useUpdateUser();
   const { data, isFetching } = useUserProfile();
@@ -27,6 +32,7 @@ const EditProfile: React.FC = () => {
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       firstName: "",
+      middleName: "",
       lastName: "",
       identityNumber: "",
       phone: "",
@@ -42,6 +48,7 @@ const EditProfile: React.FC = () => {
       setIdImage(data.imageDocumentId);
       reset({
         firstName: data.name ?? "",
+        middleName: data.middleName ?? "",
         lastName: data.lastName ?? "",
         identityNumber: data.documentId ?? "",
         phone: data.phone ?? "",
@@ -55,6 +62,7 @@ const EditProfile: React.FC = () => {
     const payload: ProfileUpdateData = {
       name: data.firstName,
       lastName: data.lastName,
+      middleName: data.middleName,
       phone: data.phone,
       documentId: data.identityNumber,
       password: data.password,
@@ -63,11 +71,18 @@ const EditProfile: React.FC = () => {
       delete payload.password;
     }
     updateMutation.mutate({ data: payload }, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+        await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+        try {
+          setUser(await fetchAccount());
+        } catch (error) {
+          console.log(error);
+        }
         Toast.show({
           type: 'success',
-          text1: "Exito",
-          text2: "Perfil actualizado correctamente"
+          text1: t("ProfileEdit.saveSuccessTitle"),
+          text2: t("ProfileEdit.saveSuccessMessage")
         });
       },
       onError: (error) => {
@@ -101,16 +116,22 @@ const EditProfile: React.FC = () => {
 
 
       uploadMutation.mutate(imageData, {
-        onSuccess: (response) => {
+        onSuccess: async (response) => {
           if (imageType === 'photo') {
             setProfileImage(response.data.path);
           } else {
             setIdImage(response.data.path);
           }
+          await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+          try {
+            setUser(await fetchAccount());
+          } catch (error) {
+            console.log(error);
+          }
           Toast.show({
             type: 'success',
-            text1: "Exito",
-            text2: "Imagen subida correctamente"
+            text1: t("ProfileEdit.uploadSuccessTitle"),
+            text2: t("ProfileEdit.uploadSuccessMessage")
           });
         },
         onError: (error) => {
@@ -141,7 +162,10 @@ const EditProfile: React.FC = () => {
               ) : profileImage ? (
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />
               ) : (
-                <Text style={styles.initials}>MG</Text>
+                <Text style={styles.initials}>
+                  {(data?.name || "?").slice(0, 1).toUpperCase()}
+                  {(data?.lastName || "").slice(0, 1).toUpperCase()}
+                </Text>
               )}
               <IconButton
                 icon={({ size, color }) => <Camera size={size} color="#fff" />}
@@ -157,7 +181,7 @@ const EditProfile: React.FC = () => {
         {/* Personal Details */}
         <Card style={generalStyles.cardMin}>
           <Card.Content>
-            <Text style={styles.label}>Nombre</Text>
+            <Text style={styles.label}>{t("ProfileEdit.firstName")}</Text>
             <Controller
               name="firstName"
               control={control}
@@ -176,11 +200,30 @@ const EditProfile: React.FC = () => {
               )}
             />
 
-            <Text style={styles.label}>Apellido</Text>
+            <Text style={styles.label}>{t("ProfileEdit.middleName")}</Text>
+            <Controller
+              name="middleName"
+              control={control}
+              rules={{ required: t("ProfileEdit.middleNameRequired"), minLength: { value: 2, message: t("ProfileEdit.minTwo") } }}
+              render={({ field, fieldState }) => (
+                <>
+                  <TextInput
+                    style={fieldState.error ? styles.inputError : styles.input}
+                    onChangeText={field.onChange}
+                    value={field.value}
+                    placeholder={t("ProfileEdit.middleNamePlaceholder")}
+                    autoCapitalize="words"
+                  />
+                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                </>
+              )}
+            />
+
+            <Text style={styles.label}>{t("ProfileEdit.lastName")}</Text>
             <Controller
               name="lastName"
               control={control}
-              rules={{ minLength: { value: 2, message: "Debe tener al menos 2 caracteres" } }}
+              rules={{ required: t("ProfileEdit.lastNameRequired"), minLength: { value: 2, message: t("ProfileEdit.minTwo") } }}
               render={({ field, fieldState }) => (
                 <>
                   <TextInput
@@ -250,8 +293,10 @@ const EditProfile: React.FC = () => {
         <Card style={generalStyles.cardMin}>
           <Card.Content>
             <View style={styles.row}>
-              <Text style={styles.label}>Foto de Cédula</Text>
-              <Button onPress={() => setShowDialog(true)}>¿Por qué necesitamos esto?</Button>
+              <Text style={styles.label}>{t("ProfileEdit.idPhoto")}</Text>
+              <TouchableOpacity onPress={() => setShowDialog(true)} hitSlop={8}>
+                <Text style={styles.whyLink}>{t("ProfileEdit.whyNeeded")}</Text>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => handleImagePicker("documentId")}>
               {uploadMutation.isPending && loaderImage === 'documentId' ? (
@@ -340,22 +385,26 @@ const EditProfile: React.FC = () => {
         </Button>
       </ScrollView>
 
-      {/* Dialog */}
-      <Portal>
-        <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
-          <Dialog.Title>Verificación de Identidad</Dialog.Title>
-          <Dialog.Content>
-            <Text style={styles.dialogText}>
-              Necesitamos una foto de tu cédula para verificar tu identidad y cumplir con
-              nuestras políticas de seguridad. Esta información es confidencial y solo se
-              utilizará para fines de verificación.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowDialog(false)}>Entendido</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      {showDialog ? (
+        <Portal>
+          <View style={styles.overlayRoot}>
+            <Pressable style={styles.backdrop} onPress={() => setShowDialog(false)} />
+            <View style={styles.dialogCenter} pointerEvents="box-none">
+              <View style={styles.dialogCard}>
+                <Text style={styles.dialogTitle}>{t("ProfileEdit.whyTitle")}</Text>
+                <Text style={styles.dialogText}>{t("ProfileEdit.whyBody")}</Text>
+                <Button
+                  mode="contained"
+                  style={styles.dialogButton}
+                  onPress={() => setShowDialog(false)}
+                >
+                  {t("ProfileEdit.whyDismiss")}
+                </Button>
+              </View>
+            </View>
+          </View>
+        </Portal>
+      ) : null}
     </View>
   );
 };
@@ -461,9 +510,54 @@ const styles = StyleSheet.create({
     marginTop: 16,
     backgroundColor: "#ff7f50",
   },
+  whyLink: {
+    color: "#ff7f50",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  overlayRoot: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1000,
+  },
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+  },
+  dialogCenter: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  dialogCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+  },
+  dialogTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 10,
+  },
   dialogText: {
     fontSize: 14,
+    lineHeight: 20,
     color: "#666",
+    marginBottom: 16,
+  },
+  dialogButton: {
+    backgroundColor: "#ff7f50",
+    alignSelf: "flex-end",
   },
   inputContainer: {
     flexDirection: "row",

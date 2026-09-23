@@ -131,6 +131,33 @@
     "noSans": "You don't have any active SAN yet.",
     "explore": "Explore new SANs"
   },
+  "ProfileCompletion": {
+    "title": "Complete your profile",
+    "subtitle": "We need your middle name, last name, ID number and photos before you can join a SAN.",
+    "percent": "{{percent}}% complete",
+    "completeNow": "Complete now",
+    "joinBlockedTitle": "Incomplete profile",
+    "joinBlockedMessage": "To join a SAN you must complete your profile: middle name, last name, ID number, profile photo and ID photo.",
+    "goToProfile": "Go to edit profile"
+  },
+  "ProfileEdit": {
+    "firstName": "First name",
+    "middleName": "Middle name",
+    "middleNamePlaceholder": "E.g. José",
+    "middleNameRequired": "Middle name is required",
+    "lastName": "Last name",
+    "lastNameRequired": "Last name is required",
+    "minTwo": "Must be at least 2 characters",
+    "saveSuccessTitle": "Success",
+    "saveSuccessMessage": "Profile updated successfully",
+    "uploadSuccessTitle": "Success",
+    "uploadSuccessMessage": "Image uploaded successfully",
+    "idPhoto": "ID photo",
+    "whyNeeded": "Why do we need this?",
+    "whyTitle": "Identity verification",
+    "whyBody": "We need a photo of your ID to verify your identity and meet our security policies. This information is confidential and will only be used for verification.",
+    "whyDismiss": "Got it"
+  },
   "Explorer": {
     "availableSANs": "Available SANs",
     "noResults": "There are no SANs available to join right now."

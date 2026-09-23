@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ACCOUNT_QUERY_KEY, fetchAccount } from "../../services/auth";
 import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
+import ImageSourceSheet from "../../components/ui/ImageSourceSheet";
 
 function getUploadedImagePath(response: any): string | null {
   const payload = response?.data ?? response;
@@ -32,6 +33,7 @@ const EditProfile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [idImage, setIdImage] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [imageSourceType, setImageSourceType] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { control, handleSubmit, reset, watch } = useForm({
@@ -99,12 +101,29 @@ const EditProfile: React.FC = () => {
     });
   };
 
-  const handleImagePicker = async (imageType: string) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+  const handleImagePicker = async (imageType: string, source: "camera" | "library") => {
+    setImageSourceType(null);
+    const permission =
+      source === "camera"
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Toast.show({
+        type: "error",
+        text1: t(source === "camera" ? "ProfileEdit.cameraPermissionDenied" : "ProfileEdit.libraryPermissionDenied"),
+      });
+      return;
+    }
+
+    const pickerOptions = {
+      mediaTypes: ["images"] as const,
       allowsEditing: true,
       quality: 1,
-    });
+    };
+    const result =
+      source === "camera"
+        ? await ImagePicker.launchCameraAsync(pickerOptions)
+        : await ImagePicker.launchImageLibraryAsync(pickerOptions);
     if (!result.canceled) {
       setLoaderImage(imageType);
       const localUri = result.assets[0].uri;
@@ -169,7 +188,11 @@ const EditProfile: React.FC = () => {
         {/* Profile Image */}
         <Card style={generalStyles.cardMin}>
           <Card.Content style={styles.centerContent}>
-            <View style={styles.profileImageContainer}>
+            <TouchableOpacity
+              style={styles.profileImageContainer}
+              onPress={() => setImageSourceType("photo")}
+              activeOpacity={0.85}
+            >
               {uploadMutation.isPending && loaderImage === 'photo' ? (
                 <View style={styles.initials}>
                   <ActivityIndicator size="large" color="#fff" />
@@ -183,12 +206,12 @@ const EditProfile: React.FC = () => {
                 </Text>
               )}
               <IconButton
-                icon={({ size, color }) => <Camera size={size} color="#fff" />}
+                icon={({ size }) => <Camera size={size} color="#fff" />}
                 size={20}
                 style={styles.cameraIcon}
-                onPress={() => handleImagePicker("photo")}
+                onPress={() => setImageSourceType("photo")}
               />
-            </View>
+            </TouchableOpacity>
             <Text style={styles.helperText}>Toca para cambiar tu foto de perfil</Text>
           </Card.Content>
         </Card>
@@ -321,7 +344,7 @@ const EditProfile: React.FC = () => {
                 <Text style={styles.whyLink}>{t("ProfileEdit.whyNeeded")}</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => handleImagePicker("documentId")}>
+            <TouchableOpacity onPress={() => setImageSourceType("documentId")}>
               {uploadMutation.isPending && loaderImage === 'documentId' ? (
                 <View style={styles.uploadContainer}>
                   <ActivityIndicator size="large" color="#ff7f50" />
@@ -407,6 +430,17 @@ const EditProfile: React.FC = () => {
           Guardar Cambios
         </Button>
       </ScrollView>
+
+      <ImageSourceSheet
+        visible={Boolean(imageSourceType)}
+        onDismiss={() => setImageSourceType(null)}
+        onCamera={() => {
+          if (imageSourceType) void handleImagePicker(imageSourceType, "camera");
+        }}
+        onLibrary={() => {
+          if (imageSourceType) void handleImagePicker(imageSourceType, "library");
+        }}
+      />
 
       {showDialog ? (
         <Portal>

@@ -75,7 +75,14 @@
       ],
       "expo-status-bar",
       "@react-native-vector-icons/material-design-icons",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "UniSAN necesita acceso a tus fotos para completar tu perfil.",
+          "cameraPermission": "UniSAN necesita acceso a la cámara para tomar tu foto de perfil o de cédula."
+        }
+      ]
     ],
     "extra": {
       "eas": {

@@ -159,7 +159,12 @@
     "whyNeeded": "Why do we need this?",
     "whyTitle": "Identity verification",
     "whyBody": "We need a photo of your ID to verify your identity and meet our security policies. This information is confidential and will only be used for verification.",
-    "whyDismiss": "Got it"
+    "whyDismiss": "Got it",
+    "sourceTitle": "Add photo",
+    "takePhoto": "Take photo",
+    "pickFromDevice": "Choose from device",
+    "cameraPermissionDenied": "We need camera access to take the photo.",
+    "libraryPermissionDenied": "We need access to your photos to choose an image."
   },
   "Explorer": {
     "availableSANs": "Available SANs",

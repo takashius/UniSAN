@@ -159,7 +159,12 @@
     "whyNeeded": "¿Por qué necesitamos esto?",
     "whyTitle": "Verificación de identidad",
     "whyBody": "Necesitamos una foto de tu cédula para verificar tu identidad y cumplir con nuestras políticas de seguridad. Esta información es confidencial y solo se utilizará para fines de verificación.",
-    "whyDismiss": "Entendido"
+    "whyDismiss": "Entendido",
+    "sourceTitle": "Agregar foto",
+    "takePhoto": "Tomar foto",
+    "pickFromDevice": "Buscar en el dispositivo",
+    "cameraPermissionDenied": "Necesitamos acceso a la cámara para tomar la foto.",
+    "libraryPermissionDenied": "Necesitamos acceso a tus fotos para elegir una imagen."
   },
   "Explorer": {
     "availableSANs": "SANs disponibles",

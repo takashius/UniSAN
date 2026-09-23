@@ -161,7 +161,7 @@ const EditProfile: React.FC = () => {
     const pickerOptions = {
       mediaTypes: ["images"] as const,
       allowsEditing: true,
-      quality: 1,
+      quality: 0.6,
     };
     const result =
       source === "camera"
@@ -208,10 +208,17 @@ const EditProfile: React.FC = () => {
         },
         onError: (error) => {
           console.warn("Error al subir imagen:", error);
+          const message =
+            error && typeof error === "object" && "message" in error
+              ? String((error as { message?: unknown }).message || "")
+              : "";
+          const tooLarge = /too large|413|demasiado grande/i.test(message);
           Toast.show({
             type: "error",
-            text1: "Error",
-            text2: "Hubo un problema al subir la imagen. Intenta nuevamente",
+            text1: t("common.error"),
+            text2: t(
+              tooLarge ? "ProfileEdit.uploadTooLarge" : "ProfileEdit.uploadError"
+            ),
           });
         },
         onSettled: () => {

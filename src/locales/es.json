@@ -155,6 +155,8 @@
     "saveSuccessMessage": "Perfil actualizado correctamente",
     "uploadSuccessTitle": "Éxito",
     "uploadSuccessMessage": "Imagen subida correctamente",
+    "uploadError": "Hubo un problema al subir la imagen. Intenta nuevamente",
+    "uploadTooLarge": "La foto es demasiado pesada. Tómalas de nuevo o elige otra más liviana.",
     "idPhoto": "Foto de Cédula",
     "idUploadHint": "Haz clic para subir una foto de tu cédula",
     "idPendingTitle": "Cédula en revisión",

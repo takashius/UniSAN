@@ -115,6 +115,7 @@ export const useUploadImage = () => {
     onSuccess: async () => {
       await SecureStoreManager.removeItem('contentType');
       queryClient.invalidateQueries({ queryKey: ['myAccount'] });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     },
     onError: async error => {
       console.log('error useUploadImage', error);

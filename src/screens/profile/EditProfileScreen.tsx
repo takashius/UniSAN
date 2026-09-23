@@ -14,6 +14,12 @@ import { ACCOUNT_QUERY_KEY, fetchAccount } from "../../services/auth";
 import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
+function getUploadedImagePath(response: any): string | null {
+  const payload = response?.data ?? response;
+  const path = payload?.path || payload?.secure_url || payload?.url;
+  return typeof path === "string" && path.trim() ? path : null;
+}
+
 const EditProfile: React.FC = () => {
   const { t } = useTranslation();
   const { setUser } = useUser();
@@ -27,7 +33,6 @@ const EditProfile: React.FC = () => {
   const [idImage, setIdImage] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const queryClient = useQueryClient();
-  queryClient.invalidateQueries({ queryKey: ["uploadImage"] });
 
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
@@ -43,19 +48,17 @@ const EditProfile: React.FC = () => {
   });
 
   useEffect(() => {
-    if (data) {
-      setProfileImage(data.photo);
-      setIdImage(data.imageDocumentId);
-      reset({
-        firstName: data.name ?? "",
-        middleName: data.middleName ?? "",
-        lastName: data.lastName ?? "",
-        identityNumber: data.documentId ?? "",
-        phone: data.phone ?? "",
-        email: data.email ?? "",
-      });
-
-    }
+    if (!data) return;
+    setProfileImage((current) => data.photo || current);
+    setIdImage((current) => data.imageDocumentId || current);
+    reset({
+      firstName: data.name ?? "",
+      middleName: data.middleName ?? "",
+      lastName: data.lastName ?? "",
+      identityNumber: data.documentId ?? "",
+      phone: data.phone ?? "",
+      email: data.email ?? "",
+    });
   }, [data, reset]);
 
   const onSubmit = (data: ProfileFormData) => {
@@ -102,27 +105,36 @@ const EditProfile: React.FC = () => {
       allowsEditing: true,
       quality: 1,
     });
-    setLoaderImage(imageType);
-
     if (!result.canceled) {
+      setLoaderImage(imageType);
+      const localUri = result.assets[0].uri;
+      if (imageType === "photo") {
+        setProfileImage(localUri);
+      } else {
+        setIdImage(localUri);
+      }
+
       const imageData = {
         image: {
-          uri: result.assets[0].uri,
+          uri: localUri,
           type: "image/jpeg",
           name: "uploaded_image.jpg",
         },
         imageType,
       };
 
-
       uploadMutation.mutate(imageData, {
         onSuccess: async (response) => {
-          if (imageType === 'photo') {
-            setProfileImage(response.data.path);
-          } else {
-            setIdImage(response.data.path);
+          const uploadedPath = getUploadedImagePath(response);
+          if (uploadedPath) {
+            if (imageType === "photo") {
+              setProfileImage(uploadedPath);
+            } else {
+              setIdImage(uploadedPath);
+            }
           }
           await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+          await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
           try {
             setUser(await fetchAccount());
           } catch (error) {
@@ -141,6 +153,9 @@ const EditProfile: React.FC = () => {
             text1: "Error",
             text2: "Hubo un problema al subir la imagen. Intenta nuevamente"
           });
+        },
+        onSettled: () => {
+          setLoaderImage(null);
         },
       });
 

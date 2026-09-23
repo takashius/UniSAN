@@ -9,7 +9,7 @@ export interface PaymentMethod {
   userId: string;
   title: string;
   bank: Bank;
-  method: 'transferencia' | 'pago_movil';
+  method: "transferencia" | "pago_movil";
   idNumber: string;
   accountNumber?: string;
   accountType?: string;
@@ -23,7 +23,7 @@ export interface PaymentMethod {
 export interface PaymentMethodCreate {
   title: string;
   bank: string;
-  method: 'transferencia' | 'pago_movil';
+  method: "transferencia" | "pago_movil";
   idNumber: string;
   accountNumber?: string;
   accountType?: string;
@@ -32,4 +32,4 @@ export interface PaymentMethodCreate {
 
 export interface PaymentMethodUpdate extends Partial<PaymentMethodCreate> {
   active?: boolean;
-} 
+}

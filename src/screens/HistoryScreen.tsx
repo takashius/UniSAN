@@ -20,33 +20,42 @@ import FullScreenLoader from "../components/ui/FullScreenLoader";
 const History = () => {
   const { t } = useTranslation();
   const [showPicker, setShowPicker] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
   const [date, setDate] = useState<Date | null>(null);
-  const { data, isLoading, refetch } = useTransactionsHistory(page, date ? date.toLocaleDateString() : null);
+  const { data, isLoading } = useTransactionsHistory(
+    page,
+    date ? date.toLocaleDateString() : null,
+  );
 
   return (
     <View style={styles.container}>
-
       <FullScreenLoader visible={isLoading} />
 
       <ScrollView contentContainerStyle={generalStyles.mainContent}>
         <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t("ActivityScreen.recentActivity")}</Text>
-            <TouchableOpacity style={styles.filterButton} onPress={() => setShowPicker(true)}>
+            <Text style={styles.sectionTitle}>
+              {t("ActivityScreen.recentActivity")}
+            </Text>
+            <TouchableOpacity
+              style={styles.filterButton}
+              onPress={() => setShowPicker(true)}
+            >
               <Calendar size={16} color="#ff7f50" />
-              <Text style={styles.filterText}>{t("ActivityScreen.filterByDate")}</Text>
+              <Text style={styles.filterText}>
+                {t("ActivityScreen.filterByDate")}
+              </Text>
             </TouchableOpacity>
           </View>
 
           {data?.transactions && data.transactions.length > 0 ? (
-            <Animated.View entering={FadeIn.duration(400)} style={generalStyles.card}>
+            <Animated.View
+              entering={FadeIn.duration(400)}
+              style={generalStyles.card}
+            >
               <View>
                 {data.transactions.map((item, index) => (
-                  <HistoryTransactionItem
-                    key={item._id + index}
-                    item={item}
-                  />
+                  <HistoryTransactionItem key={item._id + index} item={item} />
                 ))}
               </View>
             </Animated.View>
@@ -71,7 +80,9 @@ const History = () => {
 
         <View style={generalStyles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t("ActivityScreen.completedSANs")}</Text>
+            <Text style={styles.sectionTitle}>
+              {t("ActivityScreen.completedSANs")}
+            </Text>
           </View>
 
           <View style={styles.noContent}>
@@ -87,8 +98,8 @@ const History = () => {
           </View>
         </View>
       </ScrollView>
-      {showPicker && (
-        Platform.OS === "ios" ? (
+      {showPicker &&
+        (Platform.OS === "ios" ? (
           <Portal>
             <Dialog
               visible={showPicker}
@@ -107,8 +118,12 @@ const History = () => {
                 />
               </Dialog.Content>
               <Dialog.Actions>
-                <Button onPress={() => setShowPicker(false)}>{t("common.cancel")}</Button>
-                <Button onPress={() => setShowPicker(false)}>{t("common.confirm")}</Button>
+                <Button onPress={() => setShowPicker(false)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button onPress={() => setShowPicker(false)}>
+                  {t("common.confirm")}
+                </Button>
               </Dialog.Actions>
             </Dialog>
           </Portal>
@@ -121,8 +136,7 @@ const History = () => {
               if (selectedDate) setDate(selectedDate);
             }}
           />
-        )
-      )}
+        ))}
     </View>
   );
 };
@@ -133,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-    paddingTop: 16
+    paddingTop: 16,
   },
   sectionHeader: {
     flexDirection: "row",

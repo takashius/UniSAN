@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Calendar, Users, ChevronRight, PlusCircle } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
+import type { TabParamList } from "../../types/navigation";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
@@ -25,8 +27,8 @@ interface SANCardProps {
   hasOpenSpot?: boolean;
   usersCount?: number;
   external?: boolean;
-  fxCurrency?: 'usd' | 'eur' | null;
-  joinMode?: 'paid' | 'free' | null;
+  fxCurrency?: "usd" | "eur" | null;
+  joinMode?: "paid" | "free" | null;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -43,7 +45,7 @@ const SANCard: React.FC<SANCardProps> = ({
   joinMode,
 }) => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<TabParamList>>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
   const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
@@ -56,26 +58,31 @@ const SANCard: React.FC<SANCardProps> = ({
 
   const joinWithoutPayment = () => {
     if (!ensureProfile()) return;
-    Alert.alert(t("SANCard.freeJoinConfirmTitle"), t("SANCard.freeJoinConfirm"), [
-      { text: t("common.cancel"), style: "cancel" },
-      {
-        text: t("common.confirm"),
-        onPress: () => {
-          const payload: JoinSanRequest = { san: id };
-          joinSan.mutate(
-            payload,
-            {
+    Alert.alert(
+      t("SANCard.freeJoinConfirmTitle"),
+      t("SANCard.freeJoinConfirm"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.confirm"),
+          onPress: () => {
+            const payload: JoinSanRequest = { san: id };
+            joinSan.mutate(payload, {
               onSuccess: async () => {
                 try {
-                  await queryClient.invalidateQueries({ queryKey: ["availableSan"] });
-                  await queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+                  await queryClient.invalidateQueries({
+                    queryKey: ["availableSan"],
+                  });
+                  await queryClient.invalidateQueries({
+                    queryKey: ["sanDetail"],
+                  });
                   const updatedUser = await queryClient.fetchQuery({
                     queryKey: ["myAccount"],
                     queryFn: fetchAccount,
                   });
                   setUser(updatedUser);
                 } catch (error) {
-                  console.log(error);
+                  console.warn(error);
                 }
                 Toast.show({
                   type: "success",
@@ -88,11 +95,11 @@ const SANCard: React.FC<SANCardProps> = ({
                   text1: t("common.error"),
                 });
               },
-            }
-          );
+            });
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const openSanDetails = () => {
@@ -116,7 +123,9 @@ const SANCard: React.FC<SANCardProps> = ({
             <Text style={styles.name}>{sanName}</Text>
             <Text style={styles.period}>{frequency}</Text>
             {isFreeJoin ? (
-              <Text style={styles.freeJoinBadge}>{t("SANCard.freeJoinBadge")}</Text>
+              <Text style={styles.freeJoinBadge}>
+                {t("SANCard.freeJoinBadge")}
+              </Text>
             ) : null}
           </View>
           <View style={styles.headerAmount}>
@@ -129,7 +138,9 @@ const SANCard: React.FC<SANCardProps> = ({
           <View style={styles.detailItem}>
             <Users size={16} color="#888" style={styles.icon} />
             <Text style={styles.detailText}>
-              {hasOpenSpot && !external ? position : `${usersCount}/${membersPerSan}`}
+              {hasOpenSpot && !external
+                ? position
+                : `${usersCount}/${membersPerSan}`}
             </Text>
           </View>
           <View style={styles.detailItem}>
@@ -147,18 +158,25 @@ const SANCard: React.FC<SANCardProps> = ({
             <>
               {!hasOpenSpot ? (
                 <View style={styles.waitingSpot}>
-                  <Text style={styles.waitingSpotText}>{t("SANCard.waitingForSlots")}</Text>
+                  <Text style={styles.waitingSpotText}>
+                    {t("SANCard.waitingForSlots")}
+                  </Text>
                 </View>
-              ) : (<View style={{ height: 10 }}></View>)}
+              ) : (
+                <View style={{ height: 10 }}></View>
+              )}
             </>
           )}
 
-          {external ?
-            <TouchableOpacity style={styles.detailsLink} onPress={openSanDetails}>
+          {external ? (
+            <TouchableOpacity
+              style={styles.detailsLink}
+              onPress={openSanDetails}
+            >
               <Text style={styles.linkText}>{t("SANCard.details")}</Text>
               <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>
-            :
+          ) : (
             <TouchableOpacity
               style={styles.detailsLink}
               onPress={
@@ -175,8 +193,7 @@ const SANCard: React.FC<SANCardProps> = ({
               </Text>
               <PlusCircle size={16} color="#ff7f50" />
             </TouchableOpacity>
-          }
-
+          )}
         </View>
       </View>
       <View style={styles.bottomBorder} />
@@ -188,9 +205,8 @@ const SANCard: React.FC<SANCardProps> = ({
         fxCurrency={fxCurrency}
         isJoin
         onDismiss={() => setDialogOpen(false)}
-        onPaymentRegistered={() => console.log("Pago registrado!")}
+        onPaymentRegistered={() => undefined}
       />
-
     </Animated.View>
   );
 };

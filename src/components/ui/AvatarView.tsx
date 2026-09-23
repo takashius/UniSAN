@@ -1,15 +1,19 @@
-import { View, StyleSheet, Image, Text } from 'react-native'
-import React from 'react'
-import { Account } from '../../types';
+import { View, StyleSheet, Image, Text } from "react-native";
+import React from "react";
 
 interface Avatar {
   name: string;
   lastName?: string;
   photo?: string;
-  mini?: boolean
+  mini?: boolean;
 }
 
-const AvatarView: React.FC<Avatar> = ({ name, lastName, photo, mini = false }) => {
+const AvatarView: React.FC<Avatar> = ({
+  name,
+  lastName,
+  photo,
+  mini = false,
+}) => {
   const getInitials = (name: string, lastName?: string) => {
     if (!name) return "??";
 
@@ -26,18 +30,29 @@ const AvatarView: React.FC<Avatar> = ({ name, lastName, photo, mini = false }) =
   return (
     <View style={styles.profileRow}>
       {photo ? (
-        <Image source={{ uri: photo }} style={[mini ? styles.profileImage : styles.profileImageMini]} />
+        <Image
+          source={{ uri: photo }}
+          style={[mini ? styles.profileImage : styles.profileImageMini]}
+        />
       ) : (
-        <View style={[styles.initialsContainer, mini ? styles.profileImage : styles.profileImageMini]}>
-          <Text style={[styles.initialsText, mini ? styles.font : styles.fontMini]}>{getInitials(name, lastName)}</Text>
+        <View
+          style={[
+            styles.initialsContainer,
+            mini ? styles.profileImage : styles.profileImageMini,
+          ]}
+        >
+          <Text
+            style={[styles.initialsText, mini ? styles.font : styles.fontMini]}
+          >
+            {getInitials(name, lastName)}
+          </Text>
         </View>
       )}
     </View>
+  );
+};
 
-  )
-}
-
-export default AvatarView
+export default AvatarView;
 
 const styles = StyleSheet.create({
   profileName: {
@@ -72,5 +87,5 @@ const styles = StyleSheet.create({
   },
   fontMini: {
     fontSize: 18,
-  }
+  },
 });

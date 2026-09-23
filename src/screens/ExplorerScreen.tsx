@@ -28,7 +28,7 @@ const Explorer: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       void refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   const onRefresh = async () => {
@@ -45,7 +45,6 @@ const Explorer: React.FC = () => {
 
   return (
     <View style={styles.container}>
-
       <FullScreenLoader visible={isLoading && !refreshing} />
       <ScrollView
         contentContainerStyle={generalStyles.mainContent}
@@ -58,7 +57,6 @@ const Explorer: React.FC = () => {
           />
         }
       >
-
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("Explorer.availableSANs")}</Text>
           {availableSANs && availableSANs.length > 0 ? (

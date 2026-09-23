@@ -1,7 +1,14 @@
 import React from "react";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
+import type { TabParamList } from "../../types/navigation";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../context/UserContext";
 import { openEditProfile } from "../../utils/profileCompletion";
@@ -9,14 +16,16 @@ import generalStyles from "../../styles/general";
 
 const ProfileCompletionCard = () => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<TabParamList>>();
   const { user } = useUser();
   const completion = user?.profileCompletion;
   const percent = completion?.percent ?? 0;
   const progress = useSharedValue(0);
 
   React.useEffect(() => {
-    progress.value = withTiming(Math.min(100, Math.max(0, percent)), { duration: 700 });
+    progress.value = withTiming(Math.min(100, Math.max(0, percent)), {
+      duration: 700,
+    });
   }, [percent, progress]);
 
   const barStyle = useAnimatedStyle(() => ({
@@ -26,13 +35,18 @@ const ProfileCompletionCard = () => {
   if (!completion || completion.complete) return null;
 
   return (
-    <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, styles.card]}>
+    <Animated.View
+      entering={FadeInDown.duration(400)}
+      style={[generalStyles.card, styles.card]}
+    >
       <Text style={styles.title}>{t("ProfileCompletion.title")}</Text>
       <Text style={styles.subtitle}>{t("ProfileCompletion.subtitle")}</Text>
       <View style={styles.track}>
         <Animated.View style={[styles.fill, barStyle]} />
       </View>
-      <Text style={styles.percent}>{t("ProfileCompletion.percent", { percent })}</Text>
+      <Text style={styles.percent}>
+        {t("ProfileCompletion.percent", { percent })}
+      </Text>
       <TouchableOpacity onPress={() => openEditProfile(navigation)}>
         <Text style={styles.link}>{t("ProfileCompletion.completeNow")}</Text>
       </TouchableOpacity>

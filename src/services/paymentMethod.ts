@@ -6,25 +6,31 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import ERDEAxios from "./ERDEAxios";
-import { PaymentMethod, PaymentMethodCreate, PaymentMethodUpdate } from "../types/paymentMethod";
+import {
+  PaymentMethod,
+  PaymentMethodCreate,
+  PaymentMethodUpdate,
+} from "../types/paymentMethod";
 
 export const usePaymentMethods = (): UseQueryResult<PaymentMethod[], Error> => {
   return useQuery<PaymentMethod[], Error>({
     queryKey: ["paymentMethods"],
     queryFn: () => {
       return ERDEAxios.get<PaymentMethod[]>("/paymentMethod").then(
-        (response) => response.data
+        (response) => response.data,
       );
     },
   });
 };
 
-export const usePaymentMethod = (id: string): UseQueryResult<PaymentMethod, Error> => {
+export const usePaymentMethod = (
+  id: string,
+): UseQueryResult<PaymentMethod, Error> => {
   return useQuery<PaymentMethod, Error>({
     queryKey: ["paymentMethod", id],
     queryFn: () => {
       return ERDEAxios.get<PaymentMethod>(`/paymentMethod/${id}`).then(
-        (response) => response.data
+        (response) => response.data,
       );
     },
   });
@@ -53,7 +59,11 @@ export const useUpdatePaymentMethod = (): UseMutationResult<
   { id: string; data: PaymentMethodUpdate }
 > => {
   const queryClient = useQueryClient();
-  return useMutation<PaymentMethod, Error, { id: string; data: PaymentMethodUpdate }>({
+  return useMutation<
+    PaymentMethod,
+    Error,
+    { id: string; data: PaymentMethodUpdate }
+  >({
     mutationFn: async ({ id, data }) => {
       const response = await ERDEAxios.patch(`/paymentMethod/${id}`, data);
       return response.data;
@@ -79,4 +89,4 @@ export const useDeletePaymentMethod = (): UseMutationResult<
       queryClient.invalidateQueries({ queryKey: ["paymentMethods"] });
     },
   });
-}; 
+};

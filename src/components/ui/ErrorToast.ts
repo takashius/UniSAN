@@ -1,4 +1,4 @@
-const errorToast = (error: any) => {
+const errorToast = (error: unknown) => {
   let errorMessage: string = "";
 
   if (typeof error === "string") {

@@ -12,6 +12,6 @@ export function normalizeRoles(role: unknown): string[] {
 
 export function isAdminRole(role: unknown): boolean {
   return normalizeRoles(role).some((item) =>
-    ADMIN_ROLES.includes(item as (typeof ADMIN_ROLES)[number])
+    ADMIN_ROLES.includes(item as (typeof ADMIN_ROLES)[number]),
   );
 }

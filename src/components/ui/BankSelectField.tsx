@@ -18,15 +18,19 @@ const BankSelectField: React.FC<BankSelectFieldProps> = ({
     () =>
       [...(banks ?? [])]
         .sort((left, right) =>
-          String(left.code || "").localeCompare(String(right.code || ""), undefined, {
-            numeric: true,
-          })
+          String(left.code || "").localeCompare(
+            String(right.code || ""),
+            undefined,
+            {
+              numeric: true,
+            },
+          ),
         )
         .map((bank) => ({
           value: bank._id,
           label: `(${bank.code}) ${bank.name}`,
         })),
-    [banks]
+    [banks],
   );
 
   return (

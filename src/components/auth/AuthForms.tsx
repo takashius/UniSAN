@@ -1,27 +1,30 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { ArrowRight } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { ArrowRight } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
+import type { TextInput as PaperTextInput } from "react-native-paper";
+import type { AuthStackParamList } from "../../types/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useUser } from '../../context/UserContext';
-import { Button, Checkbox, TextInput } from 'react-native-paper';
-import { useLogin, useRegister, useAccount } from '../../services/auth';
-import Toast from 'react-native-toast-message';
-import errorToast from '../ui/ErrorToast';
-import SecureStoreManager from '../AsyncStorageManager';
-import FullScreenLoader from '../ui/FullScreenLoader';
-import { registerAndSyncPushToken } from '../../services/notifications';
+import { useUser } from "../../context/UserContext";
+import { Button, Checkbox, TextInput } from "react-native-paper";
+import { useLogin, useRegister, useAccount } from "../../services/auth";
+import Toast from "react-native-toast-message";
+import errorToast from "../ui/ErrorToast";
+import SecureStoreManager from "../AsyncStorageManager";
+import FullScreenLoader from "../ui/FullScreenLoader";
+import { registerAndSyncPushToken } from "../../services/notifications";
 
 export const LoginForm = () => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const { login } = useUser();
   const loginMutate = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [completingLogin, setCompletingLogin] = React.useState(false);
   const [hasRememberedEmail, setHasRememberedEmail] = React.useState(false);
-  const passwordInputRef = React.useRef<any>(null);
+  const passwordInputRef = React.useRef<PaperTextInput>(null);
   const { refetch } = useAccount();
   const isBusy = loginMutate.isPending || completingLogin;
 
@@ -29,7 +32,7 @@ export const LoginForm = () => {
     control,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
   } = useForm<{ email: string; password: string; rememberEmail: boolean }>({
     defaultValues: {
       email: "",
@@ -64,7 +67,11 @@ export const LoginForm = () => {
     }
   };
 
-  const onSubmit = (data: { email: string; password: string; rememberEmail: boolean }) => {
+  const onSubmit = (data: {
+    email: string;
+    password: string;
+    rememberEmail: boolean;
+  }) => {
     setCompletingLogin(true);
     void persistRememberedEmail(data.email, data.rememberEmail);
     loginMutate.mutate(
@@ -72,22 +79,25 @@ export const LoginForm = () => {
       {
         onSuccess: async (responseData) => {
           try {
-            await SecureStoreManager.setItem<string>("Token", responseData.token);
+            await SecureStoreManager.setItem<string>(
+              "Token",
+              responseData.token,
+            );
             const user = await refetch();
             if (user.data) {
               login(user.data);
               void registerAndSyncPushToken();
               Toast.show({
-                type: 'success',
+                type: "success",
                 text1: t("auth.loginSuccessTitle"),
-                text2: t("auth.loginSuccessMessage")
+                text2: t("auth.loginSuccessMessage"),
               });
             } else {
               setCompletingLogin(false);
               Toast.show({
-                type: 'error',
+                type: "error",
                 text1: t("auth.loginErrorTitle"),
-                text2: t("auth.loginErrorMessage")
+                text2: t("auth.loginErrorMessage"),
               });
             }
           } catch {
@@ -97,13 +107,13 @@ export const LoginForm = () => {
         onError: (error) => {
           setCompletingLogin(false);
           Toast.show({
-            type: 'error',
+            type: "error",
             text1: t("auth.loginErrorTitle"),
-            text2: `${errorToast(error)}}`
+            text2: `${errorToast(error)}}`,
           });
-          console.log('Error al hacer login:', error)
-        }
-      }
+          console.warn("Error al hacer login:", error);
+        },
+      },
     );
   };
 
@@ -139,9 +149,7 @@ export const LoginForm = () => {
           )}
         />
         {errors.email && (
-          <Text style={styles.errorText}>
-            {String(errors.email.message)}
-          </Text>
+          <Text style={styles.errorText}>{String(errors.email.message)}</Text>
         )}
       </View>
 
@@ -168,10 +176,23 @@ export const LoginForm = () => {
                 secureTextEntry={!showPassword}
                 autoComplete="password"
                 textContentType="password"
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={hasRememberedEmail}
-                right={showPassword ?
-                  <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
-                  : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
+                right={
+                  showPassword ? (
+                    <TextInput.Icon
+                      icon="eye"
+                      color={"#ff7f50"}
+                      onPress={() => setShowPassword(!showPassword)}
+                    />
+                  ) : (
+                    <TextInput.Icon
+                      icon="eye-off"
+                      color={"#ff7f50"}
+                      onPress={() => setShowPassword(!showPassword)}
+                    />
+                  )
+                }
                 style={styles.input}
                 error={errors.password ? true : false}
               />
@@ -200,7 +221,9 @@ export const LoginForm = () => {
                   color="#ff7f50"
                   uncheckedColor="#888888"
                 />
-                <Text style={styles.rememberLabel}>{t("auth.rememberUser")}</Text>
+                <Text style={styles.rememberLabel}>
+                  {t("auth.rememberUser")}
+                </Text>
               </TouchableOpacity>
             )}
           />
@@ -220,20 +243,17 @@ export const LoginForm = () => {
         contentStyle={styles.buttonContent}
         onPress={handleSubmit(onSubmit)}
         disabled={isBusy}
-        icon={({ size, color }) => (
-          <ArrowRight size={size} color={color} />
-        )}
+        icon={({ size, color }) => <ArrowRight size={size} color={color} />}
       >
         {t("auth.loginButton")}
       </Button>
-
     </View>
   );
 };
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const registerMutate = useRegister();
   const { login } = useUser();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -268,7 +288,12 @@ export const RegisterForm = () => {
   }) => {
     setCompletingRegister(true);
     registerMutate.mutate(
-      { name: data.name, email: data.email, password: data.password, acceptedTerms: data.acceptedTerms },
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        acceptedTerms: data.acceptedTerms,
+      },
       {
         onSuccess: async (response) => {
           try {
@@ -278,16 +303,16 @@ export const RegisterForm = () => {
               login(user.data);
               void registerAndSyncPushToken();
               Toast.show({
-                type: 'success',
+                type: "success",
                 text1: t("auth.registerSuccessTitle"),
-                text2: t("auth.registerSuccessMessage")
+                text2: t("auth.registerSuccessMessage"),
               });
             } else {
               setCompletingRegister(false);
               Toast.show({
-                type: 'error',
+                type: "error",
                 text1: t("auth.registerErrorTitle"),
-                text2: t("auth.registerErrorMessage")
+                text2: t("auth.registerErrorMessage"),
               });
             }
           } catch {
@@ -297,13 +322,13 @@ export const RegisterForm = () => {
         onError: (error) => {
           setCompletingRegister(false);
           Toast.show({
-            type: 'error',
+            type: "error",
             text1: t("auth.registerErrorTitle"),
-            text2: `${errorToast(error)}`
+            text2: `${errorToast(error)}`,
           });
-          console.log('Error al registrarse:', error)
+          console.warn("Error al registrarse:", error);
         },
-      }
+      },
     );
   };
 
@@ -329,7 +354,9 @@ export const RegisterForm = () => {
             />
           )}
         />
-        {errors.name && <Text style={styles.errorText}>{errors.name.message}</Text>}
+        {errors.name && (
+          <Text style={styles.errorText}>{errors.name.message}</Text>
+        )}
       </View>
 
       {/* Campo de Email */}
@@ -357,7 +384,9 @@ export const RegisterForm = () => {
             />
           )}
         />
-        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+        {errors.email && (
+          <Text style={styles.errorText}>{errors.email.message}</Text>
+        )}
       </View>
 
       {/* Campo de Contraseña */}
@@ -380,14 +409,28 @@ export const RegisterForm = () => {
               textColor="black"
               onChangeText={onChange}
               secureTextEntry={!showPassword}
-              right={showPassword ?
-                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
-                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
+              right={
+                showPassword ? (
+                  <TextInput.Icon
+                    icon="eye"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <TextInput.Icon
+                    icon="eye-off"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                )
+              }
               style={styles.input}
             />
           )}
         />
-        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+        {errors.password && (
+          <Text style={styles.errorText}>{errors.password.message}</Text>
+        )}
       </View>
 
       {/* Confirmar Contraseña */}
@@ -408,9 +451,21 @@ export const RegisterForm = () => {
               textColor="black"
               onChangeText={onChange}
               secureTextEntry={!showPasswordConfirm}
-              right={showPasswordConfirm ?
-                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />
-                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />}
+              right={
+                showPasswordConfirm ? (
+                  <TextInput.Icon
+                    icon="eye"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  />
+                ) : (
+                  <TextInput.Icon
+                    icon="eye-off"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  />
+                )
+              }
               style={styles.input}
             />
           )}
@@ -425,7 +480,8 @@ export const RegisterForm = () => {
           control={control}
           name="acceptedTerms"
           rules={{
-            validate: (value) => value === true || t("auth.acceptTermsRequired"),
+            validate: (value) =>
+              value === true || t("auth.acceptTermsRequired"),
           }}
           render={({ field: { onChange, value } }) => (
             <View style={styles.termsRow}>
@@ -436,7 +492,10 @@ export const RegisterForm = () => {
               />
               <Text style={styles.termsLabel}>
                 {t("auth.acceptTermsLabel")}{" "}
-                <Text style={styles.termsLink} onPress={() => navigation.navigate("Terms")}>
+                <Text
+                  style={styles.termsLink}
+                  onPress={() => navigation.navigate("Terms")}
+                >
                   {t("auth.termsLink")}
                 </Text>
               </Text>
@@ -444,7 +503,9 @@ export const RegisterForm = () => {
           )}
         />
         {errors.acceptedTerms && (
-          <Text style={styles.errorText}>{String(errors.acceptedTerms.message)}</Text>
+          <Text style={styles.errorText}>
+            {String(errors.acceptedTerms.message)}
+          </Text>
         )}
       </View>
 
@@ -455,9 +516,7 @@ export const RegisterForm = () => {
         contentStyle={styles.buttonContent}
         onPress={handleSubmit(onSubmit)}
         disabled={isBusy}
-        icon={({ size, color }) => (
-          <ArrowRight size={size} color={color} />
-        )}
+        icon={({ size, color }) => <ArrowRight size={size} color={color} />}
       >
         {t("auth.registerButton")}
       </Button>
@@ -468,19 +527,19 @@ export const RegisterForm = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   inputContainer: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   input: {
     width: "100%",
     backgroundColor: "white",
-    color: "black"
+    color: "black",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -488,7 +547,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   icon: {
-    position: 'absolute',
+    position: "absolute",
     right: 12,
   },
   eyeButton: {
@@ -531,22 +590,22 @@ const styles = StyleSheet.create({
   },
   link: {
     fontSize: 12,
-    color: '#ff7f50',
-    textDecorationLine: 'underline',
+    color: "#ff7f50",
+    textDecorationLine: "underline",
   },
   button: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ff7f50',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ff7f50",
     padding: 16,
     borderRadius: 8,
     marginTop: 16,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginRight: 8,
   },
   errorText: {

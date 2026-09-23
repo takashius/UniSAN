@@ -21,16 +21,37 @@ import EditProfile from "../screens/profile/EditProfileScreen";
 import PaymentMethods from "../screens/profile/PaymentMethodsScreen";
 import PendingPaymentsScreen from "../screens/admin/PendingPaymentsScreen";
 import PendingPaymentDetailScreen from "../screens/admin/PendingPaymentDetailScreen";
-import { Home, MessageCircle, Search, Calendar, User } from "lucide-react-native";
+import PendingDocumentsScreen from "../screens/admin/PendingDocumentsScreen";
+import PendingDocumentDetailScreen from "../screens/admin/PendingDocumentDetailScreen";
+import {
+  Home,
+  MessageCircle,
+  Search,
+  Calendar,
+  User,
+} from "lucide-react-native";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
-import { ChatStackParamList, ProfileStackParamList, SANStackParamList, AuthStackParamList, TabParamList } from "../types/navigation";
-import { CHAT_ENABLED } from "../config/features";
-import { registerAndSyncPushToken, subscribeAdminPaymentTaps } from "../services/notifications";
 import {
+  ChatStackParamList,
+  ProfileStackParamList,
+  SANStackParamList,
+  AuthStackParamList,
+  TabParamList,
+} from "../types/navigation";
+import { CHAT_ENABLED } from "../config/features";
+import {
+  registerAndSyncPushToken,
+  subscribeAdminDocumentTaps,
+  subscribeAdminPaymentTaps,
+} from "../services/notifications";
+import {
+  consumeQueuedPendingDocument,
   consumeQueuedPendingPayment,
   navigationRef,
+  openPendingDocument,
   openPendingPayment,
+  queuePendingDocument,
   queuePendingPayment,
 } from "./navigationRef";
 import { isAdminRole } from "../utils/roles";
@@ -52,22 +73,37 @@ const AppNavigator: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    return subscribeAdminPaymentTaps((id) => {
+    const unsubPayments = subscribeAdminPaymentTaps((id) => {
       if (user && isAdminRole(user.user.role) && !user.needsTermsAcceptance) {
         openPendingPayment(id);
         return;
       }
       queuePendingPayment(id);
     });
+    const unsubDocuments = subscribeAdminDocumentTaps((userId) => {
+      if (user && isAdminRole(user.user.role) && !user.needsTermsAcceptance) {
+        openPendingDocument(userId);
+        return;
+      }
+      queuePendingDocument(userId);
+    });
+    return () => {
+      unsubPayments();
+      unsubDocuments();
+    };
   }, [user]);
 
   useEffect(() => {
-    if (!user || !isAdminRole(user.user.role) || user.needsTermsAcceptance) return;
-    const queued = consumeQueuedPendingPayment();
-    if (queued) {
-      const timer = setTimeout(() => openPendingPayment(queued), 300);
-      return () => clearTimeout(timer);
-    }
+    if (!user || !isAdminRole(user.user.role) || user.needsTermsAcceptance)
+      return;
+    const queuedPayment = consumeQueuedPendingPayment();
+    const queuedDocument = consumeQueuedPendingDocument();
+    if (!queuedPayment && !queuedDocument) return;
+    const timer = setTimeout(() => {
+      if (queuedPayment) openPendingPayment(queuedPayment);
+      if (queuedDocument) openPendingDocument(queuedDocument);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [user]);
 
   const SANStack = () => (
@@ -142,6 +178,24 @@ const AppNavigator: React.FC = () => {
           headerTintColor: "white",
         }}
       />
+      <ProfileStackNav.Screen
+        name="PendingDocuments"
+        component={PendingDocumentsScreen}
+        options={{
+          headerTitle: t("Navigation.pendingDocuments"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
+      <ProfileStackNav.Screen
+        name="PendingDocumentDetail"
+        component={PendingDocumentDetailScreen}
+        options={{
+          headerTitle: t("Navigation.pendingDocumentDetail"),
+          headerStyle: { backgroundColor: "#ff7f50" },
+          headerTintColor: "white",
+        }}
+      />
     </ProfileStackNav.Navigator>
   );
 
@@ -159,84 +213,89 @@ const AppNavigator: React.FC = () => {
           user.needsTermsAcceptance ? (
             <TermsScreen mode="accept" />
           ) : (
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ color, size }) => {
-                let IconComponent;
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                  let IconComponent;
 
-                switch (route.name) {
-                  case "UNISAN":
-                    IconComponent = Home;
-                    break;
-                  case "Chat":
-                    IconComponent = MessageCircle;
-                    break;
-                  case "Explorer":
-                    IconComponent = Search;
-                    break;
-                  case "History":
-                    IconComponent = Calendar;
-                    break;
-                  case "Profile":
-                    IconComponent = User;
-                    break;
-                  default:
-                    IconComponent = Home;
-                }
+                  switch (route.name) {
+                    case "UNISAN":
+                      IconComponent = Home;
+                      break;
+                    case "Chat":
+                      IconComponent = MessageCircle;
+                      break;
+                    case "Explorer":
+                      IconComponent = Search;
+                      break;
+                    case "History":
+                      IconComponent = Calendar;
+                      break;
+                    case "Profile":
+                      IconComponent = User;
+                      break;
+                    default:
+                      IconComponent = Home;
+                  }
 
-                return <IconComponent color={color} size={size} />;
-              },
-              tabBarActiveTintColor: "#ff7f50",
-              tabBarInactiveTintColor: "gray",
-              tabBarStyle: {
-                backgroundColor: "white",
-                borderTopWidth: 1,
-                borderTopColor: "#f4f4f4",
-                height: 56 + insets.bottom + 12,
-                paddingTop: 12,
-                paddingBottom: insets.bottom + 8,
-              },
-              headerStyle: { backgroundColor: "#ff7f50" },
-              headerTintColor: "white",
-            })}
-          >
-            <Tab.Screen
-              name="UNISAN"
-              component={HomeScreen}
-              options={{
-                tabBarLabel: t("Navigation.home"),
-                headerTitle: t("Navigation.home"),
-              }} />
-            {CHAT_ENABLED ? (
+                  return <IconComponent color={color} size={size} />;
+                },
+                tabBarActiveTintColor: "#ff7f50",
+                tabBarInactiveTintColor: "gray",
+                tabBarStyle: {
+                  backgroundColor: "white",
+                  borderTopWidth: 1,
+                  borderTopColor: "#f4f4f4",
+                  height: 56 + insets.bottom + 12,
+                  paddingTop: 12,
+                  paddingBottom: insets.bottom + 8,
+                },
+                headerStyle: { backgroundColor: "#ff7f50" },
+                headerTintColor: "white",
+              })}
+            >
               <Tab.Screen
-                name="Chat"
-                component={ChatStack}
+                name="UNISAN"
+                component={HomeScreen}
                 options={{
-                  tabBarLabel: t("Navigation.chat")
-                }} />
-            ) : null}
-            <Tab.Screen
-              name="Explorer"
-              component={SANStack}
-              options={{
-                tabBarLabel: t("Navigation.explorer"),
-                headerTitle: t("Navigation.explorer"),
-              }} />
-            <Tab.Screen
-              name="History"
-              component={HistoryScreen}
-              options={{
-                tabBarLabel: t("Navigation.history"),
-                headerTitle: t("Navigation.history"),
-              }} />
-            <Tab.Screen
-              name="Profile"
-              component={ProfileStack}
-              options={{
-                headerShown: false,
-                tabBarLabel: t("Navigation.profile"),
-              }} />
-          </Tab.Navigator>
+                  tabBarLabel: t("Navigation.home"),
+                  headerTitle: t("Navigation.home"),
+                }}
+              />
+              {CHAT_ENABLED ? (
+                <Tab.Screen
+                  name="Chat"
+                  component={ChatStack}
+                  options={{
+                    tabBarLabel: t("Navigation.chat"),
+                  }}
+                />
+              ) : null}
+              <Tab.Screen
+                name="Explorer"
+                component={SANStack}
+                options={{
+                  tabBarLabel: t("Navigation.explorer"),
+                  headerTitle: t("Navigation.explorer"),
+                }}
+              />
+              <Tab.Screen
+                name="History"
+                component={HistoryScreen}
+                options={{
+                  tabBarLabel: t("Navigation.history"),
+                  headerTitle: t("Navigation.history"),
+                }}
+              />
+              <Tab.Screen
+                name="Profile"
+                component={ProfileStack}
+                options={{
+                  headerShown: false,
+                  tabBarLabel: t("Navigation.profile"),
+                }}
+              />
+            </Tab.Navigator>
           )
         ) : (
           <AuthStack.Navigator>

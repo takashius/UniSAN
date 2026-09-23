@@ -1,6 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../context/UserContext";
 import { useSanSettings } from "../../services/settings";
@@ -19,12 +23,16 @@ const UserLevel: React.FC = () => {
 
   const level = user?.user.level || 1;
   const points = user?.user.points || 0;
-  const maxLevel = settings?.levels?.length ? getMaxLevel(settings.levels) : null;
+  const maxLevel = settings?.levels?.length
+    ? getMaxLevel(settings.levels)
+    : null;
   const levelType = getLevelType(level, maxLevel);
   const maxCap = getMaxCap(settings?.levels, level);
-  const threshold = user?.user.nextLevelPoints ?? getPointsThreshold(settings, level);
+  const threshold =
+    user?.user.nextLevelPoints ?? getPointsThreshold(settings, level);
   const remaining =
-    user?.user.pointsNeeded ?? (threshold == null ? null : Math.max(0, threshold - points));
+    user?.user.pointsNeeded ??
+    (threshold == null ? null : Math.max(0, threshold - points));
   const isMaxLevel =
     user?.user.pointsNeeded === null || (maxLevel != null && level >= maxLevel);
   const progress = isMaxLevel
@@ -49,7 +57,9 @@ const UserLevel: React.FC = () => {
         <View>
           <Text style={styles.subtitle}>{t("UserLevel.currentLevel")}</Text>
           <View style={styles.levelRow}>
-            <Text style={styles.levelTitle}>{t("UserLevel.level", { level })}</Text>
+            <Text style={styles.levelTitle}>
+              {t("UserLevel.level", { level })}
+            </Text>
             <View
               style={[
                 styles.badge,
@@ -60,7 +70,9 @@ const UserLevel: React.FC = () => {
                     : styles.badgeIntermediate,
               ]}
             >
-              <Text style={styles.badgeText}>{t(`UserLevel.levelType.${levelType}`)}</Text>
+              <Text style={styles.badgeText}>
+                {t(`UserLevel.levelType.${levelType}`)}
+              </Text>
             </View>
           </View>
         </View>
@@ -71,7 +83,9 @@ const UserLevel: React.FC = () => {
 
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>{t("UserLevel.points", { points })}</Text>
+          <Text style={styles.progressLabel}>
+            {t("UserLevel.points", { points })}
+          </Text>
           {!isMaxLevel && threshold != null && (
             <Text style={styles.progressLabel}>
               {t("UserLevel.nextLevelPoints", { nextLevelPoints: threshold })}
@@ -90,7 +104,9 @@ const UserLevel: React.FC = () => {
 
       {maxCap != null && (
         <View style={styles.benefits}>
-          <Text style={styles.benefitsTitle}>{t("UserLevel.benefitsTitle")}</Text>
+          <Text style={styles.benefitsTitle}>
+            {t("UserLevel.benefitsTitle")}
+          </Text>
           <View style={styles.benefitItem}>
             <View style={styles.bulletPoint} />
             <Text style={styles.benefitText}>

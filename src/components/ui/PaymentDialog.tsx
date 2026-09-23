@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Pressable, ScrollView, Text, Image, useWindowDimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Text,
+  Image,
+  useWindowDimensions,
+} from "react-native";
 import { Button, TextInput, Portal, HelperText } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import * as Clipboard from "expo-clipboard";
@@ -41,13 +49,14 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   onPaymentRegistered,
 }) => {
   const { height } = useWindowDimensions();
-  const { control, handleSubmit, reset, watch, setValue } = useForm<PaymentFormData>({
-    defaultValues: {
-      paymentDate: new Date(),
-      amount: 0,
-      referenceNumber: "",
-    },
-  });
+  const { control, handleSubmit, reset, watch, setValue } =
+    useForm<PaymentFormData>({
+      defaultValues: {
+        paymentDate: new Date(),
+        amount: 0,
+        referenceNumber: "",
+      },
+    });
   const { t } = useTranslation();
   const [receiptUri, setReceiptUri] = useState<string | null>(null);
   const [completing, setCompleting] = useState(false);
@@ -60,7 +69,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const sanRate = rateForSan(fx, fxCurrency);
   const isBusy = joinSan.isPending || paymentSan.isPending || completing;
   const watchedAmount = Number(watch("amount"));
-  const bsAmount = Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
+  const bsAmount =
+    Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
 
   useEffect(() => {
     if (!open) return;
@@ -127,7 +137,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
         });
         setUser(updatedUser);
       } catch (error) {
-        console.log(error);
+        console.warn(error);
       }
       Toast.show({
         type: "success",
@@ -168,7 +178,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       },
       onError: (error: unknown) => {
         setCompleting(false);
-        console.log(error);
+        console.warn(error);
         Toast.show({
           type: "error",
           text1: t("Payment.paymentErrorTitle"),
@@ -191,220 +201,307 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     <>
       <FullScreenLoader visible={isBusy} />
       <Portal>
-      <View style={styles.overlayRoot}>
-        <Pressable style={styles.backdrop} onPress={isBusy ? undefined : onDismiss} />
-        <View style={styles.center} pointerEvents="box-none">
-          <View style={[styles.card, { maxHeight: height * 0.9 }]}>
-            <Text style={styles.dialogTitle}>
-              {isJoin ? t("Payment.joinTitle") : t("Payment.title")}
-            </Text>
-            <ScrollView
-              style={[styles.scroll, { maxHeight: height * 0.58 }]}
-              contentContainerStyle={styles.scrollContent}
-              keyboardShouldPersistTaps="handled"
-              nestedScrollEnabled
-            >
-              <View style={styles.paymentDetails}>
-                {receivingAccounts.length === 0 ? (
-                  <HelperText type="info">{t("Payment.noReceivingAccounts")}</HelperText>
-                ) : (
-                  receivingAccounts.map((account) => (
-                    <View key={account._id} style={styles.accountBlock}>
+        <View style={styles.overlayRoot}>
+          <Pressable
+            style={styles.backdrop}
+            onPress={isBusy ? undefined : onDismiss}
+          />
+          <View style={styles.center} pointerEvents="box-none">
+            <View style={[styles.card, { maxHeight: height * 0.9 }]}>
+              <Text style={styles.dialogTitle}>
+                {isJoin ? t("Payment.joinTitle") : t("Payment.title")}
+              </Text>
+              <ScrollView
+                style={[styles.scroll, { maxHeight: height * 0.58 }]}
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                nestedScrollEnabled
+              >
+                <View style={styles.paymentDetails}>
+                  {receivingAccounts.length === 0 ? (
+                    <HelperText type="info">
+                      {t("Payment.noReceivingAccounts")}
+                    </HelperText>
+                  ) : (
+                    receivingAccounts.map((account) => (
+                      <View key={account._id} style={styles.accountBlock}>
+                        <View style={styles.detailRow}>
+                          <HelperText type="info">
+                            {t("Payment.bank")}:
+                          </HelperText>
+                          <HelperText type="info">
+                            {account.bankCode
+                              ? `(${account.bankCode}) ${account.bankName}`
+                              : account.bankName}
+                          </HelperText>
+                        </View>
+                        {!!account.holderName && (
+                          <View style={styles.detailRow}>
+                            <HelperText type="info">
+                              {t("Payment.holder")}:
+                            </HelperText>
+                            <HelperText type="info">
+                              {account.holderName}
+                            </HelperText>
+                          </View>
+                        )}
+                        <View style={styles.detailRow}>
+                          <HelperText type="info">
+                            {t("Payment.phone")}:
+                          </HelperText>
+                          <HelperText type="info">{account.phone}</HelperText>
+                        </View>
+                        <View style={styles.detailRow}>
+                          <HelperText type="info">
+                            {t("Payment.documentID")}:
+                          </HelperText>
+                          <HelperText type="info">
+                            {account.documentId}
+                          </HelperText>
+                        </View>
+                        {!!account.accountNumber && (
+                          <View style={styles.detailRow}>
+                            <HelperText type="info">
+                              {t("Payment.accountNumber")}:
+                            </HelperText>
+                            <HelperText type="info">
+                              {account.accountNumber}
+                            </HelperText>
+                          </View>
+                        )}
+                        <Button
+                          mode="outlined"
+                          compact
+                          textColor="#ff7f50"
+                          onPress={() => void copyAccountData(account)}
+                          style={styles.copyButton}
+                          icon={({ size, color }) => (
+                            <Copy size={size} color={color} />
+                          )}
+                        >
+                          {t("Payment.copyData")}
+                        </Button>
+                      </View>
+                    ))
+                  )}
+                  {lateFeeAmount > 0 ? (
+                    <>
                       <View style={styles.detailRow}>
-                        <HelperText type="info">{t("Payment.bank")}:</HelperText>
                         <HelperText type="info">
-                          {account.bankCode
-                            ? `(${account.bankCode}) ${account.bankName}`
-                            : account.bankName}
+                          {t("Payment.installment")}:
+                        </HelperText>
+                        <HelperText type="info">
+                          {formatUsd(baseAmount ?? amount - lateFeeAmount)}
                         </HelperText>
                       </View>
-                      {!!account.holderName && (
-                        <View style={styles.detailRow}>
-                          <HelperText type="info">{t("Payment.holder")}:</HelperText>
-                          <HelperText type="info">{account.holderName}</HelperText>
-                        </View>
-                      )}
                       <View style={styles.detailRow}>
-                        <HelperText type="info">{t("Payment.phone")}:</HelperText>
-                        <HelperText type="info">{account.phone}</HelperText>
+                        <HelperText type="info">
+                          {t("Payment.lateFee")}
+                          {lateFeePercent ? ` (${lateFeePercent}%)` : ""}:
+                        </HelperText>
+                        <HelperText type="info">
+                          {formatUsd(lateFeeAmount)}
+                        </HelperText>
                       </View>
-                      <View style={styles.detailRow}>
-                        <HelperText type="info">{t("Payment.documentID")}:</HelperText>
-                        <HelperText type="info">{account.documentId}</HelperText>
-                      </View>
-                      {!!account.accountNumber && (
-                        <View style={styles.detailRow}>
-                          <HelperText type="info">{t("Payment.accountNumber")}:</HelperText>
-                          <HelperText type="info">{account.accountNumber}</HelperText>
-                        </View>
-                      )}
-                      <Button
-                        mode="outlined"
-                        compact
-                        textColor="#ff7f50"
-                        onPress={() => void copyAccountData(account)}
-                        style={styles.copyButton}
-                        icon={({ size, color }) => <Copy size={size} color={color} />}
-                      >
-                        {t("Payment.copyData")}
-                      </Button>
-                    </View>
-                  ))
-                )}
-                {lateFeeAmount > 0 ? (
-                  <>
-                    <View style={styles.detailRow}>
-                      <HelperText type="info">{t("Payment.installment")}:</HelperText>
-                      <HelperText type="info">{formatUsd(baseAmount ?? amount - lateFeeAmount)}</HelperText>
-                    </View>
-                    <View style={styles.detailRow}>
                       <HelperText type="info">
-                        {t("Payment.lateFee")}
-                        {lateFeePercent ? ` (${lateFeePercent}%)` : ""}:
+                        {t("Payment.lateFeeHint")}
                       </HelperText>
-                      <HelperText type="info">{formatUsd(lateFeeAmount)}</HelperText>
-                    </View>
-                    <HelperText type="info">{t("Payment.lateFeeHint")}</HelperText>
-                  </>
-                ) : null}
-                <View style={styles.detailRow}>
-                  <HelperText type="info">{t("Payment.amountToPay")}:</HelperText>
-                  <Text style={styles.highlightAmount}>{formatUsd(amount)}</Text>
+                    </>
+                  ) : null}
+                  <View style={styles.detailRow}>
+                    <HelperText type="info">
+                      {t("Payment.amountToPay")}:
+                    </HelperText>
+                    <Text style={styles.highlightAmount}>
+                      {formatUsd(amount)}
+                    </Text>
+                  </View>
+                  {fxError ? (
+                    <HelperText type="error">
+                      {t("Payment.fxUnavailable")}
+                    </HelperText>
+                  ) : null}
                 </View>
-                {fxError ? (
-                  <HelperText type="error">{t("Payment.fxUnavailable")}</HelperText>
-                ) : null}
-              </View>
 
-              <Controller
-                control={control}
-                name="sourceBank"
-                rules={{ required: true }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                  <View>
-                    <BankSelectField selectedBank={value} onSelectBank={onChange} />
-                    {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
-                  </View>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="paymentDate"
-                rules={{ required: true }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                  <View style={styles.field}>
-                    <DateInputField date={value} onChange={onChange} label={t("Payment.paymentDate")} />
-                    {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
-                  </View>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="amount"
-                rules={{ required: true }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                  <View style={styles.field}>
-                    <TextInput
-                      label={t("Payment.amount")}
-                      value={!value ? "" : String(value)}
-                      activeUnderlineColor="#ff7f50"
-                      textColor="black"
-                      keyboardType="numeric"
-                      onChangeText={onChange}
-                      style={formStyles.input}
-                    />
-                    {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
-                  </View>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="referenceNumber"
-                rules={{ required: true }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                  <View style={styles.field}>
-                    <TextInput
-                      label={t("Payment.referenceNumber")}
-                      value={value}
-                      activeUnderlineColor="#ff7f50"
-                      textColor="black"
-                      keyboardType="numeric"
-                      placeholder={t("Payment.referenceNumberPlaceholder")}
-                      onChangeText={onChange}
-                      style={formStyles.input}
-                    />
-                    <HelperText type="info">{t("Payment.referenceNumberHint")}</HelperText>
-                    {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
-                  </View>
-                )}
-              />
-
-              <View style={styles.field}>
-                <HelperText type="info">{t("Payment.receiptOptional")}</HelperText>
-                <HelperText type="info">{t("Payment.receiptHint")}</HelperText>
-                {receiptUri ? (
-                  <View style={styles.receiptPreview}>
-                    <Image source={{ uri: receiptUri }} style={styles.receiptImage} />
-                    <View style={styles.receiptActions}>
-                      <Button
-                        mode="outlined"
-                        compact
-                        textColor="#ff7f50"
-                        onPress={() => void pickReceipt()}
-                        style={styles.receiptButton}
-                      >
-                        {t("Payment.changeReceipt")}
-                      </Button>
-                      <Button
-                        mode="text"
-                        compact
-                        textColor="#888"
-                        onPress={() => setReceiptUri(null)}
-                        icon={({ size, color }) => <X size={size} color={color} />}
-                      >
-                        {t("Payment.removeReceipt")}
-                      </Button>
+                <Controller
+                  control={control}
+                  name="sourceBank"
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <View>
+                      <BankSelectField
+                        selectedBank={value}
+                        onSelectBank={onChange}
+                      />
+                      {error && (
+                        <HelperText type="error">
+                          {t("methodsForm.requiredError")}
+                        </HelperText>
+                      )}
                     </View>
-                  </View>
-                ) : (
-                  <Button
-                    mode="outlined"
-                    textColor="#ff7f50"
-                    onPress={() => void pickReceipt()}
-                    style={styles.receiptButton}
-                    icon={({ size, color }) => <ImagePlus size={size} color={color} />}
-                  >
-                    {t("Payment.attachReceipt")}
-                  </Button>
-                )}
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="paymentDate"
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <View style={styles.field}>
+                      <DateInputField
+                        date={value}
+                        onChange={onChange}
+                        label={t("Payment.paymentDate")}
+                      />
+                      {error && (
+                        <HelperText type="error">
+                          {t("methodsForm.requiredError")}
+                        </HelperText>
+                      )}
+                    </View>
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="amount"
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <View style={styles.field}>
+                      <TextInput
+                        label={t("Payment.amount")}
+                        value={!value ? "" : String(value)}
+                        activeUnderlineColor="#ff7f50"
+                        textColor="black"
+                        keyboardType="numeric"
+                        onChangeText={onChange}
+                        style={formStyles.input}
+                      />
+                      {error && (
+                        <HelperText type="error">
+                          {t("methodsForm.requiredError")}
+                        </HelperText>
+                      )}
+                    </View>
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="referenceNumber"
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <View style={styles.field}>
+                      <TextInput
+                        label={t("Payment.referenceNumber")}
+                        value={value}
+                        activeUnderlineColor="#ff7f50"
+                        textColor="black"
+                        keyboardType="numeric"
+                        placeholder={t("Payment.referenceNumberPlaceholder")}
+                        onChangeText={onChange}
+                        style={formStyles.input}
+                      />
+                      <HelperText type="info">
+                        {t("Payment.referenceNumberHint")}
+                      </HelperText>
+                      {error && (
+                        <HelperText type="error">
+                          {t("methodsForm.requiredError")}
+                        </HelperText>
+                      )}
+                    </View>
+                  )}
+                />
+
+                <View style={styles.field}>
+                  <HelperText type="info">
+                    {t("Payment.receiptOptional")}
+                  </HelperText>
+                  <HelperText type="info">
+                    {t("Payment.receiptHint")}
+                  </HelperText>
+                  {receiptUri ? (
+                    <View style={styles.receiptPreview}>
+                      <Image
+                        source={{ uri: receiptUri }}
+                        style={styles.receiptImage}
+                      />
+                      <View style={styles.receiptActions}>
+                        <Button
+                          mode="outlined"
+                          compact
+                          textColor="#ff7f50"
+                          onPress={() => void pickReceipt()}
+                          style={styles.receiptButton}
+                        >
+                          {t("Payment.changeReceipt")}
+                        </Button>
+                        <Button
+                          mode="text"
+                          compact
+                          textColor="#888"
+                          onPress={() => setReceiptUri(null)}
+                          icon={({ size, color }) => (
+                            <X size={size} color={color} />
+                          )}
+                        >
+                          {t("Payment.removeReceipt")}
+                        </Button>
+                      </View>
+                    </View>
+                  ) : (
+                    <Button
+                      mode="outlined"
+                      textColor="#ff7f50"
+                      onPress={() => void pickReceipt()}
+                      style={styles.receiptButton}
+                      icon={({ size, color }) => (
+                        <ImagePlus size={size} color={color} />
+                      )}
+                    >
+                      {t("Payment.attachReceipt")}
+                    </Button>
+                  )}
+                </View>
+              </ScrollView>
+              <View style={styles.actions}>
+                <Button
+                  textColor="#ff7f50"
+                  mode="outlined"
+                  onPress={onDismiss}
+                  style={formStyles.cancelButton}
+                  disabled={isBusy}
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit(onSubmit)}
+                  style={formStyles.confirmButton}
+                  disabled={isBusy || !sanRate}
+                >
+                  {isJoin
+                    ? t("Payment.confirmJoin")
+                    : t("Payment.confirmPayment")}
+                </Button>
               </View>
-            </ScrollView>
-            <View style={styles.actions}>
-              <Button
-                textColor="#ff7f50"
-                mode="outlined"
-                onPress={onDismiss}
-                style={formStyles.cancelButton}
-                disabled={isBusy}
-              >
-                {t("common.cancel")}
-              </Button>
-              <Button
-                mode="contained"
-                onPress={handleSubmit(onSubmit)}
-                style={formStyles.confirmButton}
-                disabled={isBusy || !sanRate}
-              >
-                {isJoin ? t("Payment.confirmJoin") : t("Payment.confirmPayment")}
-              </Button>
             </View>
           </View>
         </View>
-      </View>
-    </Portal>
+      </Portal>
     </>
   );
 };

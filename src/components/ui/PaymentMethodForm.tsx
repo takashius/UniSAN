@@ -1,9 +1,19 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Pressable, ScrollView, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import { Button, TextInput, HelperText, Portal } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useCreatePaymentMethod, useUpdatePaymentMethod } from "../../services/paymentMethod";
+import {
+  useCreatePaymentMethod,
+  useUpdatePaymentMethod,
+} from "../../services/paymentMethod";
 import { PaymentMethod, PaymentMethodCreate } from "../../types/paymentMethod";
 import Toast from "react-native-toast-message";
 import BankSelectField from "./BankSelectField";
@@ -16,18 +26,23 @@ interface PaymentMethodFormProps {
   method?: PaymentMethod;
 }
 
-const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismiss, method }) => {
-  const { control, handleSubmit, watch, reset, setValue } = useForm<PaymentMethodCreate>({
-    defaultValues: {
-      title: "",
-      bank: "",
-      method: "transferencia",
-      idNumber: "",
-      accountType: "ahorro",
-      accountNumber: "",
-      phoneNumber: "",
-    },
-  });
+const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
+  visible,
+  onDismiss,
+  method,
+}) => {
+  const { control, handleSubmit, watch, reset, setValue } =
+    useForm<PaymentMethodCreate>({
+      defaultValues: {
+        title: "",
+        bank: "",
+        method: "transferencia",
+        idNumber: "",
+        accountType: "ahorro",
+        accountNumber: "",
+        phoneNumber: "",
+      },
+    });
 
   const { t } = useTranslation();
   const createPaymentMethod = useCreatePaymentMethod();
@@ -69,7 +84,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
               text2: t("alerts.errorMessage"),
             });
           },
-        }
+        },
       );
     } else {
       createPaymentMethod.mutate(data, {
@@ -97,7 +112,8 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
     onDismiss();
   };
 
-  const isLoading = createPaymentMethod.isPending || updatePaymentMethod.isPending;
+  const isLoading =
+    createPaymentMethod.isPending || updatePaymentMethod.isPending;
 
   if (!visible) {
     return null;
@@ -128,7 +144,10 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     name="title"
                     control={control}
                     rules={{ required: true }}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
                       <View style={styles.inputContainer}>
                         <TextInput
                           placeholder={t("methodsForm.titlePlaceholder")}
@@ -138,7 +157,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                           style={styles.input}
                           onChangeText={onChange}
                         />
-                        {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
+                        {error && (
+                          <HelperText type="error">
+                            {t("methodsForm.requiredError")}
+                          </HelperText>
+                        )}
                       </View>
                     )}
                   />
@@ -147,10 +170,20 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     name="bank"
                     control={control}
                     rules={{ required: true }}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
                       <View>
-                        <BankSelectField selectedBank={value} onSelectBank={onChange} />
-                        {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
+                        <BankSelectField
+                          selectedBank={value}
+                          onSelectBank={onChange}
+                        />
+                        {error && (
+                          <HelperText type="error">
+                            {t("methodsForm.requiredError")}
+                          </HelperText>
+                        )}
                       </View>
                     )}
                   />
@@ -164,8 +197,14 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                         placeholder={t("methodsForm.paymentTypePlaceholder")}
                         onSelect={onChange}
                         options={[
-                          { value: "transferencia", label: t("methodsForm.transfer") },
-                          { value: "pago_movil", label: t("methodsForm.mobile") },
+                          {
+                            value: "transferencia",
+                            label: t("methodsForm.transfer"),
+                          },
+                          {
+                            value: "pago_movil",
+                            label: t("methodsForm.mobile"),
+                          },
                         ]}
                       />
                     )}
@@ -175,10 +214,15 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                     name="idNumber"
                     control={control}
                     rules={{ required: true }}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
                       <View style={styles.inputContainer}>
                         <TextInput
-                          placeholder={t("methodsForm.identityNumberPlaceholder")}
+                          placeholder={t(
+                            "methodsForm.identityNumberPlaceholder",
+                          )}
                           activeUnderlineColor="#ff7f50"
                           textColor="black"
                           inputMode="numeric"
@@ -186,7 +230,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                           style={styles.input}
                           onChangeText={onChange}
                         />
-                        {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
+                        {error && (
+                          <HelperText type="error">
+                            {t("methodsForm.requiredError")}
+                          </HelperText>
+                        )}
                       </View>
                     )}
                   />
@@ -199,11 +247,19 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                         render={({ field: { onChange, value } }) => (
                           <SelectField
                             value={value || "ahorro"}
-                            placeholder={t("methodsForm.accountTypePlaceholder")}
+                            placeholder={t(
+                              "methodsForm.accountTypePlaceholder",
+                            )}
                             onSelect={onChange}
                             options={[
-                              { value: "corriente", label: t("methodsForm.current") },
-                              { value: "ahorro", label: t("methodsForm.savings") },
+                              {
+                                value: "corriente",
+                                label: t("methodsForm.current"),
+                              },
+                              {
+                                value: "ahorro",
+                                label: t("methodsForm.savings"),
+                              },
                             ]}
                           />
                         )}
@@ -213,10 +269,15 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                         name="accountNumber"
                         control={control}
                         rules={{ required: true }}
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <View style={styles.inputContainer}>
                             <TextInput
-                              placeholder={t("methodsForm.accountNumberPlaceholder")}
+                              placeholder={t(
+                                "methodsForm.accountNumberPlaceholder",
+                              )}
                               activeUnderlineColor="#ff7f50"
                               textColor="black"
                               inputMode="numeric"
@@ -224,7 +285,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                               style={styles.input}
                               onChangeText={onChange}
                             />
-                            {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
+                            {error && (
+                              <HelperText type="error">
+                                {t("methodsForm.requiredError")}
+                              </HelperText>
+                            )}
                           </View>
                         )}
                       />
@@ -236,10 +301,15 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                       name="phoneNumber"
                       control={control}
                       rules={{ required: true }}
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <View style={styles.inputContainer}>
                           <TextInput
-                            placeholder={t("methodsForm.phoneNumberPlaceholder")}
+                            placeholder={t(
+                              "methodsForm.phoneNumberPlaceholder",
+                            )}
                             activeUnderlineColor="#ff7f50"
                             textColor="black"
                             inputMode="numeric"
@@ -247,7 +317,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({ visible, onDismis
                             style={styles.input}
                             onChangeText={onChange}
                           />
-                          {error && <HelperText type="error">{t("methodsForm.requiredError")}</HelperText>}
+                          {error && (
+                            <HelperText type="error">
+                              {t("methodsForm.requiredError")}
+                            </HelperText>
+                          )}
                         </View>
                       )}
                     />

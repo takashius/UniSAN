@@ -34,7 +34,7 @@ const Tabs: React.FC<TabsProps> = ({ children, defaultValue }) => {
     <>
       {React.Children.map(children, (child) => {
         if (React.isValidElement<TabsListProps | TabsContentProps>(child)) {
-          const childType = child.type as any;
+          const childType = child.type as { displayName?: string };
           if (childType.displayName === "TabsList") {
             return React.cloneElement(child, { activeTab, setActiveTab });
           }
@@ -49,7 +49,11 @@ const Tabs: React.FC<TabsProps> = ({ children, defaultValue }) => {
 };
 
 // Lista de pestañas
-const TabsList: React.FC<TabsListProps> = ({ children, activeTab, setActiveTab }) => {
+const TabsList: React.FC<TabsListProps> = ({
+  children,
+  activeTab,
+  setActiveTab,
+}) => {
   return (
     <View style={styles.tabsList}>
       {React.Children.map(children, (child) => {
@@ -65,7 +69,12 @@ const TabsList: React.FC<TabsListProps> = ({ children, activeTab, setActiveTab }
 TabsList.displayName = "TabsList";
 
 // Componente de un solo tab
-const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, activeTab, setActiveTab, children }) => {
+const TabsTrigger: React.FC<TabsTriggerProps> = ({
+  value,
+  activeTab,
+  setActiveTab,
+  children,
+}) => {
   const isActive = activeTab === value;
 
   return (
@@ -73,15 +82,23 @@ const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, activeTab, setActiveTa
       onPress={() => setActiveTab?.(value)}
       style={[styles.tabsTrigger, isActive && styles.activeTab]}
     >
-      <Text style={[styles.tabsTriggerText, isActive && styles.activeTabText]}>{children}</Text>
+      <Text style={[styles.tabsTriggerText, isActive && styles.activeTabText]}>
+        {children}
+      </Text>
     </TouchableOpacity>
   );
 };
 TabsTrigger.displayName = "TabsTrigger";
 
 // Contenido de cada tab
-const TabsContent: React.FC<TabsContentProps> = ({ value, activeTab, children }) => {
-  return activeTab === value ? <View style={styles.tabsContent}>{children}</View> : null;
+const TabsContent: React.FC<TabsContentProps> = ({
+  value,
+  activeTab,
+  children,
+}) => {
+  return activeTab === value ? (
+    <View style={styles.tabsContent}>{children}</View>
+  ) : null;
 };
 TabsContent.displayName = "TabsContent";
 
@@ -96,7 +113,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     marginBottom: 4,
-    marginTop: 4
+    marginTop: 4,
   },
   tabsTrigger: {
     paddingVertical: 8,

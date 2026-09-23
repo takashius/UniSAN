@@ -1,13 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Image, Text, TextInput, ScrollView, ActivityIndicator, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TextInput,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Card, Portal, IconButton, Button } from "react-native-paper";
-import { Camera, Eye, EyeOff, Upload } from "lucide-react-native";
+import {
+  Camera,
+  CircleCheck,
+  Eye,
+  EyeOff,
+  Hourglass,
+  Upload,
+} from "lucide-react-native";
 import generalStyles from "../../styles/general";
-import { useUserProfile, useUploadImage, useUpdateUser } from "../../services/auth";
+import {
+  useUserProfile,
+  useUploadImage,
+  useUpdateUser,
+} from "../../services/auth";
 import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import { Controller, useForm } from "react-hook-form";
-import { ProfileFormData, ProfileUpdateData } from "../../types";
+import {
+  DocumentIdStatus,
+  ProfileFormData,
+  ProfileUpdateData,
+} from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { ACCOUNT_QUERY_KEY, fetchAccount } from "../../services/auth";
@@ -15,9 +40,14 @@ import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import ImageSourceSheet from "../../components/ui/ImageSourceSheet";
 
-function getUploadedImagePath(response: any): string | null {
-  const payload = response?.data ?? response;
-  const path = payload?.path || payload?.secure_url || payload?.url;
+function getUploadedImagePath(response: unknown): string | null {
+  const payload =
+    response && typeof response === "object" && "data" in response
+      ? (response as { data?: unknown }).data
+      : response;
+  if (!payload || typeof payload !== "object") return null;
+  const record = payload as Record<string, unknown>;
+  const path = record.path || record.secure_url || record.url;
   return typeof path === "string" && path.trim() ? path : null;
 }
 
@@ -31,7 +61,9 @@ const EditProfile: React.FC = () => {
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [loaderImage, setLoaderImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [idImage, setIdImage] = useState<string | null>(null);
+  const [documentStatus, setDocumentStatus] =
+    useState<DocumentIdStatus>("none");
+  const [rejectionReason, setRejectionReason] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [imageSourceType, setImageSourceType] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -52,7 +84,8 @@ const EditProfile: React.FC = () => {
   useEffect(() => {
     if (!data) return;
     setProfileImage((current) => data.photo || current);
-    setIdImage((current) => data.imageDocumentId || current);
+    setDocumentStatus(data.imageDocumentIdStatus || "none");
+    setRejectionReason(data.imageDocumentIdRejectionReason || "");
     reset({
       firstName: data.name ?? "",
       middleName: data.middleName ?? "",
@@ -75,33 +108,39 @@ const EditProfile: React.FC = () => {
     if (data.password === "") {
       delete payload.password;
     }
-    updateMutation.mutate({ data: payload }, {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-        await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-        try {
-          setUser(await fetchAccount());
-        } catch (error) {
-          console.log(error);
-        }
-        Toast.show({
-          type: 'success',
-          text1: t("ProfileEdit.saveSuccessTitle"),
-          text2: t("ProfileEdit.saveSuccessMessage")
-        });
+    updateMutation.mutate(
+      { data: payload },
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+          await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+          try {
+            setUser(await fetchAccount());
+          } catch (error) {
+            console.warn(error);
+          }
+          Toast.show({
+            type: "success",
+            text1: t("ProfileEdit.saveSuccessTitle"),
+            text2: t("ProfileEdit.saveSuccessMessage"),
+          });
+        },
+        onError: (error) => {
+          console.warn("Error al actualizar el usuario:", error);
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Hubo un problema al actualizar. Intenta nuevamente",
+          });
+        },
       },
-      onError: (error) => {
-        console.log("❌ Error al actualizar el usuario:", error);
-        Toast.show({
-          type: 'error',
-          text1: "Error",
-          text2: "Hubo un problema al actualizar. Intenta nuevamente"
-        });
-      },
-    });
+    );
   };
 
-  const handleImagePicker = async (imageType: string, source: "camera" | "library") => {
+  const handleImagePicker = async (
+    imageType: string,
+    source: "camera" | "library",
+  ) => {
     setImageSourceType(null);
     const permission =
       source === "camera"
@@ -110,7 +149,11 @@ const EditProfile: React.FC = () => {
     if (!permission.granted) {
       Toast.show({
         type: "error",
-        text1: t(source === "camera" ? "ProfileEdit.cameraPermissionDenied" : "ProfileEdit.libraryPermissionDenied"),
+        text1: t(
+          source === "camera"
+            ? "ProfileEdit.cameraPermissionDenied"
+            : "ProfileEdit.libraryPermissionDenied",
+        ),
       });
       return;
     }
@@ -129,8 +172,6 @@ const EditProfile: React.FC = () => {
       const localUri = result.assets[0].uri;
       if (imageType === "photo") {
         setProfileImage(localUri);
-      } else {
-        setIdImage(localUri);
       }
 
       const imageData = {
@@ -145,39 +186,38 @@ const EditProfile: React.FC = () => {
       uploadMutation.mutate(imageData, {
         onSuccess: async (response) => {
           const uploadedPath = getUploadedImagePath(response);
-          if (uploadedPath) {
-            if (imageType === "photo") {
-              setProfileImage(uploadedPath);
-            } else {
-              setIdImage(uploadedPath);
-            }
+          if (uploadedPath && imageType === "photo") {
+            setProfileImage(uploadedPath);
+          }
+          if (imageType === "documentId") {
+            setDocumentStatus("pending");
+            setRejectionReason("");
           }
           await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
           await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
           try {
             setUser(await fetchAccount());
           } catch (error) {
-            console.log(error);
+            console.warn(error);
           }
           Toast.show({
-            type: 'success',
+            type: "success",
             text1: t("ProfileEdit.uploadSuccessTitle"),
-            text2: t("ProfileEdit.uploadSuccessMessage")
+            text2: t("ProfileEdit.uploadSuccessMessage"),
           });
         },
         onError: (error) => {
-          console.log("❌ Error al subir imagen:", error);
+          console.warn("Error al subir imagen:", error);
           Toast.show({
-            type: 'error',
+            type: "error",
             text1: "Error",
-            text2: "Hubo un problema al subir la imagen. Intenta nuevamente"
+            text2: "Hubo un problema al subir la imagen. Intenta nuevamente",
           });
         },
         onSettled: () => {
           setLoaderImage(null);
         },
       });
-
     }
   };
 
@@ -193,12 +233,15 @@ const EditProfile: React.FC = () => {
               onPress={() => setImageSourceType("photo")}
               activeOpacity={0.85}
             >
-              {uploadMutation.isPending && loaderImage === 'photo' ? (
+              {uploadMutation.isPending && loaderImage === "photo" ? (
                 <View style={styles.initials}>
                   <ActivityIndicator size="large" color="#fff" />
                 </View>
               ) : profileImage ? (
-                <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.profileImage}
+                />
               ) : (
                 <Text style={styles.initials}>
                   {(data?.name || "?").slice(0, 1).toUpperCase()}
@@ -212,7 +255,9 @@ const EditProfile: React.FC = () => {
                 onPress={() => setImageSourceType("photo")}
               />
             </TouchableOpacity>
-            <Text style={styles.helperText}>Toca para cambiar tu foto de perfil</Text>
+            <Text style={styles.helperText}>
+              Toca para cambiar tu foto de perfil
+            </Text>
           </Card.Content>
         </Card>
 
@@ -223,7 +268,13 @@ const EditProfile: React.FC = () => {
             <Controller
               name="firstName"
               control={control}
-              rules={{ required: "El nombre es obligatorio", minLength: { value: 2, message: "Debe tener al menos 2 caracteres" } }}
+              rules={{
+                required: "El nombre es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "Debe tener al menos 2 caracteres",
+                },
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <TextInput
@@ -233,7 +284,11 @@ const EditProfile: React.FC = () => {
                     placeholder="Ej. María"
                     autoCapitalize="words"
                   />
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -242,7 +297,10 @@ const EditProfile: React.FC = () => {
             <Controller
               name="middleName"
               control={control}
-              rules={{ required: t("ProfileEdit.middleNameRequired"), minLength: { value: 2, message: t("ProfileEdit.minTwo") } }}
+              rules={{
+                required: t("ProfileEdit.middleNameRequired"),
+                minLength: { value: 2, message: t("ProfileEdit.minTwo") },
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <TextInput
@@ -252,7 +310,11 @@ const EditProfile: React.FC = () => {
                     placeholder={t("ProfileEdit.middleNamePlaceholder")}
                     autoCapitalize="words"
                   />
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -261,7 +323,10 @@ const EditProfile: React.FC = () => {
             <Controller
               name="lastName"
               control={control}
-              rules={{ required: t("ProfileEdit.lastNameRequired"), minLength: { value: 2, message: t("ProfileEdit.minTwo") } }}
+              rules={{
+                required: t("ProfileEdit.lastNameRequired"),
+                minLength: { value: 2, message: t("ProfileEdit.minTwo") },
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <TextInput
@@ -271,7 +336,11 @@ const EditProfile: React.FC = () => {
                     placeholder="Ej. González"
                     autoCapitalize="words"
                   />
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -280,7 +349,13 @@ const EditProfile: React.FC = () => {
             <Controller
               name="identityNumber"
               control={control}
-              rules={{ required: "La cédula es obligatoria", minLength: { value: 6, message: "Debe tener al menos 6 caracteres" } }}
+              rules={{
+                required: "La cédula es obligatoria",
+                minLength: {
+                  value: 6,
+                  message: "Debe tener al menos 6 caracteres",
+                },
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <TextInput
@@ -290,7 +365,11 @@ const EditProfile: React.FC = () => {
                     placeholder="Ej. 12345678"
                     inputMode="numeric"
                   />
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -302,7 +381,8 @@ const EditProfile: React.FC = () => {
               rules={{
                 required: t("ProfileEdit.phoneRequired"),
                 validate: (value) =>
-                  String(value || "").replace(/\D/g, "").length >= 10 || t("ProfileEdit.phoneInvalid"),
+                  String(value || "").replace(/\D/g, "").length >= 10 ||
+                  t("ProfileEdit.phoneInvalid"),
               }}
               render={({ field, fieldState }) => (
                 <>
@@ -313,7 +393,11 @@ const EditProfile: React.FC = () => {
                     placeholder="4141234567"
                     inputMode="tel"
                   />
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -344,22 +428,51 @@ const EditProfile: React.FC = () => {
                 <Text style={styles.whyLink}>{t("ProfileEdit.whyNeeded")}</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => setImageSourceType("documentId")}>
-              {uploadMutation.isPending && loaderImage === 'documentId' ? (
-                <View style={styles.uploadContainer}>
-                  <ActivityIndicator size="large" color="#ff7f50" />
-                </View>
-              ) : idImage ? (
-                <Image source={{ uri: idImage }} style={styles.idImage} />
-              ) : (
-                <View style={styles.uploadContainer}>
-                  <Upload size={36} color="#aaa" />
-                  <Text style={styles.helperText}>
-                    Haz clic para subir una foto de tu cédula
-                  </Text>
-                </View>
-              )}
-            </TouchableOpacity>
+            {documentStatus === "pending" ? (
+              <View style={styles.statusBox}>
+                <Hourglass size={36} color="#ff7f50" />
+                <Text style={styles.statusTitle}>
+                  {t("ProfileEdit.idPendingTitle")}
+                </Text>
+                <Text style={styles.helperText}>
+                  {t("ProfileEdit.idPendingMessage")}
+                </Text>
+              </View>
+            ) : documentStatus === "approved" ? (
+              <View style={styles.statusBox}>
+                <CircleCheck size={36} color="#16a34a" />
+                <Text style={styles.statusTitle}>
+                  {t("ProfileEdit.idApprovedTitle")}
+                </Text>
+                <Text style={styles.helperText}>
+                  {t("ProfileEdit.idApprovedMessage")}
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => setImageSourceType("documentId")}
+              >
+                {uploadMutation.isPending && loaderImage === "documentId" ? (
+                  <View style={styles.uploadContainer}>
+                    <ActivityIndicator size="large" color="#ff7f50" />
+                  </View>
+                ) : (
+                  <View style={styles.uploadContainer}>
+                    <Upload size={36} color="#aaa" />
+                    <Text style={styles.helperText}>
+                      {documentStatus === "rejected"
+                        ? t("ProfileEdit.idRejectedMessage")
+                        : t("ProfileEdit.idUploadHint")}
+                    </Text>
+                    {documentStatus === "rejected" && rejectionReason ? (
+                      <Text style={styles.rejectedReason}>
+                        {rejectionReason}
+                      </Text>
+                    ) : null}
+                  </View>
+                )}
+              </TouchableOpacity>
+            )}
           </Card.Content>
         </Card>
 
@@ -370,7 +483,10 @@ const EditProfile: React.FC = () => {
               name="password"
               control={control}
               rules={{
-                minLength: { value: 6, message: "Debe tener al menos 6 caracteres" },
+                minLength: {
+                  value: 6,
+                  message: "Debe tener al menos 6 caracteres",
+                },
               }}
               render={({ field, fieldState }) => (
                 <>
@@ -383,11 +499,21 @@ const EditProfile: React.FC = () => {
                       placeholder="********"
                       secureTextEntry={!passwordVisible} // 🔥 Alterna visibilidad
                     />
-                    <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-                      {passwordVisible ? <EyeOff size={24} color="#aaa" /> : <Eye size={24} color="#aaa" />}
+                    <TouchableOpacity
+                      onPress={() => setPasswordVisible(!passwordVisible)}
+                    >
+                      {passwordVisible ? (
+                        <EyeOff size={24} color="#aaa" />
+                      ) : (
+                        <Eye size={24} color="#aaa" />
+                      )}
                     </TouchableOpacity>
                   </View>
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -396,7 +522,8 @@ const EditProfile: React.FC = () => {
               name="confirmPassword"
               control={control}
               rules={{
-                validate: (value) => value === watch("password") || "Las contraseñas no coinciden",
+                validate: (value) =>
+                  value === watch("password") || "Las contraseñas no coinciden",
               }}
               render={({ field, fieldState }) => (
                 <>
@@ -409,11 +536,23 @@ const EditProfile: React.FC = () => {
                       placeholder="********"
                       secureTextEntry={!confirmPasswordVisible} // 🔥 Alterna visibilidad
                     />
-                    <TouchableOpacity onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
-                      {confirmPasswordVisible ? <EyeOff size={24} color="#aaa" /> : <Eye size={24} color="#aaa" />}
+                    <TouchableOpacity
+                      onPress={() =>
+                        setConfirmPasswordVisible(!confirmPasswordVisible)
+                      }
+                    >
+                      {confirmPasswordVisible ? (
+                        <EyeOff size={24} color="#aaa" />
+                      ) : (
+                        <Eye size={24} color="#aaa" />
+                      )}
                     </TouchableOpacity>
                   </View>
-                  {fieldState.error && <Text style={generalStyles.errorText}>{fieldState.error.message}</Text>}
+                  {fieldState.error && (
+                    <Text style={generalStyles.errorText}>
+                      {fieldState.error.message}
+                    </Text>
+                  )}
                 </>
               )}
             />
@@ -435,21 +574,30 @@ const EditProfile: React.FC = () => {
         visible={Boolean(imageSourceType)}
         onDismiss={() => setImageSourceType(null)}
         onCamera={() => {
-          if (imageSourceType) void handleImagePicker(imageSourceType, "camera");
+          if (imageSourceType)
+            void handleImagePicker(imageSourceType, "camera");
         }}
         onLibrary={() => {
-          if (imageSourceType) void handleImagePicker(imageSourceType, "library");
+          if (imageSourceType)
+            void handleImagePicker(imageSourceType, "library");
         }}
       />
 
       {showDialog ? (
         <Portal>
           <View style={styles.overlayRoot}>
-            <Pressable style={styles.backdrop} onPress={() => setShowDialog(false)} />
+            <Pressable
+              style={styles.backdrop}
+              onPress={() => setShowDialog(false)}
+            />
             <View style={styles.dialogCenter} pointerEvents="box-none">
               <View style={styles.dialogCard}>
-                <Text style={styles.dialogTitle}>{t("ProfileEdit.whyTitle")}</Text>
-                <Text style={styles.dialogText}>{t("ProfileEdit.whyBody")}</Text>
+                <Text style={styles.dialogTitle}>
+                  {t("ProfileEdit.whyTitle")}
+                </Text>
+                <Text style={styles.dialogText}>
+                  {t("ProfileEdit.whyBody")}
+                </Text>
                 <Button
                   mode="contained"
                   style={styles.dialogButton}
@@ -517,6 +665,28 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
   },
+  statusBox: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 20,
+    marginTop: 8,
+  },
+  statusTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 10,
+    textAlign: "center",
+  },
+  rejectedReason: {
+    fontSize: 12,
+    color: "#ff4d4d",
+    textAlign: "center",
+    marginTop: 8,
+  },
   label: {
     fontSize: 14,
     fontWeight: "bold",
@@ -541,12 +711,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  idImage: {
-    width: "100%",
-    height: 200,
-    marginTop: 16,
-    borderRadius: 8,
   },
   uploadContainer: {
     alignItems: "center",
@@ -626,6 +790,6 @@ const styles = StyleSheet.create({
   },
   inputPassword: {
     flex: 1,
-    paddingVertical: 10
-  }
+    paddingVertical: 10,
+  },
 });

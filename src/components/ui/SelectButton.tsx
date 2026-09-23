@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ChevronDown } from "lucide-react-native";
 
 interface SelectButtonProps {
@@ -8,7 +8,11 @@ interface SelectButtonProps {
   onPress: () => void;
 }
 
-const SelectButton: React.FC<SelectButtonProps> = ({ value, placeholder, onPress }) => {
+const SelectButton: React.FC<SelectButtonProps> = ({
+  value,
+  placeholder,
+  onPress,
+}) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.selectButton}>
       <Text style={styles.text}>{value || placeholder}</Text>

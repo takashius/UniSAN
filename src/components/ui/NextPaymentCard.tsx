@@ -2,7 +2,11 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import nextPaymentStyles from "../../styles/paymentCard";
 import { useTranslation } from "react-i18next";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { NextPaymentProps } from "../../types/payment";
 import PaymentDialog from "./PaymentDialog";
 import generalStyles from "../../styles/general";
@@ -39,7 +43,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   const fadeAnim = useSharedValue(0);
   React.useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 500 });
-  }, []);
+  }, [fadeAnim]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -49,46 +53,69 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   return (
     <>
       <Animated.View style={[generalStyles.card, animatedStyle]}>
-        {name ?
+        {name ? (
           <View style={nextPaymentStyles.paymentCardHeader}>
             <View>
               <Text style={nextPaymentStyles.cardTitle}>{name}</Text>
-              <Text style={nextPaymentStyles.cardSubtitle}>{t("HomeScreen.turn", { current: paymentTurn, total: membersPerSan })}</Text>
+              <Text style={nextPaymentStyles.cardSubtitle}>
+                {t("HomeScreen.turn", {
+                  current: paymentTurn,
+                  total: membersPerSan,
+                })}
+              </Text>
             </View>
             <View style={nextPaymentStyles.cardAmountWrap}>
-              <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
+              <Text style={nextPaymentStyles.cardAmount}>
+                {formatUsd(installment)}
+              </Text>
               {bsAmount != null ? (
-                <Text style={nextPaymentStyles.cardAmountBs}>{formatBs(bsAmount)}</Text>
+                <Text style={nextPaymentStyles.cardAmountBs}>
+                  {formatBs(bsAmount)}
+                </Text>
               ) : null}
             </View>
           </View>
-          :
+        ) : (
           <View style={nextPaymentStyles.paymentCardHeader}>
             <Text style={nextPaymentStyles.cardTitle}>
-              {t("HomeScreen.turn", { current: paymentTurn, total: membersPerSan })}
+              {t("HomeScreen.turn", {
+                current: paymentTurn,
+                total: membersPerSan,
+              })}
             </Text>
             <View style={nextPaymentStyles.cardAmountWrap}>
-              <Text style={nextPaymentStyles.cardAmount}>{formatUsd(installment)}</Text>
+              <Text style={nextPaymentStyles.cardAmount}>
+                {formatUsd(installment)}
+              </Text>
               {bsAmount != null ? (
-                <Text style={nextPaymentStyles.cardAmountBs}>{formatBs(bsAmount)}</Text>
+                <Text style={nextPaymentStyles.cardAmountBs}>
+                  {formatBs(bsAmount)}
+                </Text>
               ) : null}
             </View>
           </View>
-        }
+        )}
 
         <View style={nextPaymentStyles.paymentDetails}>
-          <Text style={nextPaymentStyles.detailsLabel}>{t("HomeScreen.paymentDate")}</Text>
-          <Text style={nextPaymentStyles.detailsValue}>{nextPaymentDate ?? t("HomeScreen.noPaymentDate")}</Text>
+          <Text style={nextPaymentStyles.detailsLabel}>
+            {t("HomeScreen.paymentDate")}
+          </Text>
+          <Text style={nextPaymentStyles.detailsValue}>
+            {nextPaymentDate ?? t("HomeScreen.noPaymentDate")}
+          </Text>
         </View>
 
-        <TouchableOpacity style={nextPaymentStyles.paymentButton} onPress={() => setDialogOpen(true)}>
+        <TouchableOpacity
+          style={nextPaymentStyles.paymentButton}
+          onPress={() => setDialogOpen(true)}
+        >
           <Text style={nextPaymentStyles.buttonText}>
             {alreadyPaidThisTurn
               ? t("HomeScreen.earlyPaymentButton")
               : t("HomeScreen.PaymentButton")}
           </Text>
         </TouchableOpacity>
-      </Animated.View >
+      </Animated.View>
 
       <PaymentDialog
         open={dialogOpen}
@@ -99,7 +126,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
         lateFeeAmount={lateFeeAmount}
         lateFeePercent={lateFeePercent}
         onDismiss={() => setDialogOpen(false)}
-        onPaymentRegistered={() => console.log("Pago registrado!")}
+        onPaymentRegistered={() => undefined}
       />
     </>
   );

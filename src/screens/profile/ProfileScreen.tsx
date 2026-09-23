@@ -1,12 +1,29 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { ChevronRight, LogOut, Settings, CreditCard, User, FileText, ClipboardCheck } from "lucide-react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import {
+  ChevronRight,
+  LogOut,
+  Settings,
+  CreditCard,
+  User,
+  FileText,
+  ClipboardCheck,
+  IdCard,
+} from "lucide-react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import UserLevel from "../../components/ui/UserLevel";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../../context/UserContext";
 import { useLogout } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { ProfileStackParamList } from "../../types/navigation";
 import generalStyles from "../../styles/general";
 import AvatarView from "../../components/ui/AvatarView";
 import { useSanSettings } from "../../services/settings";
@@ -20,13 +37,14 @@ const Profile = () => {
   const { t } = useTranslation();
   const { user, logout } = useUser();
   const logoutMutate = useLogout();
-  const navigation: any = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const { data: settings } = useSanSettings();
   const isAdmin = isAdminRole(user?.user.role);
   const level = user?.user.level ? user.user.level : 1;
   const levelType = getLevelType(
     level,
-    settings?.levels?.length ? getMaxLevel(settings.levels) : null
+    settings?.levels?.length ? getMaxLevel(settings.levels) : null,
   );
 
   const handleLogout = () => {
@@ -36,7 +54,7 @@ const Profile = () => {
           logout();
         },
         onError: (error) => {
-          console.log("Error:", error);
+          console.warn("Error:", error);
         },
       });
     });
@@ -46,12 +64,22 @@ const Profile = () => {
       <FullScreenLoader visible={logoutMutate.isPending} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Animated.View entering={FadeInDown.duration(400)} style={[generalStyles.card, { marginBottom: 16 }]}>
+        <Animated.View
+          entering={FadeInDown.duration(400)}
+          style={[generalStyles.card, { marginBottom: 16 }]}
+        >
           <View style={styles.profileHeader}>
-            <AvatarView name={user?.user.name!} lastName={user?.user?.lastName} photo={user?.user?.photo} mini={true} />
+            <AvatarView
+              name={user?.user.name ?? ""}
+              lastName={user?.user?.lastName}
+              photo={user?.user?.photo}
+              mini={true}
+            />
             <View style={styles.profileInfo}>
               <View style={styles.profileRow}>
-                <Text style={styles.profileName}>{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>
+                <Text
+                  style={styles.profileName}
+                >{`${user?.user.name} ${user?.user.lastName ? user?.user.lastName : ""}`}</Text>
               </View>
               <Text style={styles.profileEmail}>{user?.user.email}</Text>
               <Text style={styles.profileLevel}>
@@ -70,36 +98,65 @@ const Profile = () => {
 
         <View style={generalStyles.section}>
           <Text style={styles.sectionTitle}>{t("Profile.statistics")}</Text>
-          <Animated.View entering={FadeInDown.duration(400).delay(100)} style={styles.statsGrid}>
-            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
-              <Text style={styles.statLabel}>{t("Profile.sansParticipated")}</Text>
-              <Text style={styles.statValue}>{user?.statistics.activeSansCount}</Text>
+          <Animated.View
+            entering={FadeInDown.duration(400).delay(100)}
+            style={styles.statsGrid}
+          >
+            <View
+              style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}
+            >
+              <Text style={styles.statLabel}>
+                {t("Profile.sansParticipated")}
+              </Text>
+              <Text style={styles.statValue}>
+                {user?.statistics.activeSansCount}
+              </Text>
             </View>
-            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
-              <Text style={styles.statLabel}>{t("Profile.paymentsOnTime")}</Text>
-              <Text style={styles.statValue}>{user?.statistics.onTimePayments}/{user?.statistics.totalPayments}</Text>
+            <View
+              style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}
+            >
+              <Text style={styles.statLabel}>
+                {t("Profile.paymentsOnTime")}
+              </Text>
+              <Text style={styles.statValue}>
+                {user?.statistics.onTimePayments}/
+                {user?.statistics.totalPayments}
+              </Text>
             </View>
-            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
+            <View
+              style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}
+            >
               <Text style={styles.statLabel}>{t("Profile.sansCompleted")}</Text>
-              <Text style={styles.statValue}>{user?.statistics.completedSansCount}</Text>
+              <Text style={styles.statValue}>
+                {user?.statistics.completedSansCount}
+              </Text>
             </View>
-            <View style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}>
+            <View
+              style={[generalStyles.card, { width: "48%", marginBottom: 16 }]}
+            >
               <Text style={styles.statLabel}>{t("Profile.totalSaved")}</Text>
-              <Text style={styles.statValueOrange}>${user?.statistics.totalSavings}</Text>
+              <Text style={styles.statValueOrange}>
+                ${user?.statistics.totalSavings}
+              </Text>
             </View>
           </Animated.View>
         </View>
 
         <View style={generalStyles.section}>
           <Text style={styles.sectionTitle}>{t("Profile.settings")}</Text>
-          <Animated.View entering={FadeIn.duration(400).delay(200)} style={[generalStyles.card, { padding: 0 }]}>
+          <Animated.View
+            entering={FadeIn.duration(400).delay(200)}
+            style={[generalStyles.card, { padding: 0 }]}
+          >
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => navigation.navigate("PaymentMethods")}
             >
               <View style={styles.settingsItemRow}>
                 <CreditCard size={20} color="#ff7f50" />
-                <Text style={styles.settingsItemText}>{t("Profile.paymentMethods")}</Text>
+                <Text style={styles.settingsItemText}>
+                  {t("Profile.paymentMethods")}
+                </Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
@@ -119,7 +176,9 @@ const Profile = () => {
             >
               <View style={styles.settingsItemRow}>
                 <Settings size={20} color="#ff7f50" />
-                <Text style={styles.settingsItemText}>{t("Profile.preferences")}</Text>
+                <Text style={styles.settingsItemText}>
+                  {t("Profile.preferences")}
+                </Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
@@ -129,23 +188,44 @@ const Profile = () => {
             >
               <View style={styles.settingsItemRow}>
                 <FileText size={20} color="#ff7f50" />
-                <Text style={styles.settingsItemText}>{t("Profile.terms")}</Text>
+                <Text style={styles.settingsItemText}>
+                  {t("Profile.terms")}
+                </Text>
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
             {isAdmin ? (
-              <TouchableOpacity
-                style={styles.settingsItem}
-                onPress={() => navigation.navigate("PendingPayments")}
-              >
-                <View style={styles.settingsItemRow}>
-                  <ClipboardCheck size={20} color="#ff7f50" />
-                  <Text style={styles.settingsItemText}>{t("Profile.pendingPayments")}</Text>
-                </View>
-                <ChevronRight size={20} color="#888" />
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity
+                  style={styles.settingsItem}
+                  onPress={() => navigation.navigate("PendingPayments")}
+                >
+                  <View style={styles.settingsItemRow}>
+                    <ClipboardCheck size={20} color="#ff7f50" />
+                    <Text style={styles.settingsItemText}>
+                      {t("Profile.pendingPayments")}
+                    </Text>
+                  </View>
+                  <ChevronRight size={20} color="#888" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.settingsItem}
+                  onPress={() => navigation.navigate("PendingDocuments")}
+                >
+                  <View style={styles.settingsItemRow}>
+                    <IdCard size={20} color="#ff7f50" />
+                    <Text style={styles.settingsItemText}>
+                      {t("Profile.pendingDocuments")}
+                    </Text>
+                  </View>
+                  <ChevronRight size={20} color="#888" />
+                </TouchableOpacity>
+              </>
             ) : null}
-            <TouchableOpacity style={[styles.settingsItem, styles.logoutItem]} onPress={handleLogout}>
+            <TouchableOpacity
+              style={[styles.settingsItem, styles.logoutItem]}
+              onPress={handleLogout}
+            >
               <LogOut size={20} color="#ff4d4d" />
               <Text style={styles.logoutText}>{t("Profile.logout")}</Text>
             </TouchableOpacity>
@@ -245,4 +325,3 @@ const styles = StyleSheet.create({
     marginLeft: 12, // Añade espacio entre el icono y el texto
   },
 });
-

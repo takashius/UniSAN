@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import { FadeIn } from "react-native-reanimated";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { ChatStackParamList } from "../../types/navigation";
 import generalStyles from "../../styles/general";
 
 interface Chat {
@@ -14,8 +22,8 @@ interface Chat {
 }
 
 const ChatList: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const navigation: any = useNavigation();
+  const [searchTerm] = useState<string>("");
+  const navigation = useNavigation<NativeStackNavigationProp<ChatStackParamList>>();
   const chats: Chat[] = [
     {
       id: "1",
@@ -34,7 +42,7 @@ const ChatList: React.FC = () => {
   ];
 
   const filteredChats = chats.filter((chat) =>
-    chat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    chat.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -49,7 +57,9 @@ const ChatList: React.FC = () => {
             >
               <TouchableOpacity
                 style={styles.chatButton}
-                onPress={() => navigation.navigate("ChatDetail", { id: chat.id })}
+                onPress={() =>
+                  navigation.navigate("ChatDetail", { id: chat.id })
+                }
               >
                 <View style={styles.chatHeader}>
                   <Text style={styles.chatName}>{chat.name}</Text>

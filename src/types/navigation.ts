@@ -11,7 +11,7 @@ export type SANStackParamList = {
 };
 
 export type ChatStackParamList = {
-  ChatList: any;
+  ChatList: undefined;
   ChatDetail: { id: string };
 };
 
@@ -23,6 +23,8 @@ export type ProfileStackParamList = {
   Terms: undefined;
   PendingPayments: undefined;
   PendingPaymentDetail: { id: string };
+  PendingDocuments: undefined;
+  PendingDocumentDetail: { userId: string };
 };
 
 export type TabParamList = {

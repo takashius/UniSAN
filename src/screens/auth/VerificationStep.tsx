@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
+import type { AuthStackParamList } from "../../types/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
@@ -11,11 +14,14 @@ import errorToast from "../../components/ui/ErrorToast";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 interface VerificationStepProps {
-  route: any;
-  navigation: any;
+  route: RouteProp<AuthStackParamList, "RecoveryPasswordStep2">;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 }
 
-const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }) => {
+const VerificationStep: React.FC<VerificationStepProps> = ({
+  navigation,
+  route,
+}) => {
   const { t } = useTranslation();
   const { email } = route.params;
   const [showPassword, setShowPassword] = useState(false);
@@ -38,13 +44,16 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
 
   const newPassword = watch("newPassword");
 
-  const onSubmit = (data: { verificationCode: string; newPassword: string; confirmPassword: string }) => {
-
+  const onSubmit = (data: {
+    verificationCode: string;
+    newPassword: string;
+    confirmPassword: string;
+  }) => {
     if (data.verificationCode.length !== 6) {
       Toast.show({
-        type: 'error',
+        type: "error",
         text1: t("VerificationStep.invalidCodeTitle"),
-        text2: t("VerificationStep.invalidCodeMessage")
+        text2: t("VerificationStep.invalidCodeMessage"),
       });
       return;
     }
@@ -54,21 +63,21 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
       {
         onSuccess: () => {
           Toast.show({
-            type: 'success',
+            type: "success",
             text1: t("VerificationStep.successTitle"),
-            text2: t("VerificationStep.successMessage")
+            text2: t("VerificationStep.successMessage"),
           });
           navigation.navigate("Login");
         },
         onError: (error) => {
           Toast.show({
-            type: 'error',
+            type: "error",
             text1: "Error",
-            text2: `${errorToast(error)}`
+            text2: `${errorToast(error)}`,
           });
-          console.log('Error:', error)
+          console.warn("Error:", error);
         },
-      }
+      },
     );
   };
 
@@ -81,13 +90,18 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
 
       {/* Verification Code */}
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>{t("VerificationStep.verificationCodeLabel")}</Text>
+        <Text style={styles.label}>
+          {t("VerificationStep.verificationCodeLabel")}
+        </Text>
         <Controller
           control={control}
           name="verificationCode"
           rules={{
             required: t("VerificationStep.requiredField"),
-            minLength: { value: 6, message: t("VerificationStep.invalidCodeMessage") },
+            minLength: {
+              value: 6,
+              message: t("VerificationStep.invalidCodeMessage"),
+            },
           }}
           render={({ field: { onChange, value } }) => (
             <InputOTP
@@ -100,7 +114,9 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
           )}
         />
         {errors.verificationCode && (
-          <Text style={styles.errorText}>{errors.verificationCode.message}</Text>
+          <Text style={styles.errorText}>
+            {errors.verificationCode.message}
+          </Text>
         )}
       </View>
 
@@ -111,7 +127,10 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
           name="newPassword"
           rules={{
             required: t("VerificationStep.requiredField"),
-            minLength: { value: 8, message: t("VerificationStep.passwordMinLength") },
+            minLength: {
+              value: 8,
+              message: t("VerificationStep.passwordMinLength"),
+            },
           }}
           render={({ field: { onChange, value } }) => (
             <TextInput
@@ -121,9 +140,21 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
               activeUnderlineColor="#ff7f50"
               textColor="black"
               onChangeText={onChange}
-              right={showPassword ?
-                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />
-                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPassword(!showPassword)} />}
+              right={
+                showPassword ? (
+                  <TextInput.Icon
+                    icon="eye"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <TextInput.Icon
+                    icon="eye-off"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                )
+              }
               error={!!errors.newPassword}
               style={styles.input}
             />
@@ -142,7 +173,8 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
           rules={{
             required: t("VerificationStep.requiredField"),
             validate: (value) =>
-              value === newPassword || t("VerificationStep.passwordMismatchMessage"),
+              value === newPassword ||
+              t("VerificationStep.passwordMismatchMessage"),
           }}
           render={({ field: { onChange, value } }) => (
             <TextInput
@@ -152,9 +184,21 @@ const VerificationStep: React.FC<VerificationStepProps> = ({ navigation, route }
               activeUnderlineColor="#ff7f50"
               textColor="black"
               onChangeText={onChange}
-              right={showPasswordConfirm ?
-                <TextInput.Icon icon="eye" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />
-                : <TextInput.Icon icon="eye-off" color={'#ff7f50'} onPress={() => setShowPasswordConfirm(!showPasswordConfirm)} />}
+              right={
+                showPasswordConfirm ? (
+                  <TextInput.Icon
+                    icon="eye"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  />
+                ) : (
+                  <TextInput.Icon
+                    icon="eye-off"
+                    color={"#ff7f50"}
+                    onPress={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  />
+                )
+              }
               error={!!errors.confirmPassword}
               style={styles.input}
             />
@@ -244,19 +288,19 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   secondaryButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderColor: "#FF7F50",
     padding: 16,
     borderRadius: 8,
     marginTop: 16,
   },
   primaryButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ff7f50',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ff7f50",
     padding: 16,
     borderRadius: 8,
     marginTop: 16,

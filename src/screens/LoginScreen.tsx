@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "../components/ui/Tabs";
 import { LoginForm, RegisterForm } from "../components/auth/AuthForms";
 import { useTranslation } from "react-i18next";
 import SecureStoreManager from "../components/AsyncStorageManager";
@@ -39,7 +44,7 @@ const LoginScreen = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [login, refetch]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +62,9 @@ const LoginScreen = () => {
           <Tabs defaultValue="login">
             <TabsList>
               <TabsTrigger value="login">{t("auth.loginTab")}</TabsTrigger>
-              <TabsTrigger value="register">{t("auth.registerTab")}</TabsTrigger>
+              <TabsTrigger value="register">
+                {t("auth.registerTab")}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -100,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     paddingBottom: 5,
-    marginTop: 24
+    marginTop: 24,
   },
   title: {
     fontSize: 32,
@@ -149,5 +156,5 @@ const styles = StyleSheet.create({
     width: 200,
     height: 100,
     marginBottom: 16,
-  }
+  },
 });

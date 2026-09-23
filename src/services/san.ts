@@ -4,14 +4,15 @@ import {
   useQuery,
   useQueryClient,
   UseQueryResult,
-} from '@tanstack/react-query';
-import ERDEAxios from './ERDEAxios';
-import { San, JoinSanData } from '../types';
-import { SanDetail } from '../types/san';
-import SecureStoreManager from '../components/AsyncStorageManager';
+} from "@tanstack/react-query";
+import ERDEAxios from "./ERDEAxios";
+import { San, JoinSanData } from "../types";
+import { SanDetail } from "../types/san";
+import SecureStoreManager from "../components/AsyncStorageManager";
 
 /** Unión paga envía comprobante; unión free solo necesita el id del SAN. */
-export type JoinSanRequest = Pick<JoinSanData, 'san'> & Partial<Omit<JoinSanData, 'san'>>;
+export type JoinSanRequest = Pick<JoinSanData, "san"> &
+  Partial<Omit<JoinSanData, "san">>;
 
 async function postPaymentRequest(url: string, data: JoinSanRequest) {
   const { proofImage, ...payload } = data;
@@ -26,64 +27,72 @@ async function postPaymentRequest(url: string, data: JoinSanRequest) {
       formData.append(key, String(value));
     }
   });
-  formData.append('image', {
+  formData.append("image", {
     uri: proofImage.uri,
-    name: proofImage.name || 'payment_receipt.jpg',
-    type: proofImage.type || 'image/jpeg',
+    name: proofImage.name || "payment_receipt.jpg",
+    type: proofImage.type || "image/jpeg",
   } as unknown as Blob);
 
-  await SecureStoreManager.setItem<string>('contentType', 'true');
+  await SecureStoreManager.setItem<string>("contentType", "true");
   try {
     await ERDEAxios.post(url, formData);
   } finally {
-    await SecureStoreManager.removeItem('contentType');
+    await SecureStoreManager.removeItem("contentType");
   }
 }
 
 export const useAvailableSan = (): UseQueryResult<San[], Error> => {
   return useQuery<San[], Error>({
-    queryKey: ['availableSan'],
+    queryKey: ["availableSan"],
     retry: false,
     staleTime: 0,
-    refetchOnMount: 'always',
+    refetchOnMount: "always",
     queryFn: async () => {
-      const response = await ERDEAxios.get<San[]>('/san/available');
+      const response = await ERDEAxios.get<San[]>("/san/available");
       return response.data;
     },
   });
 };
 
-export const useJoinSan = (): UseMutationResult<void, Error, JoinSanRequest> => {
+export const useJoinSan = (): UseMutationResult<
+  void,
+  Error,
+  JoinSanRequest
+> => {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, JoinSanRequest>({
     mutationFn: async (data: JoinSanRequest) => {
-      await postPaymentRequest('/san/join', data);
+      await postPaymentRequest("/san/join", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['availableSan'] });
-      queryClient.invalidateQueries({ queryKey: ['sanDetail'] });
-      queryClient.invalidateQueries({ queryKey: ['myAccount'] });
+      queryClient.invalidateQueries({ queryKey: ["availableSan"] });
+      queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
+      queryClient.invalidateQueries({ queryKey: ["myAccount"] });
     },
   });
 };
 
-export const usePaymentSan = (): UseMutationResult<void, Error, JoinSanRequest> => {
+export const usePaymentSan = (): UseMutationResult<
+  void,
+  Error,
+  JoinSanRequest
+> => {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, JoinSanRequest>({
     mutationFn: async (data: JoinSanRequest) => {
-      await postPaymentRequest('/transaction', data);
+      await postPaymentRequest("/transaction", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sanDetail'] });
+      queryClient.invalidateQueries({ queryKey: ["sanDetail"] });
     },
   });
 };
 
 export const useSanDetail = (sanId: string) => {
   return useQuery<SanDetail, Error>({
-    queryKey: ['sanDetail', sanId],
+    queryKey: ["sanDetail", sanId],
     queryFn: async () => {
       const response = await ERDEAxios.get<SanDetail>(`/san/${sanId}`);
       return response.data;

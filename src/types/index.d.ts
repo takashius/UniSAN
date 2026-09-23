@@ -38,12 +38,12 @@ export interface Login {
 }
 
 export interface Image {
-  image: any;
+  image: { uri: string; type?: string; name?: string };
   imageType: string;
 }
 
 export interface Recovery {
-  code: Number;
+  code: number;
   email: string;
   newPass: string;
 }
@@ -51,7 +51,14 @@ export interface Recovery {
 export interface ProfileCompletion {
   percent: number;
   complete: boolean;
-  missing: Array<'lastName' | 'middleName' | 'documentId' | 'phone' | 'photo' | 'imageDocumentId'>;
+  missing: Array<
+    | "lastName"
+    | "middleName"
+    | "documentId"
+    | "phone"
+    | "photo"
+    | "imageDocumentId"
+  >;
 }
 
 export interface UserAccount {
@@ -83,8 +90,8 @@ export interface San {
   name: string;
   amount: number;
   frequency: string;
-  fxCurrency?: 'usd' | 'eur' | null;
-  joinMode?: 'paid' | 'free' | null;
+  fxCurrency?: "usd" | "eur" | null;
+  joinMode?: "paid" | "free" | null;
   paymentDates: Date[];
   isActive: boolean;
   isOpen?: boolean;
@@ -101,7 +108,7 @@ export interface SanMin {
   amount: number;
   startDate: string;
   frequency: string;
-  fxCurrency?: 'usd' | 'eur' | null;
+  fxCurrency?: "usd" | "eur" | null;
   position: number;
   isOpen?: boolean;
   hasOpenSpot?: boolean;
@@ -112,12 +119,12 @@ export interface NextPayment {
   id: string;
   sanName: string;
   sanAmount: number;
-  fxCurrency?: 'usd' | 'eur' | null;
+  fxCurrency?: "usd" | "eur" | null;
   paymentAmount: number;
   baseAmount?: number;
   lateFeeAmount?: number;
   lateFeePercent?: number;
-  paymentStatus?: 'early' | 'ontime' | 'late';
+  paymentStatus?: "early" | "ontime" | "late";
   nextPaymentDate: string;
   lastPaidTurn: number;
   currentTurn: number | null;
@@ -156,6 +163,8 @@ export interface JoinSanData {
   };
 }
 
+export type DocumentIdStatus = "none" | "pending" | "approved" | "rejected";
+
 export interface UserProfileResponse {
   id: string;
   name: string;
@@ -165,7 +174,8 @@ export interface UserProfileResponse {
   phone: string;
   email: string;
   documentId: string;
-  imageDocumentId: string | null;
+  imageDocumentIdStatus?: DocumentIdStatus;
+  imageDocumentIdRejectionReason?: string;
 }
 
 export interface ProfileFormData {

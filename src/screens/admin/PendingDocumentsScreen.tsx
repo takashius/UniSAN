@@ -7,24 +7,21 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import { Receipt } from "lucide-react-native";
+import { IdCard } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ProfileStackParamList } from "../../types/navigation";
 import { useTranslation } from "react-i18next";
-import { usePendingPayments } from "../../services/adminPayments";
+import { usePendingDocuments } from "../../services/adminDocuments";
 import { useUser } from "../../context/UserContext";
 import { isAdminRole } from "../../utils/roles";
-import type { AdminPayment } from "../../types/adminPayments";
+import type { AdminDocument } from "../../types/adminDocuments";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import generalStyles from "../../styles/general";
 
-function personName(
-  person?: { name?: string; lastName?: string; email?: string } | null,
-) {
-  if (!person) return "-";
-  const name = `${person.name || ""} ${person.lastName || ""}`.trim();
-  return name || person.email || "-";
+function personName(item: AdminDocument) {
+  const name = `${item.name || ""} ${item.lastName || ""}`.trim();
+  return name || item.email || "-";
 }
 
 function formatDate(value?: string) {
@@ -34,13 +31,13 @@ function formatDate(value?: string) {
   return date.toLocaleDateString();
 }
 
-const PendingPaymentsScreen = () => {
+const PendingDocumentsScreen = () => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const { user } = useUser();
   const isAdmin = isAdminRole(user?.user.role);
-  const { data, isLoading, isFetching, refetch } = usePendingPayments();
+  const { data, isLoading, isFetching, refetch } = usePendingDocuments();
 
   React.useEffect(() => {
     if (!isAdmin) navigation.goBack();
@@ -48,27 +45,19 @@ const PendingPaymentsScreen = () => {
 
   if (!isAdmin) return null;
 
-  const items = data?.results ?? [];
+  const items = data ?? [];
 
-  const renderItem = ({ item }: { item: AdminPayment }) => (
+  const renderItem = ({ item }: { item: AdminDocument }) => (
     <TouchableOpacity
       style={styles.row}
       onPress={() =>
-        navigation.navigate("PendingPaymentDetail", { id: item._id })
+        navigation.navigate("PendingDocumentDetail", { userId: item._id })
       }
       activeOpacity={0.75}
     >
-      <View style={styles.rowHeader}>
-        <Text style={styles.sanName}>{item.san?.name || "-"}</Text>
-        <Text style={styles.amount}>${item.amount}</Text>
-      </View>
-      <Text style={styles.payer}>{personName(item.user)}</Text>
-      <View style={styles.rowFooter}>
-        <Text style={styles.meta}>
-          {t("PendingPayments.reference")}: {item.operationReference}
-        </Text>
-        <Text style={styles.meta}>{formatDate(item.date)}</Text>
-      </View>
+      <Text style={styles.name}>{personName(item)}</Text>
+      <Text style={styles.meta}>{item.documentId || item.email || "-"}</Text>
+      <Text style={styles.date}>{formatDate(item.date)}</Text>
     </TouchableOpacity>
   );
 
@@ -93,13 +82,13 @@ const PendingPaymentsScreen = () => {
           !isLoading ? (
             <View style={styles.empty}>
               <View style={styles.emptyIcon}>
-                <Receipt size={32} color="#ff7f50" />
+                <IdCard size={32} color="#ff7f50" />
               </View>
               <Text style={styles.emptyTitle}>
-                {t("PendingPayments.emptyTitle")}
+                {t("PendingDocuments.emptyTitle")}
               </Text>
               <Text style={styles.emptyText}>
-                {t("PendingPayments.emptyMessage")}
+                {t("PendingDocuments.emptyMessage")}
               </Text>
             </View>
           ) : null
@@ -109,7 +98,7 @@ const PendingPaymentsScreen = () => {
   );
 };
 
-export default PendingPaymentsScreen;
+export default PendingDocumentsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -129,34 +118,18 @@ const styles = StyleSheet.create({
     ...generalStyles.card,
     marginBottom: 0,
   },
-  rowHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  sanName: {
+  name: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    flex: 1,
-    marginRight: 8,
   },
-  amount: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#ff7f50",
-  },
-  payer: {
+  meta: {
     marginTop: 6,
     fontSize: 14,
     color: "#555",
   },
-  rowFooter: {
+  date: {
     marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  meta: {
     fontSize: 12,
     color: "#888",
   },

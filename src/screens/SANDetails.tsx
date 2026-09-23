@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
 import {
   Calendar,
   Users,
@@ -10,7 +17,7 @@ import {
   Clock,
 } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSanDetail } from "../services/san";
 import generalStyles from "../styles/general";
@@ -21,7 +28,6 @@ import FullScreenLoader from "../components/ui/FullScreenLoader";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { data: sanDetails, isLoading, refetch } = useSanDetail(id);
@@ -45,199 +51,260 @@ const SANDetails: React.FC = () => {
           <Text style={styles.noResultsText}>{t("SANDetails.noResults")}</Text>
         </View>
       ) : (
-        <>{sanDetails &&
-          <ScrollView
-            contentContainerStyle={styles.content}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={() => void onRefresh()}
-                colors={["#ff7f50"]}
-                tintColor="#ff7f50"
-              />
-            }
-          >
-            <Animated.View entering={FadeInDown.duration(400)} style={generalStyles.cardMin}>
-              <View style={styles.cardContent}>
-                <View style={styles.cardHeader}>
-                  <View>
-                    <Text style={styles.sanTitle}>{sanDetails.sanName}</Text>
-                    <Text style={styles.periodText}>{sanDetails.frequency}</Text>
+        <>
+          {sanDetails && (
+            <ScrollView
+              contentContainerStyle={styles.content}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={() => void onRefresh()}
+                  colors={["#ff7f50"]}
+                  tintColor="#ff7f50"
+                />
+              }
+            >
+              <Animated.View
+                entering={FadeInDown.duration(400)}
+                style={generalStyles.cardMin}
+              >
+                <View style={styles.cardContent}>
+                  <View style={styles.cardHeader}>
+                    <View>
+                      <Text style={styles.sanTitle}>{sanDetails.sanName}</Text>
+                      <Text style={styles.periodText}>
+                        {sanDetails.frequency}
+                      </Text>
+                    </View>
+                    <Text style={styles.amountText}>${sanDetails.amount}</Text>
                   </View>
-                  <Text style={styles.amountText}>${sanDetails.amount}</Text>
-                </View>
 
-                <View style={styles.infoRow}>
-                  <View style={styles.infoItem}>
-                    <Calendar size={16} color="#888" />
-                    <Text style={styles.infoText}>{sanDetails.startDate ? sanDetails.startDate : sanDetails.createdAt}</Text>
+                  <View style={styles.infoRow}>
+                    <View style={styles.infoItem}>
+                      <Calendar size={16} color="#888" />
+                      <Text style={styles.infoText}>
+                        {sanDetails.startDate
+                          ? sanDetails.startDate
+                          : sanDetails.createdAt}
+                      </Text>
+                    </View>
+                    <View style={styles.infoItem}>
+                      <Users size={16} color="#888" />
+                      <Text style={styles.infoText}>
+                        {t("SANDetails.participants", {
+                          current: sanDetails.totalMembers,
+                          max: 10,
+                        })}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={styles.infoItem}>
-                    <Users size={16} color="#888" />
-                    <Text style={styles.infoText}>
-                      {t("SANDetails.participants", {
-                        current: sanDetails.totalMembers,
-                        max: 10,
+
+                  {CHAT_ENABLED ? (
+                    <View style={styles.buttonRow}>
+                      <TouchableOpacity style={styles.primaryButton}>
+                        <MessageCircle size={16} color="#fff" />
+                        <Text style={styles.buttonText}>
+                          {t("SANDetails.groupChat")}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.secondaryButton}>
+                        <Info size={16} color="#888" />
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
+                </View>
+              </Animated.View>
+
+              {!sanDetails.isOpen && (
+                <View style={[generalStyles.cardMin, { padding: 16 }]}>
+                  <Text style={styles.descriptionTitle}>
+                    {t("SANDetails.descriptionTitle")}
+                  </Text>
+                  <Text style={styles.descriptionText}>
+                    {sanDetails.joinMode === "free"
+                      ? t("SANDetails.freeJoinHint")
+                      : t("SANDetails.awaitMessage")}
+                  </Text>
+                </View>
+              )}
+
+              <View style={generalStyles.section}>
+                <Text style={styles.sectionTitle}>
+                  {t("SANDetails.progressTitle")}
+                </Text>
+                <View style={generalStyles.card}>
+                  <View style={styles.progressHeader}>
+                    <Text style={styles.progressTitle}>
+                      {t("SANDetails.yourTurn")}
+                    </Text>
+                    <Text style={styles.turnBadge}>
+                      {t("SANDetails.turnBadge", {
+                        current: sanDetails.currentTurn
+                          ? sanDetails.currentTurn
+                          : 0,
+                        total: 10,
                       })}
                     </Text>
                   </View>
-                </View>
-
-                {CHAT_ENABLED ? (
-                  <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.primaryButton}>
-                      <MessageCircle size={16} color="#fff" />
-                      <Text style={styles.buttonText}>{t("SANDetails.groupChat")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.secondaryButton}>
-                      <Info size={16} color="#888" />
-                    </TouchableOpacity>
+                  <View style={styles.progressBarBackground}>
+                    <Animated.View
+                      style={{
+                        ...styles.progressBar,
+                        width: `${((sanDetails.currentTurn ? sanDetails.currentTurn : 0) / 10) * 100}%`,
+                      }}
+                    />
                   </View>
-                ) : null}
-              </View>
-            </Animated.View>
-
-            {!sanDetails.isOpen &&
-              <View style={[generalStyles.cardMin, { padding: 16 }]}>
-                <Text style={styles.descriptionTitle}>{t("SANDetails.descriptionTitle")}</Text>
-                <Text style={styles.descriptionText}>
-                  {sanDetails.joinMode === "free"
-                    ? t("SANDetails.freeJoinHint")
-                    : t("SANDetails.awaitMessage")}
-                </Text>
-              </View>
-            }
-
-            <View style={generalStyles.section}>
-              <Text style={styles.sectionTitle}>{t("SANDetails.progressTitle")}</Text>
-              <View style={generalStyles.card}>
-                <View style={styles.progressHeader}>
-                  <Text style={styles.progressTitle}>{t("SANDetails.yourTurn")}</Text>
-                  <Text style={styles.turnBadge}>
-                    {t("SANDetails.turnBadge", {
-                      current: sanDetails.currentTurn ? sanDetails.currentTurn : 0,
-                      total: 10,
-                    })}
+                  <Text style={styles.progressText}>
+                    {(sanDetails.myTurn ? sanDetails.myTurn : 0) <
+                    (sanDetails.currentTurn ? sanDetails.currentTurn : 0)
+                      ? t("SANDetails.alreadyReceived")
+                      : sanDetails.currentTurn ===
+                          (sanDetails.myTurn ? sanDetails.myTurn : 0)
+                        ? t("SANDetails.currentTurn")
+                        : t("SANDetails.turnsRemaining", {
+                            remaining:
+                              (sanDetails.myTurn ? sanDetails.myTurn : 0) -
+                              (sanDetails.currentTurn
+                                ? sanDetails.currentTurn
+                                : 0),
+                          })}
                   </Text>
                 </View>
-                <View style={styles.progressBarBackground}>
-                  <Animated.View
-                    style={{
-                      ...styles.progressBar,
-                      width: `${((sanDetails.currentTurn ? sanDetails.currentTurn : 0) / 10) * 100}%`,
-                    }}
+              </View>
+
+              {sanDetails.isOpen ? (
+                <View style={generalStyles.section}>
+                  <Text style={styles.sectionTitle}>
+                    {t("HomeScreen.upcomingPayments")}
+                  </Text>
+
+                  <NextPaymentCard
+                    id={sanDetails.id}
+                    currentTurn={
+                      sanDetails.nextPaymentTurn ?? sanDetails.currentTurn
+                    }
+                    amount={sanDetails.amount}
+                    nextPaymentDate={sanDetails.nextPaymentDate}
+                    lastPaidTurn={sanDetails.lastPaidTurn!}
+                    fxCurrency={sanDetails.fxCurrency}
+                    paymentAmount={sanDetails.paymentAmount}
+                    baseAmount={sanDetails.baseAmount}
+                    lateFeeAmount={sanDetails.lateFeeAmount}
+                    lateFeePercent={sanDetails.lateFeePercent}
                   />
                 </View>
-                <Text style={styles.progressText}>
-                  {(sanDetails.myTurn ? sanDetails.myTurn : 0) < (sanDetails.currentTurn ? sanDetails.currentTurn : 0)
-                    ? t("SANDetails.alreadyReceived")
-                    : sanDetails.currentTurn === (sanDetails.myTurn ? sanDetails.myTurn : 0)
-                      ? t("SANDetails.currentTurn")
-                      : t("SANDetails.turnsRemaining", {
-                        remaining: (sanDetails.myTurn ? sanDetails.myTurn : 0) - (sanDetails.currentTurn ? sanDetails.currentTurn : 0),
-                      })}
+              ) : null}
+
+              <View style={generalStyles.section}>
+                <Text style={styles.sectionTitle}>
+                  {t("SANDetails.membersTitle")}
                 </Text>
-              </View>
-            </View>
-
-
-            {sanDetails.isOpen ? (
-            <View style={generalStyles.section}>
-              <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
-
-              <NextPaymentCard
-                id={sanDetails.id}
-                currentTurn={sanDetails.nextPaymentTurn ?? sanDetails.currentTurn}
-                amount={sanDetails.amount}
-                nextPaymentDate={sanDetails.nextPaymentDate}
-                lastPaidTurn={sanDetails.lastPaidTurn!}
-                fxCurrency={sanDetails.fxCurrency}
-                paymentAmount={sanDetails.paymentAmount}
-                baseAmount={sanDetails.baseAmount}
-                lateFeeAmount={sanDetails.lateFeeAmount}
-                lateFeePercent={sanDetails.lateFeePercent}
-              />
-            </View>
-            ) : null}
-
-            <View style={generalStyles.section}>
-              <Text style={styles.sectionTitle}>{t("SANDetails.membersTitle")}</Text>
-              <View style={generalStyles.card}>
-                {sanDetails.members.map((member, index) => (
-                  <View
-                    key={member.id}
-                    style={[
-                      styles.memberItem,
-                      (sanDetails.currentTurn != null &&
-                        sanDetails.currentTurn === member.position) && styles.currentMember,
-                    ]}
-                  >
-                    <View style={styles.avatarContainer}>
-                      <AvatarView name={member.name!} lastName={member?.lastName} photo={member?.photo} />
-                    </View>
-                    <View style={styles.memberInfo}>
-                      <Text style={styles.memberName}>
-                        {member.name || t("SANDetails.availableTurn")}
-                      </Text>
-                      <Text style={styles.memberTurn}>
-                        {member.position
-                          ? t("SANDetails.turn", { turn: member.position })
-                          : t("SANDetails.unassignedTurn")}
-                      </Text>
-                    </View>
-
-                    <View style={styles.paymentStatusContainer}>
-                      <View style={styles.paymentStatus}>
-                        {member.currentPaymentStatus === "validated" ||
-                        (!member.currentPaymentStatus && member.hasPaidCurrentTurn) ? (
-                          <>
-                            <CheckCircle size={16} color="#10B981" />
-                            <Text style={[styles.paymentStatusText, styles.paidStatus]}>
-                              {t("SANDetails.paid")}
-                            </Text>
-                          </>
-                        ) : member.currentPaymentStatus === "pending" ? (
-                          <>
-                            <Clock size={16} color="#D97706" />
-                            <Text style={[styles.paymentStatusText, styles.awaitingStatus]}>
-                              {t("SANDetails.awaitingApproval")}
-                            </Text>
-                          </>
-                        ) : member.currentPaymentStatus === "rejected" ? (
-                          <>
-                            <XCircle size={16} color="#EF4444" />
-                            <Text style={[styles.paymentStatusText, styles.pendingStatus]}>
-                              {t("SANDetails.rejected")}
-                            </Text>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle size={16} color="#EF4444" />
-                            <Text style={[styles.paymentStatusText, styles.pendingStatus]}>
-                              {t("SANDetails.pending")}
-                            </Text>
-                          </>
-                        )}
+                <View style={generalStyles.card}>
+                  {sanDetails.members.map((member) => (
+                    <View
+                      key={member.id}
+                      style={[
+                        styles.memberItem,
+                        sanDetails.currentTurn != null &&
+                          sanDetails.currentTurn === member.position &&
+                          styles.currentMember,
+                      ]}
+                    >
+                      <View style={styles.avatarContainer}>
+                        <AvatarView
+                          name={member.name!}
+                          lastName={member?.lastName}
+                          photo={member?.photo}
+                        />
+                      </View>
+                      <View style={styles.memberInfo}>
+                        <Text style={styles.memberName}>
+                          {member.name || t("SANDetails.availableTurn")}
+                        </Text>
+                        <Text style={styles.memberTurn}>
+                          {member.position
+                            ? t("SANDetails.turn", { turn: member.position })
+                            : t("SANDetails.unassignedTurn")}
+                        </Text>
                       </View>
 
-                      {member.hasReceivedMoney && (
-                        <Text style={[styles.statusBadge, styles.completedBadge]}>
-                          {t("SANDetails.completed")}
-                        </Text>
-                      )}
-                      {sanDetails.currentTurn != null &&
-                        sanDetails.currentTurn === member.position && (
-                        <Text style={[styles.statusBadge, styles.currentBadge]}>
-                          {t("SANDetails.current")}
-                        </Text>
-                      )}
+                      <View style={styles.paymentStatusContainer}>
+                        <View style={styles.paymentStatus}>
+                          {member.currentPaymentStatus === "validated" ||
+                          (!member.currentPaymentStatus &&
+                            member.hasPaidCurrentTurn) ? (
+                            <>
+                              <CheckCircle size={16} color="#10B981" />
+                              <Text
+                                style={[
+                                  styles.paymentStatusText,
+                                  styles.paidStatus,
+                                ]}
+                              >
+                                {t("SANDetails.paid")}
+                              </Text>
+                            </>
+                          ) : member.currentPaymentStatus === "pending" ? (
+                            <>
+                              <Clock size={16} color="#D97706" />
+                              <Text
+                                style={[
+                                  styles.paymentStatusText,
+                                  styles.awaitingStatus,
+                                ]}
+                              >
+                                {t("SANDetails.awaitingApproval")}
+                              </Text>
+                            </>
+                          ) : member.currentPaymentStatus === "rejected" ? (
+                            <>
+                              <XCircle size={16} color="#EF4444" />
+                              <Text
+                                style={[
+                                  styles.paymentStatusText,
+                                  styles.pendingStatus,
+                                ]}
+                              >
+                                {t("SANDetails.rejected")}
+                              </Text>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle size={16} color="#EF4444" />
+                              <Text
+                                style={[
+                                  styles.paymentStatusText,
+                                  styles.pendingStatus,
+                                ]}
+                              >
+                                {t("SANDetails.pending")}
+                              </Text>
+                            </>
+                          )}
+                        </View>
+
+                        {member.hasReceivedMoney && (
+                          <Text
+                            style={[styles.statusBadge, styles.completedBadge]}
+                          >
+                            {t("SANDetails.completed")}
+                          </Text>
+                        )}
+                        {sanDetails.currentTurn != null &&
+                          sanDetails.currentTurn === member.position && (
+                            <Text
+                              style={[styles.statusBadge, styles.currentBadge]}
+                            >
+                              {t("SANDetails.current")}
+                            </Text>
+                          )}
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  ))}
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        }
+            </ScrollView>
+          )}
         </>
       )}
     </View>
@@ -254,7 +321,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: 16
+    paddingTop: 16,
   },
   header: {
     flexDirection: "row",
@@ -483,6 +550,4 @@ const styles = StyleSheet.create({
   awaitingStatus: {
     color: "#D97706",
   },
-
-
 });

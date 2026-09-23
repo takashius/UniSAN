@@ -1,4 +1,4 @@
-export type MemberPaymentStatus = 'none' | 'pending' | 'validated' | 'rejected';
+export type MemberPaymentStatus = "none" | "pending" | "validated" | "rejected";
 
 export interface SanMember {
   id: string;
@@ -17,8 +17,8 @@ export interface SanDetail {
   amount: number;
   startDate: string | null;
   frequency: string;
-  fxCurrency?: 'usd' | 'eur' | null;
-  joinMode?: 'paid' | 'free' | null;
+  fxCurrency?: "usd" | "eur" | null;
+  joinMode?: "paid" | "free" | null;
   isActive: boolean;
   isOpen: boolean;
   currentTurn: number | null;
@@ -32,7 +32,7 @@ export interface SanDetail {
   baseAmount?: number;
   lateFeeAmount?: number;
   lateFeePercent?: number;
-  paymentStatus?: 'early' | 'ontime' | 'late';
+  paymentStatus?: "early" | "ontime" | "late";
   createdAt: string;
   updatedAt: string | null;
 }

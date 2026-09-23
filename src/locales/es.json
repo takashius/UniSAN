@@ -156,6 +156,12 @@
     "uploadSuccessTitle": "Éxito",
     "uploadSuccessMessage": "Imagen subida correctamente",
     "idPhoto": "Foto de Cédula",
+    "idUploadHint": "Haz clic para subir una foto de tu cédula",
+    "idPendingTitle": "Cédula en revisión",
+    "idPendingMessage": "Un administrador está revisando tu foto. Te avisaremos cuando esté lista.",
+    "idApprovedTitle": "Cédula verificada",
+    "idApprovedMessage": "Tu foto de cédula ya fue aprobada.",
+    "idRejectedMessage": "Debes subir de nuevo la foto de tu cédula.",
     "whyNeeded": "¿Por qué necesitamos esto?",
     "whyTitle": "Verificación de identidad",
     "whyBody": "Necesitamos una foto de tu cédula para verificar tu identidad y cumplir con nuestras políticas de seguridad. Esta información es confidencial y solo se utilizará para fines de verificación.",
@@ -231,6 +237,7 @@
     "edit": "Editar perfil",
     "terms": "Términos y condiciones",
     "pendingPayments": "Pagos pendientes",
+    "pendingDocuments": "Cédulas pendientes",
     "logout": "Cerrar Sesión",
     "appVersion": "v{{version}}"
   },
@@ -259,6 +266,24 @@
     "alreadyProcessed": "Este pago ya fue procesado.",
     "loadError": "No se pudo cargar el pago."
   },
+  "PendingDocuments": {
+    "emptyTitle": "No hay cédulas pendientes",
+    "emptyMessage": "Cuando un participante envíe su foto de cédula, aparecerá aquí para que la apruebes o rechaces.",
+    "user": "Participante",
+    "documentId": "Cédula",
+    "email": "Correo",
+    "photo": "Foto de cédula",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "rejectTitle": "Rechazar cédula",
+    "reasonPlaceholder": "Motivo del rechazo",
+    "reasonRequired": "Indica el motivo del rechazo",
+    "approveSuccess": "Cédula aprobada",
+    "rejectSuccess": "Cédula rechazada",
+    "actionError": "No se pudo completar la acción",
+    "alreadyProcessed": "Esta cédula ya fue procesada.",
+    "loadError": "No se pudo cargar la cédula."
+  },
   "Navigation": {
     "home": "Inicio",
     "chat": "Chat",
@@ -271,7 +296,9 @@
     "recoverPassword": "Recuperar contraseña",
     "terms": "Términos y condiciones",
     "pendingPayments": "Pagos pendientes",
-    "pendingPaymentDetail": "Detalle del pago"
+    "pendingPaymentDetail": "Detalle del pago",
+    "pendingDocuments": "Cédulas pendientes",
+    "pendingDocumentDetail": "Detalle de cédula"
   },
   "preferences": {
     "title": "Preferencias",

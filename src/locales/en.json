@@ -156,6 +156,12 @@
     "uploadSuccessTitle": "Success",
     "uploadSuccessMessage": "Image uploaded successfully",
     "idPhoto": "ID photo",
+    "idUploadHint": "Tap to upload a photo of your ID",
+    "idPendingTitle": "ID under review",
+    "idPendingMessage": "An administrator is reviewing your photo. We will let you know when it is ready.",
+    "idApprovedTitle": "ID verified",
+    "idApprovedMessage": "Your ID photo has already been approved.",
+    "idRejectedMessage": "You need to upload your ID photo again.",
     "whyNeeded": "Why do we need this?",
     "whyTitle": "Identity verification",
     "whyBody": "We need a photo of your ID to verify your identity and meet our security policies. This information is confidential and will only be used for verification.",
@@ -231,6 +237,7 @@
     "edit": "Edit profile",
     "terms": "Terms and conditions",
     "pendingPayments": "Pending payments",
+    "pendingDocuments": "Pending IDs",
     "logout": "Log Out",
     "appVersion": "v{{version}}"
   },
@@ -259,6 +266,24 @@
     "alreadyProcessed": "This payment was already processed.",
     "loadError": "Could not load the payment."
   },
+  "PendingDocuments": {
+    "emptyTitle": "No pending IDs",
+    "emptyMessage": "When a member uploads an ID photo, it will appear here so you can approve or reject it.",
+    "user": "Member",
+    "documentId": "ID number",
+    "email": "Email",
+    "photo": "ID photo",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectTitle": "Reject ID",
+    "reasonPlaceholder": "Rejection reason",
+    "reasonRequired": "Enter a rejection reason",
+    "approveSuccess": "ID approved",
+    "rejectSuccess": "ID rejected",
+    "actionError": "Could not complete the action",
+    "alreadyProcessed": "This ID was already processed.",
+    "loadError": "Could not load the ID."
+  },
   "Navigation": {
     "home": "Home",
     "chat": "Chat",
@@ -271,7 +296,9 @@
     "recoverPassword": "Recover Password",
     "terms": "Terms and conditions",
     "pendingPayments": "Pending payments",
-    "pendingPaymentDetail": "Payment detail"
+    "pendingPaymentDetail": "Payment detail",
+    "pendingDocuments": "Pending IDs",
+    "pendingDocumentDetail": "ID detail"
   },
   "preferences": {
     "title": "Preferences",

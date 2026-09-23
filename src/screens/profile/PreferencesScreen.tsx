@@ -13,7 +13,8 @@ import { getAppVersion } from "../../utils/appVersion";
 const Preferences: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState<string>("es");
-  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
+  const [notificationsEnabled, setNotificationsEnabled] =
+    useState<boolean>(true);
   const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
@@ -23,7 +24,11 @@ const Preferences: React.FC = () => {
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
     i18n.changeLanguage(value);
-    alert(value === "es" ? t("alerts.languageChangedEs") : t("alerts.languageChangedEn"));
+    alert(
+      value === "es"
+        ? t("alerts.languageChangedEs")
+        : t("alerts.languageChangedEn"),
+    );
   };
 
   const handleNotificationsChange = (checked: boolean) => {
@@ -34,7 +39,6 @@ const Preferences: React.FC = () => {
 
   return (
     <View style={styles.container}>
-
       {/* Main Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Language Setting */}
@@ -45,7 +49,9 @@ const Preferences: React.FC = () => {
                 <Globe size={24} color="#ff7f50" />
                 <View style={styles.rowText}>
                   <Text style={styles.label}>{t("preferences.language")}</Text>
-                  <Text style={styles.subtitle}>{t("preferences.languageDescription")}</Text>
+                  <Text style={styles.subtitle}>
+                    {t("preferences.languageDescription")}
+                  </Text>
                 </View>
               </View>
               <View>
@@ -57,7 +63,9 @@ const Preferences: React.FC = () => {
                       mode="outlined"
                       onPress={() => setMenuVisible(true)}
                     >
-                      {language === "es" ? t("languages.es") : t("languages.en")}
+                      {language === "es"
+                        ? t("languages.es")
+                        : t("languages.en")}
                     </Button>
                   }
                 >
@@ -88,8 +96,12 @@ const Preferences: React.FC = () => {
               <View style={styles.rowLeft}>
                 <Bell size={24} color="#ff7f50" />
                 <View style={styles.rowText}>
-                  <Text style={styles.label}>{t("preferences.notifications")}</Text>
-                  <Text style={styles.subtitle}>{t("preferences.notificationsDescription")}</Text>
+                  <Text style={styles.label}>
+                    {t("preferences.notifications")}
+                  </Text>
+                  <Text style={styles.subtitle}>
+                    {t("preferences.notificationsDescription")}
+                  </Text>
                 </View>
               </View>
               <Switch

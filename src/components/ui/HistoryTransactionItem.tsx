@@ -1,9 +1,13 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Transaction } from '../../types/transactions'
-import styles from '../../styles/transactions'
-import { useTranslation } from 'react-i18next'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { View, Text } from "react-native";
+import React from "react";
+import { Transaction } from "../../types/transactions";
+import styles from "../../styles/transactions";
+import { useTranslation } from "react-i18next";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
   const { t } = useTranslation();
@@ -12,7 +16,7 @@ const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
   const fadeAnim = useSharedValue(0);
   React.useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 500 });
-  }, []);
+  }, [fadeAnim]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -20,19 +24,10 @@ const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
   }));
 
   return (
-    <Animated.View
-      style={[styles.historyItem, animatedStyle]}
-    >
+    <Animated.View style={[styles.historyItem, animatedStyle]}>
       <View style={styles.historyItemHeader}>
-        <Text style={styles.historyItemTitle}>
-          {item.san.name}
-        </Text>
-        <Text
-          style={[
-            styles.historyItemAmount,
-            styles.amountPaid
-          ]}
-        >
+        <Text style={styles.historyItemTitle}>{item.san.name}</Text>
+        <Text style={[styles.historyItemAmount, styles.amountPaid]}>
           + ${item.amount}
         </Text>
       </View>
@@ -56,7 +51,7 @@ const HistoryTransactionItem: React.FC<{ item: Transaction }> = ({ item }) => {
         </View>
       </View>
     </Animated.View>
-  )
-}
+  );
+};
 
-export default HistoryTransactionItem
+export default HistoryTransactionItem;

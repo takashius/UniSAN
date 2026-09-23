@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import { Send } from "lucide-react-native";
 import { FadeInDown } from "react-native-reanimated";
@@ -13,7 +20,6 @@ interface Message {
 }
 
 const ChatDetail: React.FC = () => {
-
   const messages: Message[] = [
     {
       id: "1",
@@ -32,7 +38,8 @@ const ChatDetail: React.FC = () => {
     {
       id: "3",
       sender: "Tú",
-      content: "Hola a todos, quería recordarles que el próximo pago es el viernes",
+      content:
+        "Hola a todos, quería recordarles que el próximo pago es el viernes",
       timestamp: "10:35",
       isMe: true,
     },
@@ -58,7 +65,6 @@ const ChatDetail: React.FC = () => {
         style={styles.messagesContainer}
         contentContainerStyle={{ paddingBottom: 80 }}
       >
-
         {messages.map((message, index) => (
           <Animated.View
             key={message.id}
@@ -74,7 +80,9 @@ const ChatDetail: React.FC = () => {
                 message.isMe ? styles.myMessage : styles.otherMessage,
               ]}
             >
-              {!message.isMe && <Text style={styles.senderName}>{message.sender}</Text>}
+              {!message.isMe && (
+                <Text style={styles.senderName}>{message.sender}</Text>
+              )}
               <Text style={styles.messageContent}>{message.content}</Text>
               <Text
                 style={[

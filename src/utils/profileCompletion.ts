@@ -7,22 +7,30 @@ export function isProfileComplete(user: Account | null | undefined): boolean {
   return user?.profileCompletion?.complete === true;
 }
 
-export function openEditProfile(navigation: { navigate: (...args: any[]) => void }) {
+type ProfileNavigator = {
+  navigate: (name: string, params?: object) => void;
+};
+
+export function openEditProfile(navigation: ProfileNavigator) {
   navigation.navigate("Profile", { screen: "EditProfile" });
 }
 
 export function guardJoinWithProfile(
   user: Account | null | undefined,
-  navigation: { navigate: (...args: any[]) => void },
-  t: Translate
+  navigation: ProfileNavigator,
+  t: Translate,
 ): boolean {
   if (isProfileComplete(user)) return true;
-  Alert.alert(t("ProfileCompletion.joinBlockedTitle"), t("ProfileCompletion.joinBlockedMessage"), [
-    { text: t("common.cancel"), style: "cancel" },
-    {
-      text: t("ProfileCompletion.goToProfile"),
-      onPress: () => openEditProfile(navigation),
-    },
-  ]);
+  Alert.alert(
+    t("ProfileCompletion.joinBlockedTitle"),
+    t("ProfileCompletion.joinBlockedMessage"),
+    [
+      { text: t("common.cancel"), style: "cancel" },
+      {
+        text: t("ProfileCompletion.goToProfile"),
+        onPress: () => openEditProfile(navigation),
+      },
+    ],
+  );
   return false;
 }

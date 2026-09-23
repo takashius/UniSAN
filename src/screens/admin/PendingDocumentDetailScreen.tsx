@@ -16,42 +16,35 @@ import type { ProfileStackParamList } from "../../types/navigation";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
 import {
-  useAdminPayment,
-  useRejectAdminPayment,
-  useValidateAdminPayment,
-} from "../../services/adminPayments";
+  useAdminDocument,
+  useApproveAdminDocument,
+  useRejectAdminDocument,
+} from "../../services/adminDocuments";
 import { useUser } from "../../context/UserContext";
 import { isAdminRole } from "../../utils/roles";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import generalStyles from "../../styles/general";
 
 function personName(
-  person?: { name?: string; lastName?: string; email?: string } | null,
+  item?: { name?: string; lastName?: string; email?: string } | null,
 ) {
-  if (!person) return "-";
-  const name = `${person.name || ""} ${person.lastName || ""}`.trim();
-  return name || person.email || "-";
+  if (!item) return "-";
+  const name = `${item.name || ""} ${item.lastName || ""}`.trim();
+  return name || item.email || "-";
 }
 
-function formatDate(value?: string | null) {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
-}
-
-const PendingPaymentDetailScreen = () => {
+const PendingDocumentDetailScreen = () => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const route =
-    useRoute<RouteProp<ProfileStackParamList, "PendingPaymentDetail">>();
-  const id = String(route.params?.id || "");
+    useRoute<RouteProp<ProfileStackParamList, "PendingDocumentDetail">>();
+  const userId = String(route.params?.userId || "");
   const { user } = useUser();
   const isAdmin = isAdminRole(user?.user.role);
-  const { data: payment, isLoading } = useAdminPayment(id);
-  const validateMutation = useValidateAdminPayment();
-  const rejectMutation = useRejectAdminPayment();
+  const { data: document, isLoading } = useAdminDocument(userId);
+  const approveMutation = useApproveAdminDocument();
+  const rejectMutation = useRejectAdminDocument();
   const [showReject, setShowReject] = useState(false);
   const [reason, setReason] = useState("");
 
@@ -61,22 +54,22 @@ const PendingPaymentDetailScreen = () => {
 
   if (!isAdmin) return null;
 
-  const busy = validateMutation.isPending || rejectMutation.isPending;
-  const isPending = payment?.status === "pending";
+  const busy = approveMutation.isPending || rejectMutation.isPending;
+  const isPending = document?.imageDocumentIdStatus === "pending";
 
   const onApprove = () => {
-    validateMutation.mutate(id, {
+    approveMutation.mutate(userId, {
       onSuccess: () => {
         Toast.show({
           type: "success",
-          text1: t("PendingPayments.approveSuccess"),
+          text1: t("PendingDocuments.approveSuccess"),
         });
         navigation.goBack();
       },
       onError: () => {
         Toast.show({
           type: "error",
-          text1: t("PendingPayments.actionError"),
+          text1: t("PendingDocuments.actionError"),
         });
       },
     });
@@ -87,26 +80,26 @@ const PendingPaymentDetailScreen = () => {
     if (!trimmed) {
       Toast.show({
         type: "error",
-        text1: t("PendingPayments.reasonRequired"),
+        text1: t("PendingDocuments.reasonRequired"),
       });
       return;
     }
     rejectMutation.mutate(
-      { id, reason: trimmed },
+      { userId, reason: trimmed },
       {
         onSuccess: () => {
           setShowReject(false);
           setReason("");
           Toast.show({
             type: "success",
-            text1: t("PendingPayments.rejectSuccess"),
+            text1: t("PendingDocuments.rejectSuccess"),
           });
           navigation.goBack();
         },
         onError: () => {
           Toast.show({
             type: "error",
-            text1: t("PendingPayments.actionError"),
+            text1: t("PendingDocuments.actionError"),
           });
         },
       },
@@ -117,82 +110,42 @@ const PendingPaymentDetailScreen = () => {
     <View style={styles.container}>
       <FullScreenLoader visible={isLoading || busy} />
       <ScrollView contentContainerStyle={styles.content}>
-        {payment ? (
+        {document ? (
           <View style={generalStyles.card}>
             <Row
-              label={t("PendingPayments.payer")}
-              value={personName(payment.user)}
+              label={t("PendingDocuments.user")}
+              value={personName(document)}
             />
             <Row
-              label={t("PendingPayments.san")}
-              value={payment.san?.name || "-"}
+              label={t("PendingDocuments.documentId")}
+              value={document.documentId || "-"}
             />
             <Row
-              label={t("PendingPayments.bank")}
-              value={
-                payment.bank
-                  ? `${payment.bank.name || "-"}${payment.bank.code ? ` (${payment.bank.code})` : ""}`
-                  : "-"
-              }
+              label={t("PendingDocuments.email")}
+              value={document.email || "-"}
             />
-            <Row
-              label={t("PendingPayments.amount")}
-              value={`$${payment.amount}`}
-            />
-            {payment.lateFeeAmount ? (
-              <>
-                <Row
-                  label={t("PendingPayments.baseAmount")}
-                  value={`$${payment.baseAmount ?? payment.amount}`}
-                />
-                <Row
-                  label={t("PendingPayments.lateFee")}
-                  value={`$${payment.lateFeeAmount}${
-                    payment.lateFeePercent
-                      ? ` (${payment.lateFeePercent}%)`
-                      : ""
-                  }`}
-                />
-              </>
-            ) : null}
-            <Row
-              label={t("PendingPayments.reference")}
-              value={String(payment.operationReference)}
-            />
-            <Row
-              label={t("PendingPayments.turn")}
-              value={String(payment.paymentDateIndex + 1)}
-            />
-            <Row
-              label={t("PendingPayments.timing")}
-              value={t(`Payment.${payment.paymentStatus}`, {
-                defaultValue: payment.paymentStatus,
-              })}
-            />
-            <Row
-              label={t("PendingPayments.date")}
-              value={formatDate(payment.date)}
-            />
-            {payment.operationImage ? (
+            {document.imageDocumentId ? (
               <View style={styles.imageWrap}>
-                <Text style={styles.label}>{t("PendingPayments.receipt")}</Text>
+                <Text style={styles.label}>{t("PendingDocuments.photo")}</Text>
                 <Image
-                  source={{ uri: payment.operationImage }}
-                  style={styles.receipt}
+                  source={{ uri: document.imageDocumentId }}
+                  style={styles.photo}
                 />
               </View>
             ) : null}
             {!isPending ? (
               <Text style={styles.processed}>
-                {t("PendingPayments.alreadyProcessed")}
+                {t("PendingDocuments.alreadyProcessed")}
               </Text>
             ) : null}
           </View>
         ) : !isLoading ? (
-          <Text style={styles.processed}>{t("PendingPayments.loadError")}</Text>
+          <Text style={styles.processed}>
+            {t("PendingDocuments.loadError")}
+          </Text>
         ) : null}
 
-        {payment && isPending ? (
+        {document && isPending ? (
           <View style={styles.actions}>
             <Button
               mode="contained"
@@ -200,7 +153,7 @@ const PendingPaymentDetailScreen = () => {
               onPress={onApprove}
               disabled={busy}
             >
-              {t("PendingPayments.approve")}
+              {t("PendingDocuments.approve")}
             </Button>
             <Button
               mode="outlined"
@@ -208,7 +161,7 @@ const PendingPaymentDetailScreen = () => {
               onPress={() => setShowReject(true)}
               disabled={busy}
             >
-              {t("PendingPayments.reject")}
+              {t("PendingDocuments.reject")}
             </Button>
           </View>
         ) : null}
@@ -224,13 +177,13 @@ const PendingPaymentDetailScreen = () => {
             <View style={styles.dialogCenter} pointerEvents="box-none">
               <View style={styles.dialogCard}>
                 <Text style={styles.dialogTitle}>
-                  {t("PendingPayments.rejectTitle")}
+                  {t("PendingDocuments.rejectTitle")}
                 </Text>
                 <TextInput
                   style={styles.reasonInput}
                   value={reason}
                   onChangeText={setReason}
-                  placeholder={t("PendingPayments.reasonPlaceholder")}
+                  placeholder={t("PendingDocuments.reasonPlaceholder")}
                   multiline
                 />
                 <View style={styles.dialogActions}>
@@ -247,7 +200,7 @@ const PendingPaymentDetailScreen = () => {
                     onPress={onReject}
                     disabled={busy}
                   >
-                    {t("PendingPayments.reject")}
+                    {t("PendingDocuments.reject")}
                   </Button>
                 </View>
               </View>
@@ -266,7 +219,7 @@ const Row = ({ label, value }: { label: string; value: string }) => (
   </View>
 );
 
-export default PendingPaymentDetailScreen;
+export default PendingDocumentDetailScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -293,7 +246,7 @@ const styles = StyleSheet.create({
   imageWrap: {
     marginTop: 8,
   },
-  receipt: {
+  photo: {
     width: "100%",
     height: 220,
     borderRadius: 8,

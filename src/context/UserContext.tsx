@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import SecureStoreManager from '../components/AsyncStorageManager';
-import { Account } from '../types';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import SecureStoreManager from "../components/AsyncStorageManager";
+import { Account } from "../types";
 
 type UserContextType = {
   user: Account | null;
   login: (userData: Account) => void;
   logout: () => void;
-  setUser: any;
+  setUser: React.Dispatch<React.SetStateAction<Account | null>>;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -33,7 +33,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };

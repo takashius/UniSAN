@@ -18,8 +18,20 @@ interface OTPInputProps {
 }
 
 const InputOTP = forwardRef<TextInput, OTPInputProps>(
-  ({ value, length, onChangeText, isDisabled = false, containerStyle, inputStyle }, ref) => {
-    const hiddenInputRef = useRef<TextInput | null>(null) as React.MutableRefObject<TextInput | null>;
+  (
+    {
+      value,
+      length,
+      onChangeText,
+      isDisabled = false,
+      containerStyle,
+      inputStyle,
+    },
+    ref,
+  ) => {
+    const hiddenInputRef = useRef<TextInput | null>(
+      null,
+    ) as React.MutableRefObject<TextInput | null>;
 
     const handleFocus = () => {
       if (hiddenInputRef.current) {
@@ -31,7 +43,13 @@ const InputOTP = forwardRef<TextInput, OTPInputProps>(
 
     return (
       <TouchableWithoutFeedback onPress={handleFocus}>
-        <View style={[styles.container, isDisabled && styles.disabled, containerStyle]}>
+        <View
+          style={[
+            styles.container,
+            isDisabled && styles.disabled,
+            containerStyle,
+          ]}
+        >
           {characters.map((char, index) => (
             <InputOTPSlot
               key={index}
@@ -47,7 +65,11 @@ const InputOTP = forwardRef<TextInput, OTPInputProps>(
               hiddenInputRef.current = textInputRef;
               if (ref && typeof ref === "function") {
                 ref(textInputRef);
-              } else if (ref && typeof ref === "object" && ref.current !== undefined) {
+              } else if (
+                ref &&
+                typeof ref === "object" &&
+                ref.current !== undefined
+              ) {
                 ref.current = textInputRef;
               }
             }}
@@ -57,14 +79,12 @@ const InputOTP = forwardRef<TextInput, OTPInputProps>(
             keyboardType="numeric"
             style={styles.hiddenInput}
             editable={!isDisabled}
-            autoFocus={false}
           />
         </View>
       </TouchableWithoutFeedback>
     );
-  }
+  },
 );
-
 
 InputOTP.displayName = "InputOTP";
 
@@ -75,7 +95,12 @@ interface OTPInputSlotProps {
   onPress: () => void;
 }
 
-const InputOTPSlot: React.FC<OTPInputSlotProps> = ({ char, isActive, style, onPress }) => {
+const InputOTPSlot: React.FC<OTPInputSlotProps> = ({
+  char,
+  isActive,
+  style,
+  onPress,
+}) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <View style={[styles.slot, isActive && styles.activeSlot, style]}>

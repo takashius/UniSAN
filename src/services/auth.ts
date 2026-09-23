@@ -4,8 +4,8 @@ import {
   UseQueryResult,
   UseMutationResult,
   useQueryClient,
-} from '@tanstack/react-query';
-import ERDEAxios from './ERDEAxios';
+} from "@tanstack/react-query";
+import ERDEAxios from "./ERDEAxios";
 import {
   Account,
   LoginResponse,
@@ -15,20 +15,24 @@ import {
   Register,
   UserProfileResponse,
   ProfileUpdateData,
-} from '../types';
-import SecureStoreManager from '../components/AsyncStorageManager';
+} from "../types";
+import SecureStoreManager from "../components/AsyncStorageManager";
 
-export const ACCOUNT_QUERY_KEY = ['myAccount'] as const;
+export const ACCOUNT_QUERY_KEY = ["myAccount"] as const;
 
 export async function fetchAccount(): Promise<Account> {
-  const response = await ERDEAxios.get<Account>('/user/account');
+  const response = await ERDEAxios.get<Account>("/user/account");
   return response.data;
 }
 
-export const useLogin = (): UseMutationResult<LoginResponse, unknown, Login> => {
+export const useLogin = (): UseMutationResult<
+  LoginResponse,
+  unknown,
+  Login
+> => {
   return useMutation<LoginResponse, unknown, Login>({
     mutationFn: async (data: Login) => {
-      const response = await ERDEAxios.post('/user/login', data);
+      const response = await ERDEAxios.post("/user/login", data);
       return response.data;
     },
   });
@@ -45,29 +49,30 @@ export const useAccount = (): UseQueryResult<Account, Error> => {
 
 export const useUserProfile = () => {
   return useQuery<UserProfileResponse, Error>({
-    queryKey: ['userProfile'],
+    queryKey: ["userProfile"],
     queryFn: async () => {
-      const response = await ERDEAxios.get<UserProfileResponse>(`/user/profile`);
+      const response =
+        await ERDEAxios.get<UserProfileResponse>(`/user/profile`);
       return response.data;
     },
     staleTime: 5 * 60 * 1000,
-    placeholderData: previousData => previousData,
+    placeholderData: (previousData) => previousData,
   });
 };
 
 export const useLogout = () => {
   return useMutation({
     mutationFn: async () => {
-      const response = await ERDEAxios.post('/user/logout');
+      const response = await ERDEAxios.post("/user/logout");
       return response.data;
     },
   });
 };
 
-export const useRegister = (): UseMutationResult<any, unknown, Register> => {
-  return useMutation<any, unknown, Register>({
+export const useRegister = (): UseMutationResult<unknown, unknown, Register> => {
+  return useMutation<unknown, unknown, Register>({
     mutationFn: async (data: Register) => {
-      const response = await ERDEAxios.post('/user/register', data);
+      const response = await ERDEAxios.post("/user/register", data);
       return response.data;
     },
   });
@@ -77,7 +82,7 @@ export const useAcceptTerms = (): UseMutationResult<Account, unknown, void> => {
   const queryClient = useQueryClient();
   return useMutation<Account, unknown, void>({
     mutationFn: async () => {
-      const response = await ERDEAxios.post<Account>('/user/accept-terms');
+      const response = await ERDEAxios.post<Account>("/user/accept-terms");
       return response.data;
     },
     onSuccess: (data) => {
@@ -88,8 +93,8 @@ export const useAcceptTerms = (): UseMutationResult<Account, unknown, void> => {
 
 export const useRecoveryOne = () => {
   return useMutation({
-    mutationFn: (email: String) => {
-      return ERDEAxios.get('/user/recovery/' + email);
+    mutationFn: (email: string) => {
+      return ERDEAxios.get("/user/recovery/" + email);
     },
   });
 };
@@ -97,7 +102,7 @@ export const useRecoveryOne = () => {
 export const useRecoveryTwo = () => {
   return useMutation({
     mutationFn: (data: Recovery) => {
-      return ERDEAxios.post('/user/recovery', data);
+      return ERDEAxios.post("/user/recovery", data);
     },
   });
 };
@@ -106,20 +111,20 @@ export const useUploadImage = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: Image) => {
-      await SecureStoreManager.setItem<string>('contentType', 'true');
-      var formData = new FormData();
-      formData.append('image', data.image);
-      formData.append('imageType', data.imageType);
-      return ERDEAxios.post('/user/upload', formData);
+      await SecureStoreManager.setItem<string>("contentType", "true");
+      const formData = new FormData();
+      formData.append("image", data.image);
+      formData.append("imageType", data.imageType);
+      return ERDEAxios.post("/user/upload", formData);
     },
     onSuccess: async () => {
-      await SecureStoreManager.removeItem('contentType');
-      queryClient.invalidateQueries({ queryKey: ['myAccount'] });
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      await SecureStoreManager.removeItem("contentType");
+      queryClient.invalidateQueries({ queryKey: ["myAccount"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
-    onError: async error => {
-      console.log('error useUploadImage', error);
-      await SecureStoreManager.removeItem('contentType');
+    onError: async (error) => {
+      console.warn("error useUploadImage", error);
+      await SecureStoreManager.removeItem("contentType");
     },
   });
 

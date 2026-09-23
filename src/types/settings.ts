@@ -12,7 +12,7 @@ export interface ReceivingAccount {
   documentId: string;
   phone: string;
   accountNumber?: string;
-  accountType?: 'ahorro' | 'corriente' | null;
+  accountType?: "ahorro" | "corriente" | null;
   active: boolean;
 }
 
@@ -24,18 +24,18 @@ export interface SanSettings {
   levels: SanLevel[];
   pointsThresholds: Record<string, number>;
   receivingAccounts: ReceivingAccount[];
-  fxCurrency?: 'usd' | 'eur';
+  fxCurrency?: "usd" | "eur";
   updatedAt?: string;
 }
 
 export interface BcvFxRates {
   usd: number;
   eur: number;
-  currency: 'usd' | 'eur';
+  currency: "usd" | "eur";
   rate: number;
   date?: string;
   updatedAt: string;
   stale?: boolean;
 }
 
-export type LevelType = 'initial' | 'intermediate' | 'max';
+export type LevelType = "initial" | "intermediate" | "max";

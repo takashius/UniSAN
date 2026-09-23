@@ -16,8 +16,8 @@ export interface Transaction {
   paymentDateIndex: number;
   operationReference: number;
   pointsLost: number;
-  status: 'validated' | 'pending' | 'rejected';
-  paymentStatus: 'early' | 'ontime' | 'late';
+  status: "validated" | "pending" | "rejected";
+  paymentStatus: "early" | "ontime" | "late";
   active: boolean;
   createdAt: string;
   updatedAt: string;

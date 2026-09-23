@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { Button, Card, IconButton } from "react-native-paper";
 import { PlusCircle, CreditCard, Trash2, Edit2 } from "lucide-react-native";
 import PaymentMethodForm from "../../components/ui/PaymentMethodForm";
 import { useTranslation } from "react-i18next";
-import { usePaymentMethods, useDeletePaymentMethod } from "../../services/paymentMethod";
+import {
+  usePaymentMethods,
+  useDeletePaymentMethod,
+} from "../../services/paymentMethod";
 import { PaymentMethod } from "../../types/paymentMethod";
 import Toast from "react-native-toast-message";
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
@@ -13,7 +22,9 @@ import generalStyles from "../../styles/general";
 const PaymentMethods: React.FC = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | undefined>();
+  const [selectedMethod, setSelectedMethod] = useState<
+    PaymentMethod | undefined
+  >();
   const [itemDelete, setItemDelete] = useState<string | null>(null);
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
 
@@ -21,7 +32,6 @@ const PaymentMethods: React.FC = () => {
   const deletePaymentMethod = useDeletePaymentMethod();
 
   const handleEdit = (method: PaymentMethod) => {
-    console.log('Editando método:', method);
     setSelectedMethod(method);
     setOpen(true);
   };
@@ -32,7 +42,6 @@ const PaymentMethods: React.FC = () => {
   };
 
   const onDelete = (id: string) => {
-    console.log('Iniciando eliminación:', id);
     setItemDelete(id);
     setIsDeleteDialogVisible(true);
   };
@@ -40,7 +49,6 @@ const PaymentMethods: React.FC = () => {
   const handleDelete = () => {
     if (!itemDelete) return;
 
-    console.log('Eliminando método:', itemDelete);
     deletePaymentMethod.mutate(itemDelete, {
       onSuccess: () => {
         Toast.show({
@@ -58,7 +66,7 @@ const PaymentMethods: React.FC = () => {
           text1: t("alerts.errorTitle"),
           text2: t("alerts.errorMessage"),
         });
-      }
+      },
     });
   };
 
@@ -178,9 +186,7 @@ const PaymentMethods: React.FC = () => {
           <Card.Content>
             <View style={styles.emptyState}>
               <CreditCard size={48} color="#aaa" />
-              <Text style={styles.emptyText}>
-                {t("methods.emptyMessage")}
-              </Text>
+              <Text style={styles.emptyText}>{t("methods.emptyMessage")}</Text>
             </View>
           </Card.Content>
         </Card>

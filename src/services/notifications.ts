@@ -23,14 +23,39 @@ async function loadNotifications() {
 
 let consumedLastResponse = false;
 
-function paymentIdFromNotificationResponse(response: any): string | null {
+type NotificationTapResponse = {
+  notification?: {
+    request?: {
+      content?: {
+        data?: {
+          eventId?: string;
+          transactionId?: string;
+          transaction_id?: string;
+          userId?: string;
+          user_id?: string;
+        };
+      };
+    };
+  };
+};
+
+function paymentIdFromNotificationResponse(response: NotificationTapResponse | null): string | null {
   const data = response?.notification?.request?.content?.data;
   if (!data || String(data.eventId) !== "payment.receivedAdmin") return null;
   const id = data.transactionId ?? data.transaction_id;
   return id ? String(id) : null;
 }
 
-export function subscribeAdminPaymentTaps(onOpen: (transactionId: string) => void) {
+function documentUserIdFromNotificationResponse(response: NotificationTapResponse | null): string | null {
+  const data = response?.notification?.request?.content?.data;
+  if (!data || String(data.eventId) !== "document.receivedAdmin") return null;
+  const id = data.userId ?? data.user_id;
+  return id ? String(id) : null;
+}
+
+export function subscribeAdminPaymentTaps(
+  onOpen: (transactionId: string) => void,
+) {
   let unsubscribe = () => {};
   void loadNotifications().then(async (Notifications) => {
     if (!Notifications) return;
@@ -40,10 +65,30 @@ export function subscribeAdminPaymentTaps(onOpen: (transactionId: string) => voi
       const fromLast = paymentIdFromNotificationResponse(last);
       if (fromLast) onOpen(fromLast);
     }
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      const id = paymentIdFromNotificationResponse(response);
-      if (id) onOpen(id);
-    });
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const id = paymentIdFromNotificationResponse(response);
+        if (id) onOpen(id);
+      },
+    );
+    unsubscribe = () => subscription.remove();
+  });
+  return () => unsubscribe();
+}
+
+export function subscribeAdminDocumentTaps(onOpen: (userId: string) => void) {
+  let unsubscribe = () => {};
+  void loadNotifications().then(async (Notifications) => {
+    if (!Notifications) return;
+    const last = await Notifications.getLastNotificationResponseAsync();
+    const fromLast = documentUserIdFromNotificationResponse(last);
+    if (fromLast) onOpen(fromLast);
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const userId = documentUserIdFromNotificationResponse(response);
+        if (userId) onOpen(userId);
+      },
+    );
     unsubscribe = () => subscription.remove();
   });
   return () => unsubscribe();
@@ -63,7 +108,9 @@ export function configureNotificationHandler() {
 }
 
 export async function areNotificationsEnabled() {
-  const stored = await SecureStoreManager.getItem<boolean>("notificationsEnabled");
+  const stored = await SecureStoreManager.getItem<boolean>(
+    "notificationsEnabled",
+  );
   return stored !== false;
 }
 
@@ -80,7 +127,7 @@ export async function unregisterCurrentPushToken() {
       remove: true,
     });
   } catch (error) {
-    console.log("No se pudo quitar el token de notificaciones", error);
+    console.warn("No se pudo quitar el token de notificaciones", error);
   }
   await SecureStoreManager.removeItem("expoPushToken");
 }
@@ -96,7 +143,7 @@ async function readCurrentExpoPushToken() {
       Constants.expoConfig?.extra?.eas?.projectId ||
       Constants.easConfig?.projectId;
     const tokenResponse = await Notifications.getExpoPushTokenAsync(
-      projectId ? { projectId } : undefined
+      projectId ? { projectId } : undefined,
     );
     return tokenResponse.data || null;
   } catch {
@@ -146,7 +193,7 @@ export async function registerAndSyncPushToken() {
       Constants.expoConfig?.extra?.eas?.projectId ||
       Constants.easConfig?.projectId;
     const tokenResponse = await Notifications.getExpoPushTokenAsync(
-      projectId ? { projectId } : undefined
+      projectId ? { projectId } : undefined,
     );
     const token = tokenResponse.data;
     if (!token) return null;
@@ -154,7 +201,7 @@ export async function registerAndSyncPushToken() {
     await ERDEAxios.post("/user/updateDeviceToken", { expoPushToken: token });
     return token;
   } catch {
-    console.log("No se pudo registrar el token de notificaciones");
+    console.warn("No se pudo registrar el token de notificaciones");
     return null;
   }
 }

@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import React, { useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import { Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Card } from "react-native-paper";
 import generalStyles from "../../styles/general";
 
@@ -11,7 +11,12 @@ interface ConfirmationDialogProps {
   onCancel: () => void;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ visible, message, onConfirm, onCancel }) => {
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+  visible,
+  message,
+  onConfirm,
+  onCancel,
+}) => {
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -20,27 +25,31 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ visible, messag
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [visible]);
+  }, [opacityAnim, visible]);
 
-  return (<>
-    {visible &&
-      <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
-        <Card style={[generalStyles.cardMin, { width: 300 }]}>
-          <Card.Content>
-            <Text style={styles.message}>{message}</Text>
-          </Card.Content>
-          <Card.Actions>
-            <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
-              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-              <Text style={styles.confirmText}>{t("common.accept")}</Text>
-            </TouchableOpacity>
-          </Card.Actions>
-        </Card>
-      </Animated.View>
-    }
-  </>
+  return (
+    <>
+      {visible && (
+        <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
+          <Card style={[generalStyles.cardMin, { width: 300 }]}>
+            <Card.Content>
+              <Text style={styles.message}>{message}</Text>
+            </Card.Content>
+            <Card.Actions>
+              <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
+                <Text style={styles.cancelText}>{t("common.cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onConfirm}
+                style={styles.confirmButton}
+              >
+                <Text style={styles.confirmText}>{t("common.accept")}</Text>
+              </TouchableOpacity>
+            </Card.Actions>
+          </Card>
+        </Animated.View>
+      )}
+    </>
   );
 };
 

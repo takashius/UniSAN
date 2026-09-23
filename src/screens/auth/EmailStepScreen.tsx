@@ -1,5 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Alert, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { AuthStackParamList } from "../../types/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
@@ -10,7 +12,7 @@ import errorToast from "../../components/ui/ErrorToast";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
 interface VerificationStepProps {
-  navigation: any;
+  navigation: NativeStackNavigationProp<AuthStackParamList>;
 }
 
 const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
@@ -28,27 +30,24 @@ const EmailStepScreen: React.FC<VerificationStepProps> = ({ navigation }) => {
   });
 
   const onSubmit = (data: { email: string }) => {
-    recoveryMutate.mutate(
-      data.email,
-      {
-        onSuccess: () => {
-          Toast.show({
-            type: 'success',
-            text1: t("EmailStepScreen.codeSentTitle"),
-            text2: t("EmailStepScreen.codeSentMessage")
-          });
-          navigation.navigate("RecoveryPasswordStep2", { email: data.email });
-        },
-        onError: (error) => {
-          Toast.show({
-            type: 'error',
-            text1: "Error",
-            text2: `${errorToast(error)}`
-          });
-          console.log('Error:', error)
-        },
-      }
-    );
+    recoveryMutate.mutate(data.email, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: t("EmailStepScreen.codeSentTitle"),
+          text2: t("EmailStepScreen.codeSentMessage"),
+        });
+        navigation.navigate("RecoveryPasswordStep2", { email: data.email });
+      },
+      onError: (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: `${errorToast(error)}`,
+        });
+        console.warn("Error:", error);
+      },
+    });
   };
 
   return (
@@ -166,19 +165,19 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   secondaryButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderColor: "#FF7F50",
     padding: 16,
     borderRadius: 8,
     marginTop: 16,
   },
   primaryButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ff7f50',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ff7f50",
     padding: 16,
     borderRadius: 8,
     marginTop: 16,
@@ -197,5 +196,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
 });

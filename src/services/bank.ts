@@ -19,4 +19,4 @@ export const useBanks = () => {
       return response.data;
     },
   });
-}; 
+};

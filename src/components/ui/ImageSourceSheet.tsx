@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { Portal } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
@@ -27,17 +33,33 @@ const ImageSourceSheet: React.FC<ImageSourceSheetProps> = ({
     <Portal>
       <View style={styles.overlayRoot}>
         <Pressable style={styles.backdrop} onPress={onDismiss} />
-        <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+        <View
+          style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) }]}
+        >
           <Text style={styles.title}>{t("ProfileEdit.sourceTitle")}</Text>
-          <TouchableOpacity style={styles.cameraButton} onPress={onCamera} activeOpacity={0.85}>
+          <TouchableOpacity
+            style={styles.cameraButton}
+            onPress={onCamera}
+            activeOpacity={0.85}
+          >
             <Camera size={22} color="#fff" />
             <Text style={styles.cameraLabel}>{t("ProfileEdit.takePhoto")}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.libraryButton} onPress={onLibrary} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.libraryButton}
+            onPress={onLibrary}
+            activeOpacity={0.7}
+          >
             <ImageIcon size={16} color="#888" />
-            <Text style={styles.libraryLabel}>{t("ProfileEdit.pickFromDevice")}</Text>
+            <Text style={styles.libraryLabel}>
+              {t("ProfileEdit.pickFromDevice")}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onDismiss} hitSlop={8}>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={onDismiss}
+            hitSlop={8}
+          >
             <Text style={styles.cancelLabel}>{t("common.cancel")}</Text>
           </TouchableOpacity>
         </View>

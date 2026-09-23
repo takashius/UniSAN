@@ -28,7 +28,8 @@ const SelectField: React.FC<SelectFieldProps> = ({
 }) => {
   const { t } = useTranslation();
   const [listVisible, setListVisible] = useState(false);
-  const selectedLabel = options.find((option) => option.value === value)?.label || "";
+  const selectedLabel =
+    options.find((option) => option.value === value)?.label || "";
 
   return (
     <View style={styles.container}>
@@ -63,7 +64,12 @@ const SelectField: React.FC<SelectFieldProps> = ({
                       index === options.length - 1 && styles.itemLast,
                     ]}
                   >
-                    <Text style={[styles.itemText, selected && styles.itemTextSelected]}>
+                    <Text
+                      style={[
+                        styles.itemText,
+                        selected && styles.itemTextSelected,
+                      ]}
+                    >
                       {option.label}
                     </Text>
                   </TouchableOpacity>

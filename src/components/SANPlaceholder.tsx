@@ -1,26 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, Text, StyleSheet } from "react-native";
 import { IconButton, Button } from "react-native-paper";
+import type { TabParamList } from "../types/navigation";
 
 const SANPlaceholder = () => {
   const { t } = useTranslation();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<TabParamList>>();
 
   return (
     <View style={styles.container}>
       <View style={styles.iconCircle}>
-        <IconButton
-          icon="alert-circle-outline"
-          size={54}
-        />
+        <IconButton icon="alert-circle-outline" size={54} />
       </View>
 
       {/* Texto centrado */}
-      <Text style={styles.secondaryText}>
-        {t('HomeScreen.noSans')}
-      </Text>
+      <Text style={styles.secondaryText}>{t("HomeScreen.noSans")}</Text>
 
       <Button
         mode="contained"
@@ -28,7 +25,7 @@ const SANPlaceholder = () => {
         onPress={() => navigation.navigate("Explorer")}
         style={styles.button}
       >
-        {t('HomeScreen.explore')}
+        {t("HomeScreen.explore")}
       </Button>
     </View>
   );

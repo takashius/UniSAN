@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import SANCard from "../components/ui/SANCard";
@@ -30,14 +36,14 @@ const HomeScreen = () => {
           const account = await fetchAccount();
           if (!cancelled) setUser(account);
         } catch (error) {
-          console.log(error);
+          console.warn(error);
         }
       };
       void load();
       return () => {
         cancelled = true;
       };
-    }, [setUser])
+    }, [setUser]),
   );
 
   const onRefresh = async () => {
@@ -45,42 +51,57 @@ const HomeScreen = () => {
     try {
       await refreshAccount();
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     } finally {
       setRefreshing(false);
     }
   };
 
   const GetWelcomeMessage = () => {
-    const sansCount = user?.statistics.activeSansCount ? user?.statistics.activeSansCount : 0;
-    const daysUntilNextPayment = user?.statistics.daysUntilNextPayment ? user?.statistics.daysUntilNextPayment : 0;;
+    const sansCount = user?.statistics.activeSansCount
+      ? user?.statistics.activeSansCount
+      : 0;
+    const daysUntilNextPayment = user?.statistics.daysUntilNextPayment
+      ? user?.statistics.daysUntilNextPayment
+      : 0;
 
     if (sansCount === 0) {
-      return <Text style={styles.welcomeText}>{t("HomeScreen.noActiveSansMessage")}</Text>;
+      return (
+        <Text style={styles.welcomeText}>
+          {t("HomeScreen.noActiveSansMessage")}
+        </Text>
+      );
     }
 
     const sansKey = sansCount === 1 ? "singularSan" : "pluralSan";
 
     let paymentMessage = "";
     if (daysUntilNextPayment > 0) {
-      paymentMessage = t(`HomeScreen.paymentUpcoming`, { days: daysUntilNextPayment });
+      paymentMessage = t(`HomeScreen.paymentUpcoming`, {
+        days: daysUntilNextPayment,
+      });
     } else if (daysUntilNextPayment === 0) {
       paymentMessage = t(`HomeScreen.paymentToday`);
     } else if (daysUntilNextPayment < 0) {
-      paymentMessage = t(`HomeScreen.paymentOverdue`, { days: Math.abs(daysUntilNextPayment) });
+      paymentMessage = t(`HomeScreen.paymentOverdue`, {
+        days: Math.abs(daysUntilNextPayment),
+      });
     }
 
-    return <Text style={styles.welcomeText}>{t("HomeScreen.welcomeMessage", {
-      sansCount,
-      sansText: t(`HomeScreen.${sansKey}`),
-      days: Math.abs(daysUntilNextPayment || 0),
-      paymentMessage,
-    })}</Text>;
-  }
+    return (
+      <Text style={styles.welcomeText}>
+        {t("HomeScreen.welcomeMessage", {
+          sansCount,
+          sansText: t(`HomeScreen.${sansKey}`),
+          days: Math.abs(daysUntilNextPayment || 0),
+          paymentMessage,
+        })}
+      </Text>
+    );
+  };
 
   return (
     <View style={styles.container}>
-
       <ScrollView
         contentContainerStyle={generalStyles.mainContent}
         refreshControl={
@@ -92,9 +113,13 @@ const HomeScreen = () => {
           />
         }
       >
-        <Animated.View style={[generalStyles.card, { marginVertical: 16 }]} entering={FadeInDown.duration(400)}>
+        <Animated.View
+          style={[generalStyles.card, { marginVertical: 16 }]}
+          entering={FadeInDown.duration(400)}
+        >
           <Text style={styles.welcomeTitle}>
-            {t("HomeScreen.welcome")}, <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
+            {t("HomeScreen.welcome")},{" "}
+            <Text style={styles.highlight}>{`${user?.user.name}`}</Text>
           </Text>
           <GetWelcomeMessage />
         </Animated.View>
@@ -108,7 +133,9 @@ const HomeScreen = () => {
             <SANPlaceholder />
           ) : (
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t("HomeScreen.activeSANs")}</Text>
+              <Text style={styles.sectionTitle}>
+                {t("HomeScreen.activeSANs")}
+              </Text>
             </View>
           )}
           {user?.sans.map((san, index) => (
@@ -127,12 +154,14 @@ const HomeScreen = () => {
           ))}
         </View>
 
-        {user?.nextPayments && user?.nextPayments.length > 0 &&
+        {user?.nextPayments && user?.nextPayments.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t("HomeScreen.upcomingPayments")}</Text>
+              <Text style={styles.sectionTitle}>
+                {t("HomeScreen.upcomingPayments")}
+              </Text>
             </View>
-            {user?.nextPayments.map((payment, index) => (
+            {user?.nextPayments.map((payment) => (
               <NextPaymentCard
                 key={payment.id}
                 id={payment.id}
@@ -149,7 +178,7 @@ const HomeScreen = () => {
               />
             ))}
           </View>
-        }
+        )}
       </ScrollView>
     </View>
   );
@@ -197,5 +226,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginRight: 4,
   },
-
 });

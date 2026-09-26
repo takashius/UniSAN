@@ -202,7 +202,8 @@
     "awaitingApproval": "Awaiting approval",
     "rejected": "Payment rejected",
     "paid": "Paid",
-    "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the group fills. Payment dates are set at that time too.",
+    "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the san starts. Payment dates are set at that time too.",
+    "manualStartHint": "The group is full. An administrator can assign any remaining turns and start the san. Payment dates are set then.",
     "freeJoinHint": "You can join without an initial payment. Turns can be assigned from the dashboard; the rest are drawn when the group fills. Payment dates are set then. The first installment is due on that first date, and you can pay it early if you want."
   },
   "ActivityScreen": {

@@ -18,6 +18,7 @@ export interface ReceivingAccount {
 
 export interface SanSettings {
   autoCreateSans: boolean;
+  startMode?: "auto" | "manual";
   membersPerSan: number;
   purpose: string;
   frequencies: string[];

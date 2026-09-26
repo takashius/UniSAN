@@ -121,9 +121,12 @@ const SANDetails: React.FC = () => {
                     {t("SANDetails.descriptionTitle")}
                   </Text>
                   <Text style={styles.descriptionText}>
-                    {sanDetails.joinMode === "free"
-                      ? t("SANDetails.freeJoinHint")
-                      : t("SANDetails.awaitMessage")}
+                    {sanDetails.startMode === "manual" &&
+                    sanDetails.totalMembers >= (sanDetails.membersPerSan || 10)
+                      ? t("SANDetails.manualStartHint")
+                      : sanDetails.joinMode === "free"
+                        ? t("SANDetails.freeJoinHint")
+                        : t("SANDetails.awaitMessage")}
                   </Text>
                 </View>
               )}

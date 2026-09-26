@@ -202,7 +202,8 @@
     "awaitingApproval": "Por validar",
     "rejected": "Pago rechazado",
     "paid": "Pagado",
-    "awaitMessage": "Este SAN aún está en proceso de formación. Algunos números de turno pueden estar asignados de antemano; el resto se sorteará cuando se completen los cupos. En ese momento también se fijarán las fechas de pago. ¡Solo falta completar el grupo!",
+    "awaitMessage": "Este SAN aún está en proceso de formación. Algunos números de turno pueden estar asignados de antemano; el resto se sorteará al iniciar el san. En ese momento también se fijarán las fechas de pago. ¡Solo falta completar el grupo!",
+    "manualStartHint": "El grupo ya está completo. Un administrador puede asignar los turnos que falten e iniciar el san. Entonces se fijarán las fechas de pago.",
     "freeJoinHint": "Te puedes afiliar sin un pago inicial. Los turnos se pueden asignar desde el panel; los que falten se sortean al completar el grupo. Ahí se fijan las fechas de pago. La primera cuota vence en esa primera fecha y, si quieres, puedes adelantarla."
   },
   "ActivityScreen": {

@@ -175,6 +175,7 @@ const HomeScreen = () => {
                 baseAmount={payment.baseAmount}
                 lateFeeAmount={payment.lateFeeAmount}
                 lateFeePercent={payment.lateFeePercent}
+                membersPerSan={payment.membersPerSan}
               />
             ))}
           </View>

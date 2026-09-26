@@ -97,6 +97,7 @@ export interface San {
   isOpen?: boolean;
   active: boolean;
   members: string[];
+  membersPerSan?: number;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -113,6 +114,7 @@ export interface SanMin {
   isOpen?: boolean;
   hasOpenSpot?: boolean;
   usersCount?: number;
+  membersPerSan?: number;
 }
 
 export interface NextPayment {
@@ -129,6 +131,7 @@ export interface NextPayment {
   lastPaidTurn: number;
   currentTurn: number | null;
   isOwnTurn: boolean;
+  membersPerSan?: number;
 }
 
 export interface Register {

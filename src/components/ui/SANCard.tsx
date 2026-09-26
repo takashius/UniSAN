@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Calendar, Users, ChevronRight, PlusCircle } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import type { NavigationProp } from "@react-navigation/native";
-import type { TabParamList } from "../../types/navigation";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { SANStackParamList, TabParamList } from "../../types/navigation";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
@@ -29,6 +31,7 @@ interface SANCardProps {
   external?: boolean;
   fxCurrency?: "usd" | "eur" | null;
   joinMode?: "paid" | "free" | null;
+  membersPerSan?: number;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -43,12 +46,20 @@ const SANCard: React.FC<SANCardProps> = ({
   external = true,
   fxCurrency,
   joinMode,
+  membersPerSan: membersPerSanProp,
 }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProp<TabParamList>>();
+  const navigation =
+    useNavigation<
+      CompositeNavigationProp<
+        NativeStackNavigationProp<SANStackParamList>,
+        BottomTabNavigationProp<TabParamList>
+      >
+    >();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
-  const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+  const membersPerSan =
+    membersPerSanProp || settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
   const isFreeJoin = joinMode === "free";
   const joinSan = useJoinSan();
   const queryClient = useQueryClient();

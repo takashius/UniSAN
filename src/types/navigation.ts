@@ -1,3 +1,5 @@
+import type { NavigatorScreenParams } from "@react-navigation/native";
+
 export type AuthStackParamList = {
   Login: undefined;
   RecoveryPasswordStep1: undefined;
@@ -30,7 +32,7 @@ export type ProfileStackParamList = {
 export type TabParamList = {
   UNISAN: undefined;
   Chat: undefined;
-  Explorer: undefined;
+  Explorer: NavigatorScreenParams<SANStackParamList> | undefined;
   History: undefined;
   Profile:
     | {

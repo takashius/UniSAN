@@ -26,6 +26,7 @@ export interface SanDetail {
   myTurn: number | null;
   members: SanMember[];
   totalMembers: number;
+  membersPerSan?: number;
   lastPaidTurn: number | null;
   nextPaymentDate: string | null;
   paymentAmount?: number;

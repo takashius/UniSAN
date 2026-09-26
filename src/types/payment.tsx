@@ -30,4 +30,5 @@ export interface NextPaymentProps {
   baseAmount?: number;
   lateFeeAmount?: number;
   lateFeePercent?: number;
+  membersPerSan?: number;
 }

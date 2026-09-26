@@ -93,7 +93,7 @@ const SANDetails: React.FC = () => {
                       <Text style={styles.infoText}>
                         {t("SANDetails.participants", {
                           current: sanDetails.totalMembers,
-                          max: 10,
+                          max: sanDetails.membersPerSan || 10,
                         })}
                       </Text>
                     </View>
@@ -142,7 +142,7 @@ const SANDetails: React.FC = () => {
                         current: sanDetails.currentTurn
                           ? sanDetails.currentTurn
                           : 0,
-                        total: 10,
+                        total: sanDetails.membersPerSan || 10,
                       })}
                     </Text>
                   </View>
@@ -150,7 +150,7 @@ const SANDetails: React.FC = () => {
                     <Animated.View
                       style={{
                         ...styles.progressBar,
-                        width: `${((sanDetails.currentTurn ? sanDetails.currentTurn : 0) / 10) * 100}%`,
+                        width: `${((sanDetails.currentTurn ? sanDetails.currentTurn : 0) / (sanDetails.membersPerSan || 10)) * 100}%`,
                       }}
                     />
                   </View>

@@ -26,12 +26,14 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   baseAmount,
   lateFeeAmount,
   lateFeePercent,
+  membersPerSan: membersPerSanProp,
 }) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { data: settings } = useSanSettings();
   const { data: fx } = useBcvRate();
-  const membersPerSan = settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
+  const membersPerSan =
+    membersPerSanProp || settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
   const installment = paymentAmount ?? amount / membersPerSan;
   const sanRate = rateForSan(fx, fxCurrency);
   const bsAmount = sanRate ? usdToBs(installment, sanRate) : null;

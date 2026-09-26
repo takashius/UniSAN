@@ -76,10 +76,12 @@ const Explorer: React.FC = () => {
                     usersCount={san.members?.length ?? 0}
                     fxCurrency={san.fxCurrency}
                     joinMode={san.joinMode}
+                    membersPerSan={san.membersPerSan || membersPerSan}
                     hasOpenSpot={
                       isMemberOf(san._id)
                         ? Boolean(san.isOpen)
-                        : (san.members?.length ?? 0) < membersPerSan
+                        : (san.members?.length ?? 0) <
+                          (san.membersPerSan || membersPerSan)
                     }
                     external={isMemberOf(san._id)}
                   />

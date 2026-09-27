@@ -15,3 +15,11 @@ export function isAdminRole(role: unknown): boolean {
     ADMIN_ROLES.includes(item as (typeof ADMIN_ROLES)[number]),
   );
 }
+
+export function isOrganizerRole(role: unknown): boolean {
+  return normalizeRoles(role).some((item) => item.toUpperCase() === "ORGANIZER");
+}
+
+export function canReviewPayments(role: unknown): boolean {
+  return isAdminRole(role) || isOrganizerRole(role);
+}

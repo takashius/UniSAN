@@ -61,7 +61,7 @@ import {
   queuePendingDocument,
   queuePendingPayment,
 } from "./navigationRef";
-import { isAdminRole } from "../utils/roles";
+import { canReviewPayments, isAdminRole } from "../utils/roles";
 
 const SanStack = createNativeStackNavigator<SANStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -96,7 +96,7 @@ const AppNavigator: React.FC = () => {
 
   useEffect(() => {
     const unsubPayments = subscribeAdminPaymentTaps((id) => {
-      if (user && isAdminRole(user.user.role) && !user.needsTermsAcceptance) {
+      if (user && canReviewPayments(user.user.role) && !user.needsTermsAcceptance) {
         openPendingPayment(id);
         return;
       }
@@ -116,10 +116,13 @@ const AppNavigator: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!user || !isAdminRole(user.user.role) || user.needsTermsAcceptance)
-      return;
-    const queuedPayment = consumeQueuedPendingPayment();
-    const queuedDocument = consumeQueuedPendingDocument();
+    if (!user || user.needsTermsAcceptance) return;
+    const queuedPayment = canReviewPayments(user.user.role)
+      ? consumeQueuedPendingPayment()
+      : null;
+    const queuedDocument = isAdminRole(user.user.role)
+      ? consumeQueuedPendingDocument()
+      : null;
     if (!queuedPayment && !queuedDocument) return;
     const timer = setTimeout(() => {
       if (queuedPayment) openPendingPayment(queuedPayment);

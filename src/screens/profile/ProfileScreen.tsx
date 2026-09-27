@@ -31,7 +31,7 @@ import { getLevelType, getMaxLevel } from "../../utils/levels";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import { unregisterCurrentPushToken } from "../../services/notifications";
 import AppVersionLabel from "../../components/ui/AppVersionLabel";
-import { isAdminRole } from "../../utils/roles";
+import { canReviewPayments, isAdminRole } from "../../utils/roles";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -41,6 +41,7 @@ const Profile = () => {
     useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const { data: settings } = useSanSettings();
   const isAdmin = isAdminRole(user?.user.role);
+  const canReviewSanPayments = canReviewPayments(user?.user.role);
   const level = user?.user.level ? user.user.level : 1;
   const levelType = getLevelType(
     level,
@@ -194,33 +195,33 @@ const Profile = () => {
               </View>
               <ChevronRight size={20} color="#888" />
             </TouchableOpacity>
+            {canReviewSanPayments ? (
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={() => navigation.navigate("PendingPayments")}
+              >
+                <View style={styles.settingsItemRow}>
+                  <ClipboardCheck size={20} color="#ff7f50" />
+                  <Text style={styles.settingsItemText}>
+                    {t("Profile.pendingPayments")}
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#888" />
+              </TouchableOpacity>
+            ) : null}
             {isAdmin ? (
-              <>
-                <TouchableOpacity
-                  style={styles.settingsItem}
-                  onPress={() => navigation.navigate("PendingPayments")}
-                >
-                  <View style={styles.settingsItemRow}>
-                    <ClipboardCheck size={20} color="#ff7f50" />
-                    <Text style={styles.settingsItemText}>
-                      {t("Profile.pendingPayments")}
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#888" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.settingsItem}
-                  onPress={() => navigation.navigate("PendingDocuments")}
-                >
-                  <View style={styles.settingsItemRow}>
-                    <IdCard size={20} color="#ff7f50" />
-                    <Text style={styles.settingsItemText}>
-                      {t("Profile.pendingDocuments")}
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#888" />
-                </TouchableOpacity>
-              </>
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={() => navigation.navigate("PendingDocuments")}
+              >
+                <View style={styles.settingsItemRow}>
+                  <IdCard size={20} color="#ff7f50" />
+                  <Text style={styles.settingsItemText}>
+                    {t("Profile.pendingDocuments")}
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#888" />
+              </TouchableOpacity>
             ) : null}
             <TouchableOpacity
               style={[styles.settingsItem, styles.logoutItem]}

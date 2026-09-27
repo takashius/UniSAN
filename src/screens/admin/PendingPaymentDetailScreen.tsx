@@ -21,7 +21,7 @@ import {
   useValidateAdminPayment,
 } from "../../services/adminPayments";
 import { useUser } from "../../context/UserContext";
-import { isAdminRole } from "../../utils/roles";
+import { canReviewPayments } from "../../utils/roles";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import generalStyles from "../../styles/general";
 
@@ -48,7 +48,7 @@ const PendingPaymentDetailScreen = () => {
     useRoute<RouteProp<ProfileStackParamList, "PendingPaymentDetail">>();
   const id = String(route.params?.id || "");
   const { user } = useUser();
-  const isAdmin = isAdminRole(user?.user.role);
+  const canReview = canReviewPayments(user?.user.role);
   const { data: payment, isLoading } = useAdminPayment(id);
   const validateMutation = useValidateAdminPayment();
   const rejectMutation = useRejectAdminPayment();
@@ -56,10 +56,10 @@ const PendingPaymentDetailScreen = () => {
   const [reason, setReason] = useState("");
 
   React.useEffect(() => {
-    if (!isAdmin) navigation.goBack();
-  }, [isAdmin, navigation]);
+    if (!canReview) navigation.goBack();
+  }, [canReview, navigation]);
 
-  if (!isAdmin) return null;
+  if (!canReview) return null;
 
   const busy = validateMutation.isPending || rejectMutation.isPending;
   const isPending = payment?.status === "pending";

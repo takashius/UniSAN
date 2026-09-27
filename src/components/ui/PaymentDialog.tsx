@@ -45,6 +45,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   baseAmount,
   lateFeeAmount = 0,
   lateFeePercent = 0,
+  adminFeePercent = 0,
+  payoutKind,
   onDismiss,
   onPaymentRegistered,
 }) => {
@@ -74,6 +76,14 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const watchedAmount = Number(watch("amount"));
   const bsAmount =
     Number.isFinite(watchedAmount) && watchedAmount > 0 ? watchedAmount : null;
+  const hasAdminFee = isJoin && adminFeePercent > 0;
+  const adminFeeAmount = hasAdminFee
+    ? Math.round((amount - amount / (1 + adminFeePercent / 100)) * 100) / 100
+    : 0;
+  const netInstallment = hasAdminFee
+    ? Math.round((amount - adminFeeAmount) * 100) / 100
+    : null;
+  const hasSpecialTerms = isJoin && (adminFeePercent > 0 || payoutKind === "goods");
 
   useEffect(() => {
     if (!open) return;
@@ -290,6 +300,36 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                       </View>
                     ))
                   )}
+                  {hasAdminFee ? (
+                    <>
+                      <View style={styles.detailRow}>
+                        <HelperText type="info">
+                          {t("Payment.installment")}:
+                        </HelperText>
+                        <HelperText type="info">
+                          {formatUsd(netInstallment ?? amount)}
+                        </HelperText>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <HelperText type="info">
+                          {t("Payment.adminFee")} ({adminFeePercent}%):
+                        </HelperText>
+                        <HelperText type="info">
+                          {formatUsd(adminFeeAmount)}
+                        </HelperText>
+                      </View>
+                    </>
+                  ) : null}
+                  {isJoin && payoutKind === "goods" ? (
+                    <HelperText type="info">
+                      {t("Payment.goodsHint")}
+                    </HelperText>
+                  ) : null}
+                  {hasSpecialTerms ? (
+                    <HelperText type="info">
+                      {t("Payment.termsReaffirmation")}
+                    </HelperText>
+                  ) : null}
                   {lateFeeAmount > 0 ? (
                     <>
                       <View style={styles.detailRow}>

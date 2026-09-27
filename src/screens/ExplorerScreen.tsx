@@ -77,6 +77,9 @@ const Explorer: React.FC = () => {
                     fxCurrency={san.fxCurrency}
                     joinMode={san.joinMode}
                     membersPerSan={san.membersPerSan || membersPerSan}
+                    installmentAmount={san.installmentAmount}
+                    adminFeePercent={san.adminFeePercent}
+                    payoutKind={san.payoutKind}
                     hasOpenSpot={
                       isMemberOf(san._id)
                         ? Boolean(san.isOpen)

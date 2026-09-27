@@ -20,6 +20,9 @@ export interface SanDetail {
   fxCurrency?: "usd" | "eur" | null;
   joinMode?: "paid" | "free" | null;
   startMode?: "auto" | "manual" | null;
+  installmentAmount?: number;
+  adminFeePercent?: number;
+  payoutKind?: "cash" | "goods" | null;
   isActive: boolean;
   isOpen: boolean;
   currentTurn: number | null;

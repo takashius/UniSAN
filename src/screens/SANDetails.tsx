@@ -99,6 +99,24 @@ const SANDetails: React.FC = () => {
                     </View>
                   </View>
 
+                  {sanDetails.payoutKind === "goods" ||
+                  (sanDetails.adminFeePercent && sanDetails.adminFeePercent > 0) ? (
+                    <View style={styles.infoRow}>
+                      {sanDetails.payoutKind === "goods" ? (
+                        <Text style={styles.infoText}>
+                          {t("SANDetails.goodsKind")}
+                        </Text>
+                      ) : null}
+                      {sanDetails.adminFeePercent && sanDetails.adminFeePercent > 0 ? (
+                        <Text style={styles.infoText}>
+                          {t("SANDetails.adminFee", {
+                            percent: sanDetails.adminFeePercent,
+                          })}
+                        </Text>
+                      ) : null}
+                    </View>
+                  ) : null}
+
                   {CHAT_ENABLED ? (
                     <View style={styles.buttonRow}>
                       <TouchableOpacity style={styles.primaryButton}>

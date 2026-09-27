@@ -32,6 +32,9 @@ interface SANCardProps {
   fxCurrency?: "usd" | "eur" | null;
   joinMode?: "paid" | "free" | null;
   membersPerSan?: number;
+  installmentAmount?: number;
+  adminFeePercent?: number;
+  payoutKind?: "cash" | "goods" | null;
 }
 
 const SANCard: React.FC<SANCardProps> = ({
@@ -47,6 +50,9 @@ const SANCard: React.FC<SANCardProps> = ({
   fxCurrency,
   joinMode,
   membersPerSan: membersPerSanProp,
+  installmentAmount,
+  adminFeePercent = 0,
+  payoutKind,
 }) => {
   const { t } = useTranslation();
   const navigation =
@@ -61,6 +67,11 @@ const SANCard: React.FC<SANCardProps> = ({
   const membersPerSan =
     membersPerSanProp || settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
   const isFreeJoin = joinMode === "free";
+  const hasSpecialTerms = adminFeePercent > 0 || payoutKind === "goods";
+  const joinInstallment =
+    typeof installmentAmount === "number" && installmentAmount > 0
+      ? installmentAmount
+      : amount / membersPerSan;
   const joinSan = useJoinSan();
   const queryClient = useQueryClient();
   const { user, setUser } = useUser();
@@ -71,7 +82,9 @@ const SANCard: React.FC<SANCardProps> = ({
     if (!ensureProfile()) return;
     Alert.alert(
       t("SANCard.freeJoinConfirmTitle"),
-      t("SANCard.freeJoinConfirm"),
+      hasSpecialTerms
+        ? `${t("SANCard.freeJoinConfirm")}\n\n${t("SANCard.termsReaffirmation")}`
+        : t("SANCard.freeJoinConfirm"),
       [
         { text: t("common.cancel"), style: "cancel" },
         {
@@ -211,10 +224,12 @@ const SANCard: React.FC<SANCardProps> = ({
       <FullScreenLoader visible={joinSan.isPending} />
       <PaymentDialog
         open={dialogOpen}
-        amount={amount / membersPerSan}
+        amount={joinInstallment}
         san={id}
         fxCurrency={fxCurrency}
         isJoin
+        adminFeePercent={adminFeePercent}
+        payoutKind={payoutKind}
         onDismiss={() => setDialogOpen(false)}
         onPaymentRegistered={() => undefined}
       />

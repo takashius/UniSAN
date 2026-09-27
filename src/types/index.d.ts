@@ -92,6 +92,9 @@ export interface San {
   frequency: string;
   fxCurrency?: "usd" | "eur" | null;
   joinMode?: "paid" | "free" | null;
+  installmentAmount?: number;
+  adminFeePercent?: number;
+  payoutKind?: "cash" | "goods" | null;
   paymentDates: Date[];
   isActive: boolean;
   isOpen?: boolean;

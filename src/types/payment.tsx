@@ -8,6 +8,8 @@ export interface PaymentDialogProps {
   baseAmount?: number;
   lateFeeAmount?: number;
   lateFeePercent?: number;
+  adminFeePercent?: number;
+  payoutKind?: "cash" | "goods" | null;
   onPaymentRegistered?: () => void;
 }
 

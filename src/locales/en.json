@@ -64,6 +64,7 @@
     "freeJoinBadge": "No initial payment",
     "freeJoinConfirmTitle": "Join this SAN",
     "freeJoinConfirm": "Do you agree to join this SAN? There is no initial payment. Installments start when the group fills.",
+    "termsReaffirmation": "You can review the terms and conditions you already accepted for the details of this SAN. Joining is explicit consent to those terms.",
     "freeJoinSuccess": "You joined the SAN. Installments start when the group fills."
   },
   "UserLevel": {
@@ -204,7 +205,9 @@
     "paid": "Paid",
     "awaitMessage": "This SAN is still forming. Some turn numbers may already be assigned; the rest will be drawn when the san starts. Payment dates are set at that time too.",
     "manualStartHint": "The group is full. An administrator can assign any remaining turns and start the san. Payment dates are set then.",
-    "freeJoinHint": "You can join without an initial payment. Turns can be assigned from the dashboard; the rest are drawn when the group fills. Payment dates are set then. The first installment is due on that first date, and you can pay it early if you want."
+    "freeJoinHint": "You can join without an initial payment. Turns can be assigned from the dashboard; the rest are drawn when the group fills. Payment dates are set then. The first installment is due on that first date, and you can pay it early if you want.",
+    "adminFee": "Administrative fee {{percent}}%",
+    "goodsKind": "Material good: title is transferred after the SAN is paid in full, unless you have the last number."
   },
   "ActivityScreen": {
     "recentActivity": "Recent Activity",
@@ -407,7 +410,10 @@
     "late": "Late",
     "installment": "Installment",
     "lateFee": "Late fee",
-    "lateFeeHint": "The grace period has passed. The surcharge is paid with this installment."
+    "lateFeeHint": "The grace period has passed. The surcharge is paid with this installment.",
+    "adminFee": "Administrative fee",
+    "goodsHint": "This SAN is for a material good. The product is registered to the administrator and title is delivered after the SAN is paid in full, unless you have the last number.",
+    "termsReaffirmation": "You can review the terms and conditions you already accepted for the details of this SAN. Joining is explicit consent to those terms."
   },
   "Terms": {
     "title": "Terms and conditions",

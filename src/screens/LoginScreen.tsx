@@ -12,6 +12,8 @@ import SecureStoreManager from "../components/AsyncStorageManager";
 import { useAccount } from "../services/auth";
 import { useUser } from "../context/UserContext";
 import FullScreenLoader from "../components/ui/FullScreenLoader";
+import AppVersionLabel from "../components/ui/AppVersionLabel";
+import AppUpdateGate from "../components/ui/AppUpdateGate";
 import { registerAndSyncPushToken } from "../services/notifications";
 
 const LoginScreen = () => {
@@ -90,7 +92,9 @@ const LoginScreen = () => {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>{t("auth.footerText")}</Text>
+        <AppVersionLabel />
       </View>
+      <AppUpdateGate />
     </View>
   );
 };

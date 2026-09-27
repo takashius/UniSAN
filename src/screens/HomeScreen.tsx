@@ -15,6 +15,7 @@ import { useUser } from "../context/UserContext";
 import SANPlaceholder from "../components/SANPlaceholder";
 import NextPaymentCard from "../components/ui/NextPaymentCard";
 import ProfileCompletionCard from "../components/ui/ProfileCompletionCard";
+import AppVersionLabel from "../components/ui/AppVersionLabel";
 import generalStyles from "../styles/general";
 import { fetchAccount } from "../services/auth";
 
@@ -180,6 +181,7 @@ const HomeScreen = () => {
             ))}
           </View>
         )}
+        <AppVersionLabel />
       </ScrollView>
     </View>
   );

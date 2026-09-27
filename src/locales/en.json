@@ -15,6 +15,13 @@
     "formSubmitted": "Form successfully submitted",
     "retry": "Try again"
   },
+  "Update": {
+    "storeTitle": "New version available",
+    "storeMessage": "There is an update in the store. Install it to keep using the latest UniSAN version.",
+    "goToStore": "Go to the store",
+    "later": "Later",
+    "updating": "Updating the app…"
+  },
   "auth": {
     "password": "Password",
     "confirm_password": "Confirm Password",

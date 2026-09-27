@@ -17,9 +17,9 @@ import BankSelectField from "./BankSelectField";
 import formStyles from "../../styles/FormStyles";
 import { useTranslation } from "react-i18next";
 import DateInputField from "./DatePickerForm";
-import { useJoinSan, usePaymentSan } from "../../services/san";
+import { useJoinSan, usePaymentSan, useSanDetail } from "../../services/san";
 import { fetchAccount } from "../../services/auth";
-import { useBcvRate, useReceivingAccounts } from "../../services/settings";
+import { useBcvRate } from "../../services/settings";
 import { ReceivingAccount } from "../../types/settings";
 import { PaymentDialogProps, PaymentFormData } from "../../types/payment";
 import Toast from "react-native-toast-message";
@@ -64,7 +64,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
   const { setUser } = useUser();
-  const { data: receivingAccounts = [] } = useReceivingAccounts();
+  const { data: sanDetail } = useSanDetail(open ? san : "");
+  const receivingAccounts = sanDetail?.receivingAccount
+    ? [sanDetail.receivingAccount]
+    : [];
   const { data: fx, isError: fxError } = useBcvRate(open);
   const sanRate = rateForSan(fx, fxCurrency);
   const isBusy = joinSan.isPending || paymentSan.isPending || completing;
@@ -224,7 +227,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                     </HelperText>
                   ) : (
                     receivingAccounts.map((account) => (
-                      <View key={account._id} style={styles.accountBlock}>
+                      <View
+                        key={account._id || `${account.bankCode}-${account.phone}`}
+                        style={styles.accountBlock}
+                      >
                         <View style={styles.detailRow}>
                           <HelperText type="info">
                             {t("Payment.bank")}:

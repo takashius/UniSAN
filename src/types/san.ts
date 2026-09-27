@@ -37,4 +37,16 @@ export interface SanDetail {
   paymentStatus?: "early" | "ontime" | "late";
   createdAt: string;
   updatedAt: string | null;
+  receivingAccount?: {
+    _id?: string;
+    bankName: string;
+    bankCode: string;
+    holderName?: string;
+    documentId: string;
+    phone: string;
+    accountNumber?: string;
+    accountType?: "ahorro" | "corriente" | null;
+    active: boolean;
+    isGeneral?: boolean;
+  } | null;
 }

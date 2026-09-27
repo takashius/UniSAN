@@ -14,6 +14,7 @@ export interface ReceivingAccount {
   accountNumber?: string;
   accountType?: "ahorro" | "corriente" | null;
   active: boolean;
+  isGeneral?: boolean;
 }
 
 export interface SanSettings {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import Animated, {
-  FadeInDown,
   runOnJS,
   useAnimatedKeyboard,
   useAnimatedReaction,
@@ -17,6 +17,7 @@ import Animated, {
 import { Bell, BellOff, ChevronLeft, Send } from "lucide-react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
@@ -31,7 +32,17 @@ import {
   useSetChatMuted,
 } from "../../services/chat";
 import { setActiveChatSanId } from "../../services/notifications";
+import AvatarView from "../../components/ui/AvatarView";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
+
+function findTabNavigation(navigation: NavigationProp<ParamListBase>) {
+  let current = navigation.getParent();
+  while (current) {
+    if (current.getState()?.type === "tab") return current;
+    current = current.getParent();
+  }
+  return navigation.getParent();
+}
 
 function formatTime(value: string) {
   const date = new Date(value);
@@ -55,6 +66,7 @@ const ChatDetail: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
   const holdFocus = useRef(false);
+  const stickToBottom = useRef(true);
   const tabBarHeight = useBottomTabBarHeight();
   const keyboard = useAnimatedKeyboard({
     isStatusBarTranslucentAndroid: true,
@@ -107,6 +119,7 @@ const ChatDetail: React.FC = () => {
   }, [id, queryClient]);
 
   const scrollMessagesToEnd = () => {
+    stickToBottom.current = true;
     scrollRef.current?.scrollToEnd({ animated: false });
   };
 
@@ -120,13 +133,25 @@ const ChatDetail: React.FC = () => {
   );
 
   useEffect(() => {
-    scrollRef.current?.scrollToEnd({ animated: true });
-  }, [messages?.length]);
+    stickToBottom.current = true;
+  }, [id]);
+
+  useEffect(() => {
+    if (isLoading || !messages?.length) return;
+    const timers = [0, 60, 200].map((delay) =>
+      setTimeout(() => {
+        if (!stickToBottom.current) return;
+        scrollRef.current?.scrollToEnd({ animated: false });
+      }, delay),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [id, isLoading, messages?.length]);
 
   const send = async () => {
     const text = draft.trim();
     if (!text || sending) return;
     holdFocus.current = true;
+    stickToBottom.current = true;
     setSending(true);
     try {
       await connectChatSocket();
@@ -161,88 +186,152 @@ const ChatDetail: React.FC = () => {
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
-  return (
-    <Animated.View style={[styles.container, composerStyle]}>
-      <View style={styles.header}>
+  useLayoutEffect(() => {
+    const parent = findTabNavigation(navigation);
+    parent?.setOptions({
+      headerTitle: () => (
+        <Text numberOfLines={1} style={styles.navTitle}>
+          {title || t("Navigation.chat")}
+        </Text>
+      ),
+      headerTitleAlign: "center",
+      headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
             if (navigation.canGoBack()) navigation.goBack();
           }}
-          style={styles.headerSide}
           accessibilityLabel={t("Chat.back")}
+          style={styles.navButton}
         >
-          <ChevronLeft size={22} color="#ff7f50" />
+          <ChevronLeft size={26} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {title}
-        </Text>
+      ),
+      headerRight: () => (
         <TouchableOpacity
-          style={styles.headerSide}
-          accessibilityLabel={muted ? t("Chat.unmute") : t("Chat.mute")}
           onPress={() => muteRoom.mutate({ sanId: id, muted: !muted })}
+          accessibilityLabel={muted ? t("Chat.unmute") : t("Chat.mute")}
+          style={styles.navButton}
         >
           {muted ? (
-            <BellOff size={20} color="#888" />
+            <BellOff size={22} color="#fff" />
           ) : (
-            <Bell size={20} color="#ff7f50" />
+            <Bell size={22} color="#fff" />
           )}
         </TouchableOpacity>
-      </View>
+      ),
+    });
+  }, [id, muted, muteRoom, navigation, t, title]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const parent = findTabNavigation(navigation);
+      const state = parent?.getState();
+      const routeName = state?.routes[state.index]?.name;
+      return () => {
+        if (!parent) return;
+        const titles: Record<string, string> = {
+          UNISAN: t("Navigation.home"),
+          Chat: t("Navigation.chat"),
+          Explorer: t("Navigation.explorer"),
+          History: t("Navigation.history"),
+          Profile: t("Navigation.profile"),
+        };
+        parent.setOptions({
+          headerTitle: (routeName && titles[routeName]) || t("Navigation.chat"),
+          headerTitleAlign: Platform.OS === "ios" ? "center" : "left",
+          headerLeft: () => null,
+          headerRight: () => null,
+        });
+      };
+    }, [navigation, t]),
+  );
+
+  return (
+    <Animated.View style={[styles.container, composerStyle]}>
       <FullScreenLoader visible={isLoading} />
 
       <ScrollView
         ref={scrollRef}
         style={styles.messagesContainer}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: false })
-        }
+        contentContainerStyle={styles.messagesContent}
+        scrollEventThrottle={16}
+        onContentSizeChange={() => {
+          if (!stickToBottom.current) return;
+          scrollRef.current?.scrollToEnd({ animated: false });
+        }}
+        onScrollEndDrag={(event) => {
+          const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+          const distanceFromBottom =
+            contentSize.height - layoutMeasurement.height - contentOffset.y;
+          stickToBottom.current = distanceFromBottom < 48;
+        }}
+        onMomentumScrollEnd={(event) => {
+          const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+          const distanceFromBottom =
+            contentSize.height - layoutMeasurement.height - contentOffset.y;
+          stickToBottom.current = distanceFromBottom < 48;
+        }}
       >
         {isError ? (
           <Text style={styles.statusText}>{t("Chat.unavailable")}</Text>
         ) : messages && messages.length === 0 ? (
           <Text style={styles.statusText}>{t("Chat.noMessages")}</Text>
         ) : (
-          (messages || []).map((message, index) => {
+          (messages || []).map((message, index, list) => {
             const isMe = String(message.user.id) === String(myId);
+            const previous = list[index - 1];
+            const isGroupStart =
+              !previous || String(previous.user.id) !== String(message.user.id);
             const sender = `${message.user.name || ""} ${message.user.lastName || ""}`.trim();
             return (
-              <Animated.View
+              <View
                 key={message.id}
-                entering={FadeInDown.delay(Math.min(index, 8) * 30).duration(300)}
                 style={[
                   styles.message,
+                  isGroupStart ? styles.messageGroupStart : styles.messageGrouped,
                   isMe ? styles.messageRight : styles.messageLeft,
                 ]}
               >
-                <View
-                  style={[
-                    styles.messageBubble,
-                    isMe ? styles.myMessage : styles.otherMessage,
-                  ]}
-                >
-                  {!isMe && sender ? (
+                {!isMe ? (
+                  <View style={styles.avatarSlot}>
+                    {isGroupStart ? (
+                      <AvatarView
+                        name={message.user.name}
+                        lastName={message.user.lastName}
+                        photo={message.user.photo}
+                      />
+                    ) : null}
+                  </View>
+                ) : null}
+                <View style={[styles.bubbleColumn, isMe && styles.bubbleColumnMe]}>
+                  {!isMe && isGroupStart && sender ? (
                     <Text style={styles.senderName}>{sender}</Text>
                   ) : null}
-                  <Text
+                  <View
                     style={[
-                      styles.messageContent,
-                      isMe ? styles.myContent : styles.otherContent,
+                      styles.messageBubble,
+                      isMe ? styles.myMessage : styles.otherMessage,
                     ]}
                   >
-                    {message.text}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.messageTimestamp,
-                      isMe ? styles.myTimestamp : styles.otherTimestamp,
-                    ]}
-                  >
-                    {formatTime(message.sentAt)}
-                  </Text>
+                    <Text
+                      style={[
+                        styles.messageContent,
+                        isMe ? styles.myContent : styles.otherContent,
+                      ]}
+                    >
+                      {message.text}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.messageTimestamp,
+                        isMe ? styles.myTimestamp : styles.otherTimestamp,
+                      ]}
+                    >
+                      {formatTime(message.sentAt)}
+                    </Text>
+                  </View>
                 </View>
-              </Animated.View>
+              </View>
             );
           })
         )}
@@ -285,30 +374,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
+  navButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  headerSide: {
-    width: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+  navTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    maxWidth: 220,
   },
   messagesContainer: {
     flex: 1,
-    paddingHorizontal: 16,
+  },
+  messagesContent: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
   statusText: {
     textAlign: "center",
@@ -316,18 +400,37 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   message: {
-    marginVertical: 8,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    width: "100%",
   },
-  messageBubble: {
-    padding: 12,
-    borderRadius: 16,
-    maxWidth: "80%",
+  messageGroupStart: {
+    marginTop: 12,
+  },
+  messageGrouped: {
+    marginTop: 2,
   },
   messageRight: {
-    alignSelf: "flex-end",
+    justifyContent: "flex-end",
   },
   messageLeft: {
-    alignSelf: "flex-start",
+    justifyContent: "flex-start",
+  },
+  avatarSlot: {
+    width: 40,
+    marginRight: 8,
+  },
+  bubbleColumn: {
+    maxWidth: "80%",
+    flexShrink: 1,
+  },
+  bubbleColumnMe: {
+    alignItems: "flex-end",
+  },
+  messageBubble: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
   },
   myMessage: {
     backgroundColor: "#ff7f50",
@@ -338,8 +441,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   senderName: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#ff7f50",
     marginBottom: 4,
   },
   messageContent: {

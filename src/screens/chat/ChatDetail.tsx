@@ -6,11 +6,16 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  runOnJS,
+  useAnimatedKeyboard,
+  useAnimatedReaction,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { Bell, BellOff, ChevronLeft, Send } from "lucide-react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -48,6 +53,17 @@ const ChatDetail: React.FC = () => {
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
+  const holdFocus = useRef(false);
+  const tabBarHeight = useBottomTabBarHeight();
+  const keyboard = useAnimatedKeyboard({
+    isStatusBarTranslucentAndroid: true,
+    isNavigationBarTranslucentAndroid: true,
+  });
+  const composerStyle = useAnimatedStyle(() => {
+    const lift = Math.max(0, keyboard.height.value - tabBarHeight);
+    return { paddingBottom: lift };
+  });
   const room = rooms?.find((item) => String(item.id) === String(id));
   const title = room?.sanName || sanDetails?.sanName || "";
   const muted = room?.muted === true;
@@ -90,6 +106,19 @@ const ChatDetail: React.FC = () => {
     };
   }, [id, queryClient]);
 
+  const scrollMessagesToEnd = () => {
+    scrollRef.current?.scrollToEnd({ animated: false });
+  };
+
+  useAnimatedReaction(
+    () => keyboard.height.value,
+    (height, previous) => {
+      if (height > 0 && (previous ?? 0) === 0) {
+        runOnJS(scrollMessagesToEnd)();
+      }
+    },
+  );
+
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
   }, [messages?.length]);
@@ -97,6 +126,7 @@ const ChatDetail: React.FC = () => {
   const send = async () => {
     const text = draft.trim();
     if (!text || sending) return;
+    holdFocus.current = true;
     setSending(true);
     try {
       await connectChatSocket();
@@ -106,6 +136,7 @@ const ChatDetail: React.FC = () => {
         return;
       }
       setDraft("");
+      inputRef.current?.focus();
       if (response.message) {
         queryClient.setQueryData<ChatMessageItem[]>(
           ["chatMessages", id],
@@ -121,14 +152,17 @@ const ChatDetail: React.FC = () => {
       Toast.show({ type: "error", text1: t("Chat.sendError") });
     } finally {
       setSending(false);
+      inputRef.current?.focus();
     }
   };
 
+  const releaseFocus = () => {
+    if (!holdFocus.current) return;
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <Animated.View style={[styles.container, composerStyle]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -216,21 +250,31 @@ const ChatDetail: React.FC = () => {
 
       <View style={styles.messageInputContainer}>
         <TextInput
+          ref={inputRef}
           style={styles.input}
           placeholder={t("Chat.placeholder")}
           value={draft}
           onChangeText={setDraft}
-          editable={!sending}
+          blurOnSubmit={false}
+          returnKeyType="send"
+          onSubmitEditing={() => void send()}
+          onFocus={() => {
+            holdFocus.current = false;
+          }}
+          onBlur={releaseFocus}
         />
         <TouchableOpacity
           style={styles.sendButton}
+          onPressIn={() => {
+            holdFocus.current = true;
+          }}
           onPress={() => void send()}
           disabled={sending || !draft.trim()}
         >
           <Send size={20} color="#fff" />
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </Animated.View>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Pressable,
   AppState,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Card, Portal, IconButton, Button } from "react-native-paper";
 import {
@@ -40,6 +41,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "../../context/UserContext";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import ImageSourceSheet from "../../components/ui/ImageSourceSheet";
@@ -71,8 +73,16 @@ const EditProfile: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [imageSourceType, setImageSourceType] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const scrollToPassword = () => {
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 80);
+  };
+
+  const { control, handleSubmit, reset, setValue, watch } = useForm({
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -116,16 +126,16 @@ const EditProfile: React.FC = () => {
   }, [data, reset]);
 
   const onSubmit = (data: ProfileFormData) => {
+    const password = data.password.trim();
     const payload: ProfileUpdateData = {
       name: data.firstName,
       lastName: data.lastName,
       middleName: data.middleName,
       phone: data.phone,
       documentId: data.identityNumber,
-      password: data.password,
     };
-    if (data.password === "") {
-      delete payload.password;
+    if (password) {
+      payload.password = password;
     }
     updateMutation.mutate(
       { data: payload },
@@ -135,6 +145,8 @@ const EditProfile: React.FC = () => {
           await queryClient.invalidateQueries({
             queryKey: USER_PROFILE_QUERY_KEY,
           });
+          setValue("password", "");
+          setValue("confirmPassword", "");
           try {
             setUser(await fetchAccount());
           } catch (error) {
@@ -148,10 +160,16 @@ const EditProfile: React.FC = () => {
         },
         onError: (error) => {
           console.warn("Error al actualizar el usuario:", error);
+          const message =
+            typeof error === "string"
+              ? error
+              : error && typeof error === "object" && "message" in error
+                ? String((error as { message?: unknown }).message || "")
+                : "";
           Toast.show({
             type: "error",
-            text1: "Error",
-            text2: "Hubo un problema al actualizar. Intenta nuevamente",
+            text1: t("common.error"),
+            text2: message || t("ProfileEdit.saveError"),
           });
         },
       },
@@ -253,8 +271,18 @@ const EditProfile: React.FC = () => {
 
   return (
     <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior="padding"
+      keyboardVerticalOffset={insets.top + 56}
+    >
       <FullScreenLoader visible={isFetching || updateMutation.isPending} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+      >
         {/* Profile Image */}
         <Card style={generalStyles.cardMin}>
           <Card.Content style={styles.centerContent}>
@@ -514,8 +542,8 @@ const EditProfile: React.FC = () => {
               control={control}
               rules={{
                 minLength: {
-                  value: 6,
-                  message: "Debe tener al menos 6 caracteres",
+                  value: 8,
+                  message: t("ProfileEdit.passwordMinLength"),
                 },
               }}
               render={({ field, fieldState }) => (
@@ -527,7 +555,8 @@ const EditProfile: React.FC = () => {
                       onChangeText={field.onChange}
                       value={field.value}
                       placeholder="********"
-                      secureTextEntry={!passwordVisible} // 🔥 Alterna visibilidad
+                      secureTextEntry={!passwordVisible}
+                      onFocus={scrollToPassword}
                     />
                     <TouchableOpacity
                       onPress={() => setPasswordVisible(!passwordVisible)}
@@ -553,7 +582,8 @@ const EditProfile: React.FC = () => {
               control={control}
               rules={{
                 validate: (value) =>
-                  value === watch("password") || "Las contraseñas no coinciden",
+                  value === watch("password") ||
+                  t("ProfileEdit.passwordMismatch"),
               }}
               render={({ field, fieldState }) => (
                 <>
@@ -564,7 +594,8 @@ const EditProfile: React.FC = () => {
                       onChangeText={field.onChange}
                       value={field.value}
                       placeholder="********"
-                      secureTextEntry={!confirmPasswordVisible} // 🔥 Alterna visibilidad
+                      secureTextEntry={!confirmPasswordVisible}
+                      onFocus={scrollToPassword}
                     />
                     <TouchableOpacity
                       onPress={() =>
@@ -599,6 +630,7 @@ const EditProfile: React.FC = () => {
           Guardar Cambios
         </Button>
       </ScrollView>
+    </KeyboardAvoidingView>
 
       <ImageSourceSheet
         visible={Boolean(imageSourceType)}
@@ -651,8 +683,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
   },
+  flex: {
+    flex: 1,
+  },
   scrollContent: {
     padding: 16,
+    paddingBottom: 48,
   },
   centerContent: {
     alignItems: "center",

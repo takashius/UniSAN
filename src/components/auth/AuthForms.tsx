@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight, Fingerprint } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
 import type { TextInput as PaperTextInput } from "react-native-paper";
@@ -15,6 +15,13 @@ import errorToast from "../ui/ErrorToast";
 import SecureStoreManager from "../AsyncStorageManager";
 import FullScreenLoader from "../ui/FullScreenLoader";
 import { registerAndSyncPushToken } from "../../services/notifications";
+import {
+  canUseBiometrics,
+  getEnrolledEmail,
+  offerBiometricAfterLogin,
+  promptBiometric,
+  readBiometricSecret,
+} from "../../services/biometrics";
 
 export const LoginForm = () => {
   const { t } = useTranslation();
@@ -24,6 +31,8 @@ export const LoginForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [completingLogin, setCompletingLogin] = React.useState(false);
   const [hasRememberedEmail, setHasRememberedEmail] = React.useState(false);
+  const [enrolledEmail, setEnrolledEmail] = React.useState<string | null>(null);
+  const [biometricAvailable, setBiometricAvailable] = React.useState(false);
   const passwordInputRef = React.useRef<PaperTextInput>(null);
   const { refetch } = useAccount();
   const isBusy = loginMutate.isPending || completingLogin;
@@ -32,6 +41,7 @@ export const LoginForm = () => {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<{ email: string; password: string; rememberEmail: boolean }>({
     defaultValues: {
@@ -40,6 +50,29 @@ export const LoginForm = () => {
       rememberEmail: true,
     },
   });
+
+  const emailValue = watch("email");
+  const showBiometric =
+    biometricAvailable &&
+    Boolean(enrolledEmail) &&
+    emailValue.trim().toLowerCase() === enrolledEmail;
+
+  React.useEffect(() => {
+    let cancelled = false;
+    const loadBiometric = async () => {
+      const [available, email] = await Promise.all([
+        canUseBiometrics(),
+        getEnrolledEmail(),
+      ]);
+      if (cancelled) return;
+      setBiometricAvailable(available);
+      setEnrolledEmail(email);
+    };
+    void loadBiometric();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -67,6 +100,43 @@ export const LoginForm = () => {
     }
   };
 
+  const completeSession = async (
+    token: string,
+    email: string,
+    password: string,
+  ) => {
+    try {
+      await SecureStoreManager.setItem<string>("Token", token);
+      const user = await refetch();
+      if (user.data) {
+        login(user.data);
+        void registerAndSyncPushToken();
+        offerBiometricAfterLogin(email, password, {
+          title: t("auth.biometricOfferTitle"),
+          message: t("auth.biometricOfferMessage"),
+          yes: t("auth.biometricYes"),
+          no: t("auth.biometricNo"),
+          confirmPrompt: t("auth.biometricEnablePrompt"),
+          cancel: t("common.cancel"),
+        });
+        Toast.show({
+          type: "success",
+          text1: t("auth.loginSuccessTitle"),
+          text2: t("auth.loginSuccessMessage"),
+        });
+      } else {
+        setCompletingLogin(false);
+        Toast.show({
+          type: "error",
+          text1: t("auth.loginErrorTitle"),
+          text2: t("auth.loginErrorMessage"),
+        });
+      }
+    } catch {
+      setCompletingLogin(false);
+    }
+  };
+
   const onSubmit = (data: {
     email: string;
     password: string;
@@ -77,32 +147,8 @@ export const LoginForm = () => {
     loginMutate.mutate(
       { email: data.email, password: data.password },
       {
-        onSuccess: async (responseData) => {
-          try {
-            await SecureStoreManager.setItem<string>(
-              "Token",
-              responseData.token,
-            );
-            const user = await refetch();
-            if (user.data) {
-              login(user.data);
-              void registerAndSyncPushToken();
-              Toast.show({
-                type: "success",
-                text1: t("auth.loginSuccessTitle"),
-                text2: t("auth.loginSuccessMessage"),
-              });
-            } else {
-              setCompletingLogin(false);
-              Toast.show({
-                type: "error",
-                text1: t("auth.loginErrorTitle"),
-                text2: t("auth.loginErrorMessage"),
-              });
-            }
-          } catch {
-            setCompletingLogin(false);
-          }
+        onSuccess: (responseData) => {
+          void completeSession(responseData.token, data.email, data.password);
         },
         onError: (error) => {
           setCompletingLogin(false);
@@ -112,6 +158,34 @@ export const LoginForm = () => {
             text2: `${errorToast(error)}}`,
           });
           console.warn("Error al hacer login:", error);
+        },
+      },
+    );
+  };
+
+  const onBiometricLogin = async () => {
+    if (isBusy) return;
+    const confirmed = await promptBiometric(
+      t("auth.biometricPrompt"),
+      t("common.cancel"),
+    );
+    if (!confirmed) return;
+    const secret = await readBiometricSecret();
+    if (!secret) return;
+    setCompletingLogin(true);
+    loginMutate.mutate(
+      { email: secret.email, password: secret.password },
+      {
+        onSuccess: (responseData) => {
+          void completeSession(responseData.token, secret.email, secret.password);
+        },
+        onError: (error) => {
+          setCompletingLogin(false);
+          Toast.show({
+            type: "error",
+            text1: t("auth.loginErrorTitle"),
+            text2: `${errorToast(error)}}`,
+          });
         },
       },
     );
@@ -237,16 +311,28 @@ export const LoginForm = () => {
         </View>
       </View>
 
-      <Button
-        mode="contained"
-        style={styles.button}
-        contentStyle={styles.buttonContent}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isBusy}
-        icon={({ size, color }) => <ArrowRight size={size} color={color} />}
-      >
-        {t("auth.loginButton")}
-      </Button>
+      <View style={styles.loginActions}>
+        <Button
+          mode="contained"
+          style={[styles.button, styles.loginButtonFlex]}
+          contentStyle={styles.buttonContent}
+          onPress={handleSubmit(onSubmit)}
+          disabled={isBusy}
+          icon={({ size, color }) => <ArrowRight size={size} color={color} />}
+        >
+          {t("auth.loginButton")}
+        </Button>
+        {showBiometric ? (
+          <TouchableOpacity
+            style={styles.biometricButton}
+            onPress={() => void onBiometricLogin()}
+            disabled={isBusy}
+            accessibilityLabel={t("auth.biometricLogin")}
+          >
+            <Fingerprint size={26} color="#fff" />
+          </TouchableOpacity>
+        ) : null}
+      </View>
     </View>
   );
 };
@@ -592,6 +678,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#ff7f50",
     textDecorationLine: "underline",
+  },
+  loginActions: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    marginTop: 16,
+    gap: 10,
+  },
+  loginButtonFlex: {
+    flex: 1,
+    marginTop: 0,
+  },
+  biometricButton: {
+    width: 56,
+    borderRadius: 8,
+    backgroundColor: "#ff7f50",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
     flexDirection: "row",

@@ -43,6 +43,7 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "../../context/UserContext";
+import { refreshBiometricPassword } from "../../services/biometrics";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
 import ImageSourceSheet from "../../components/ui/ImageSourceSheet";
 
@@ -147,6 +148,9 @@ const EditProfile: React.FC = () => {
           });
           setValue("password", "");
           setValue("confirmPassword", "");
+          if (password) {
+            await refreshBiometricPassword(data.email, password);
+          }
           try {
             setUser(await fetchAccount());
           } catch (error) {

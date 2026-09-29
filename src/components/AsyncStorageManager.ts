@@ -8,7 +8,9 @@ type SecureStoreKey =
   | "User"
   | "notificationsEnabled"
   | "rememberedEmail"
-  | "expoPushToken";
+  | "expoPushToken"
+  | "biometricSecret"
+  | "biometricDeclinedEmails";
 
 class SecureStoreManager {
   /**

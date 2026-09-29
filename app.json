@@ -64,6 +64,12 @@
         }
       ],
       "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "UniSAN usa la biometría para iniciar sesión con el correo que ya registraste."
+        }
+      ],
       "@react-native-community/datetimepicker",
       [
         "expo-splash-screen",

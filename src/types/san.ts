@@ -25,6 +25,8 @@ export interface SanDetail {
   payoutKind?: "cash" | "goods" | null;
   isActive: boolean;
   isOpen: boolean;
+  chatEnabled?: boolean;
+  createdBy?: string | null;
   currentTurn: number | null;
   nextPaymentTurn?: number | null;
   myTurn: number | null;

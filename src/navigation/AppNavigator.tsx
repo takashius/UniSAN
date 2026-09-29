@@ -44,6 +44,7 @@ import {
   registerAndSyncPushToken,
   subscribeAdminDocumentTaps,
   subscribeAdminPaymentTaps,
+  subscribeChatMessageTaps,
   subscribeDocumentDecisionNotifications,
 } from "../services/notifications";
 import { useQueryClient } from "@tanstack/react-query";
@@ -53,11 +54,14 @@ import {
   fetchAccount,
 } from "../services/auth";
 import {
+  consumeQueuedChat,
   consumeQueuedPendingDocument,
   consumeQueuedPendingPayment,
   navigationRef,
+  openChat,
   openPendingDocument,
   openPendingPayment,
+  queueChat,
   queuePendingDocument,
   queuePendingPayment,
 } from "./navigationRef";
@@ -109,9 +113,17 @@ const AppNavigator: React.FC = () => {
       }
       queuePendingDocument(userId);
     });
+    const unsubChat = subscribeChatMessageTaps((sanId) => {
+      if (user && !user.needsTermsAcceptance) {
+        openChat(sanId);
+        return;
+      }
+      queueChat(sanId);
+    });
     return () => {
       unsubPayments();
       unsubDocuments();
+      unsubChat();
     };
   }, [user]);
 
@@ -123,10 +135,12 @@ const AppNavigator: React.FC = () => {
     const queuedDocument = isAdminRole(user.user.role)
       ? consumeQueuedPendingDocument()
       : null;
-    if (!queuedPayment && !queuedDocument) return;
+    const queuedChat = consumeQueuedChat();
+    if (!queuedPayment && !queuedDocument && !queuedChat) return;
     const timer = setTimeout(() => {
       if (queuedPayment) openPendingPayment(queuedPayment);
       if (queuedDocument) openPendingDocument(queuedDocument);
+      if (queuedChat) openChat(queuedChat);
     }, 300);
     return () => clearTimeout(timer);
   }, [user]);
@@ -135,6 +149,7 @@ const AppNavigator: React.FC = () => {
     <SanStack.Navigator screenOptions={{ headerShown: false }}>
       <SanStack.Screen name="ExplorerHome" component={ExplorerScreen} />
       <SanStack.Screen name="SANDetails" component={SANDetails} />
+      <SanStack.Screen name="ChatRoom" component={ChatDetail} />
     </SanStack.Navigator>
   );
 

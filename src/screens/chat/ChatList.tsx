@@ -5,51 +5,64 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
-import Animated from "react-native-reanimated";
-import { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
 import type { ChatStackParamList } from "../../types/navigation";
 import generalStyles from "../../styles/general";
+import { useChatRooms } from "../../services/chat";
+import FullScreenLoader from "../../components/ui/FullScreenLoader";
 
-interface Chat {
-  id: string;
-  name: string;
-  lastMessage: string;
-  timestamp: string;
-  unread: number;
+function formatTimestamp(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const now = new Date();
+  const sameDay = date.toDateString() === now.toDateString();
+  if (sameDay) {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+  return date.toLocaleDateString([], { day: "2-digit", month: "short" });
 }
 
 const ChatList: React.FC = () => {
-  const [searchTerm] = useState<string>("");
-  const navigation = useNavigation<NativeStackNavigationProp<ChatStackParamList>>();
-  const chats: Chat[] = [
-    {
-      id: "1",
-      name: "SAN Básico",
-      lastMessage: "Juan: Hola a todos, ¿cómo están?",
-      timestamp: "10:30",
-      unread: 2,
-    },
-    {
-      id: "2",
-      name: "SAN Quincenal",
-      lastMessage: "María: El próximo pago es el viernes",
-      timestamp: "Ayer",
-      unread: 0,
-    },
-  ];
+  const { t } = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ChatStackParamList>>();
+  const { data: chats, isLoading, isError, refetch } = useChatRooms();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const filteredChats = chats.filter((chat) =>
-    chat.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.chatList}>
-        {filteredChats.length > 0 ? (
-          filteredChats.map((chat, index) => (
+      <FullScreenLoader visible={isLoading && !refreshing} />
+      <ScrollView
+        style={styles.chatList}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+            colors={["#ff7f50"]}
+            tintColor="#ff7f50"
+          />
+        }
+      >
+        {isError ? (
+          <View style={styles.noChats}>
+            <Text style={styles.noChatsText}>{t("Chat.loadError")}</Text>
+          </View>
+        ) : chats && chats.length > 0 ? (
+          chats.map((chat, index) => (
             <Animated.View
               key={chat.id}
               entering={FadeIn.delay(index * 100).duration(400)}
@@ -62,25 +75,26 @@ const ChatList: React.FC = () => {
                 }
               >
                 <View style={styles.chatHeader}>
-                  <Text style={styles.chatName}>{chat.name}</Text>
-                  <View style={styles.chatInfo}>
-                    <Text style={styles.chatTimestamp}>{chat.timestamp}</Text>
-                    {chat.unread > 0 && (
-                      <View style={styles.unreadBadge}>
-                        <Text style={styles.unreadText}>{chat.unread}</Text>
-                      </View>
-                    )}
-                  </View>
+                  <Text style={styles.chatName}>{chat.sanName}</Text>
+                  {chat.lastMessage?.sentAt ? (
+                    <Text style={styles.chatTimestamp}>
+                      {formatTimestamp(chat.lastMessage.sentAt)}
+                    </Text>
+                  ) : null}
                 </View>
-                <Text style={styles.lastMessage}>{chat.lastMessage}</Text>
+                <Text style={styles.lastMessage} numberOfLines={1}>
+                  {chat.lastMessage
+                    ? `${chat.lastMessage.authorName ? `${chat.lastMessage.authorName}: ` : ""}${chat.lastMessage.text}`
+                    : t("Chat.noMessages")}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           ))
-        ) : (
+        ) : !isLoading ? (
           <View style={styles.noChats}>
-            <Text style={styles.noChatsText}>No se encontraron chats</Text>
+            <Text style={styles.noChatsText}>{t("Chat.empty")}</Text>
           </View>
-        )}
+        ) : null}
       </ScrollView>
     </View>
   );
@@ -110,28 +124,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-  },
-  chatInfo: {
-    flexDirection: "row",
-    alignItems: "center",
+    flex: 1,
+    marginRight: 8,
   },
   chatTimestamp: {
     fontSize: 12,
     color: "#888",
-  },
-  unreadBadge: {
-    backgroundColor: "#ff7f50",
-    borderRadius: 12,
-    width: 20,
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 8,
-  },
-  unreadText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
   },
   lastMessage: {
     fontSize: 14,

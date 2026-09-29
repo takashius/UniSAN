@@ -33,6 +33,7 @@ type NotificationTapResponse = {
           transaction_id?: string;
           userId?: string;
           user_id?: string;
+          sanId?: string;
         };
       };
     };
@@ -130,15 +131,67 @@ export function subscribeAdminDocumentTaps(onOpen: (userId: string) => void) {
   return () => unsubscribe();
 }
 
+let activeChatSanId: string | null = null;
+
+export function setActiveChatSanId(sanId: string | null) {
+  activeChatSanId = sanId;
+}
+
+function chatSanIdFromData(data?: { eventId?: string; sanId?: string } | null) {
+  if (!data || String(data.eventId) !== "chat.message" || !data.sanId) return null;
+  return String(data.sanId);
+}
+
+let consumedChatResponse = false;
+
+export function subscribeChatMessageTaps(onOpen: (sanId: string) => void) {
+  let unsubscribe = () => {};
+  void loadNotifications().then(async (Notifications) => {
+    if (!Notifications) return;
+    if (!consumedChatResponse) {
+      consumedChatResponse = true;
+      const last = await Notifications.getLastNotificationResponseAsync();
+      const fromLast = chatSanIdFromData(last?.notification?.request?.content?.data);
+      if (fromLast) onOpen(fromLast);
+    }
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const sanId = chatSanIdFromData(response.notification.request.content.data);
+        if (sanId) onOpen(sanId);
+      },
+    );
+    unsubscribe = () => subscription.remove();
+  });
+  return () => unsubscribe();
+}
+
 export function configureNotificationHandler() {
   void loadNotifications().then((Notifications) => {
     Notifications?.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowBanner: true,
-        shouldShowList: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-      }),
+      handleNotification: async (notification) => {
+        const data = notification.request.content.data as {
+          eventId?: string;
+          sanId?: string;
+        };
+        const openInThisRoom =
+          String(data?.eventId) === "chat.message" &&
+          activeChatSanId != null &&
+          String(data?.sanId) === String(activeChatSanId);
+        if (openInThisRoom) {
+          return {
+            shouldShowBanner: false,
+            shouldShowList: false,
+            shouldPlaySound: false,
+            shouldSetBadge: false,
+          };
+        }
+        return {
+          shouldShowBanner: true,
+          shouldShowList: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+        };
+      },
     });
   });
 }

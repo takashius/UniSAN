@@ -297,6 +297,17 @@
     "alreadyProcessed": "Esta cédula ya fue procesada.",
     "loadError": "No se pudo cargar la cédula."
   },
+  "Chat": {
+    "empty": "Todavía no tienes salas de chat",
+    "noMessages": "Aún no hay mensajes",
+    "loadError": "No se pudieron cargar los chats",
+    "placeholder": "Escribe un mensaje...",
+    "sendError": "No se pudo enviar el mensaje",
+    "unavailable": "Este chat no está disponible",
+    "back": "Volver",
+    "mute": "Silenciar sala",
+    "unmute": "Activar avisos de esta sala"
+  },
   "Navigation": {
     "home": "Inicio",
     "chat": "Chat",

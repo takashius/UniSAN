@@ -297,6 +297,17 @@
     "alreadyProcessed": "This ID was already processed.",
     "loadError": "Could not load the ID."
   },
+  "Chat": {
+    "empty": "You don't have any chat rooms yet",
+    "noMessages": "No messages yet",
+    "loadError": "Couldn't load the chats",
+    "placeholder": "Write a message...",
+    "sendError": "Couldn't send the message",
+    "unavailable": "This chat is not available",
+    "back": "Back",
+    "mute": "Mute room",
+    "unmute": "Turn on alerts for this room"
+  },
   "Navigation": {
     "home": "Home",
     "chat": "Chat",

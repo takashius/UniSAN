@@ -5,6 +5,7 @@ export const navigationRef = createNavigationContainerRef<TabParamList>();
 
 let pendingPaymentId: string | null = null;
 let pendingDocumentUserId: string | null = null;
+let pendingChatSanId: string | null = null;
 
 export function queuePendingPayment(id: string) {
   pendingPaymentId = id;
@@ -36,6 +37,28 @@ export function consumeQueuedPendingDocument() {
   const userId = pendingDocumentUserId;
   pendingDocumentUserId = null;
   return userId;
+}
+
+export function queueChat(sanId: string) {
+  pendingChatSanId = sanId;
+}
+
+export function consumeQueuedChat() {
+  const sanId = pendingChatSanId;
+  pendingChatSanId = null;
+  return sanId;
+}
+
+export function openChat(sanId: string) {
+  if (!sanId) return;
+  if (navigationRef.isReady()) {
+    navigationRef.navigate("Chat", {
+      screen: "ChatDetail",
+      params: { id: sanId },
+    });
+    return;
+  }
+  queueChat(sanId);
 }
 
 export function openPendingDocument(userId: string) {

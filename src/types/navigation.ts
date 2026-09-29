@@ -10,6 +10,7 @@ export type AuthStackParamList = {
 export type SANStackParamList = {
   ExplorerHome: undefined;
   SANDetails: { id: string };
+  ChatRoom: { id: string };
 };
 
 export type ChatStackParamList = {
@@ -31,7 +32,7 @@ export type ProfileStackParamList = {
 
 export type TabParamList = {
   UNISAN: undefined;
-  Chat: undefined;
+  Chat: NavigatorScreenParams<ChatStackParamList> | undefined;
   Explorer: NavigatorScreenParams<SANStackParamList> | undefined;
   History: undefined;
   Profile:

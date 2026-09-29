@@ -17,7 +17,8 @@ import {
   Clock,
 } from "lucide-react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useSanDetail } from "../services/san";
 import generalStyles from "../styles/general";
@@ -25,12 +26,33 @@ import NextPaymentCard from "../components/ui/NextPaymentCard";
 import AvatarView from "../components/ui/AvatarView";
 import { CHAT_ENABLED } from "../config/features";
 import FullScreenLoader from "../components/ui/FullScreenLoader";
+import { useUser } from "../context/UserContext";
+import { isAdminRole, isOrganizerRole } from "../utils/roles";
+import type { SANStackParamList } from "../types/navigation";
 
 const SANDetails: React.FC = () => {
   const { t } = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<SANStackParamList>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
+  const { user } = useUser();
   const { data: sanDetails, isLoading, refetch } = useSanDetail(id);
+  const isMember = (user?.sans ?? []).some(
+    (item) => String(item.id) === String(sanDetails?.id),
+  );
+  const canOpenChat = Boolean(
+    CHAT_ENABLED &&
+      sanDetails &&
+      sanDetails.isOpen &&
+      sanDetails.isActive !== false &&
+      sanDetails.chatEnabled !== false &&
+      (isAdminRole(user?.user.role) ||
+        isMember ||
+        (isOrganizerRole(user?.user.role) &&
+          sanDetails.createdBy &&
+          String(sanDetails.createdBy) === String(user?.user.id))),
+  );
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -117,9 +139,16 @@ const SANDetails: React.FC = () => {
                     </View>
                   ) : null}
 
-                  {CHAT_ENABLED ? (
+                  {canOpenChat ? (
                     <View style={styles.buttonRow}>
-                      <TouchableOpacity style={styles.primaryButton}>
+                      <TouchableOpacity
+                        style={styles.primaryButton}
+                        onPress={() =>
+                          navigation.navigate("ChatRoom", {
+                            id: String(sanDetails.id),
+                          })
+                        }
+                      >
                         <MessageCircle size={16} color="#fff" />
                         <Text style={styles.buttonText}>
                           {t("SANDetails.groupChat")}

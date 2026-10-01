@@ -133,6 +133,7 @@ export interface NextPayment {
   nextPaymentDate: string;
   lastPaidTurn: number;
   currentTurn: number | null;
+  payablePositions?: number[];
   isOwnTurn: boolean;
   membersPerSan?: number;
 }
@@ -162,6 +163,7 @@ export interface JoinSanData {
   amountBs?: number;
   date?: string;
   operationReference?: string;
+  positions?: number[];
   proofImage?: {
     uri: string;
     name?: string;

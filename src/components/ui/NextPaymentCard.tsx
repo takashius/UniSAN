@@ -27,6 +27,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   lateFeeAmount,
   lateFeePercent,
   membersPerSan: membersPerSanProp,
+  payablePositions,
 }) => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -34,7 +35,9 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
   const { data: fx } = useBcvRate();
   const membersPerSan =
     membersPerSanProp || settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
-  const installment = paymentAmount ?? amount / membersPerSan;
+  const unitInstallment = paymentAmount ?? amount / membersPerSan;
+  const turnCount = payablePositions?.length || 1;
+  const installment = unitInstallment * turnCount;
   const sanRate = rateForSan(fx, fxCurrency);
   const bsAmount = sanRate ? usdToBs(installment, sanRate) : null;
   const paymentTurn = currentTurn && currentTurn > 0 ? currentTurn : 1;
@@ -60,10 +63,14 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
             <View>
               <Text style={nextPaymentStyles.cardTitle}>{name}</Text>
               <Text style={nextPaymentStyles.cardSubtitle}>
-                {t("HomeScreen.turn", {
-                  current: paymentTurn,
-                  total: membersPerSan,
-                })}
+                {payablePositions && payablePositions.length
+                  ? t("HomeScreen.yourTurns", {
+                      turns: payablePositions.join(", "),
+                    })
+                  : t("HomeScreen.turn", {
+                      current: paymentTurn,
+                      total: membersPerSan,
+                    })}
               </Text>
             </View>
             <View style={nextPaymentStyles.cardAmountWrap}>
@@ -80,10 +87,14 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
         ) : (
           <View style={nextPaymentStyles.paymentCardHeader}>
             <Text style={nextPaymentStyles.cardTitle}>
-              {t("HomeScreen.turn", {
-                current: paymentTurn,
-                total: membersPerSan,
-              })}
+              {payablePositions && payablePositions.length
+                ? t("HomeScreen.yourTurns", {
+                    turns: payablePositions.join(", "),
+                  })
+                : t("HomeScreen.turn", {
+                    current: paymentTurn,
+                    total: membersPerSan,
+                  })}
             </Text>
             <View style={nextPaymentStyles.cardAmountWrap}>
               <Text style={nextPaymentStyles.cardAmount}>
@@ -121,7 +132,7 @@ const NextPaymentCard: React.FC<NextPaymentProps> = ({
 
       <PaymentDialog
         open={dialogOpen}
-        amount={installment}
+        amount={unitInstallment}
         san={id}
         fxCurrency={fxCurrency}
         baseAmount={baseAmount}

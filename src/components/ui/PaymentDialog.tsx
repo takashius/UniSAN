@@ -8,7 +8,7 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
-import { Button, TextInput, Portal, HelperText } from "react-native-paper";
+import { Button, TextInput, Portal, HelperText, Checkbox } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import * as Clipboard from "expo-clipboard";
 import * as ImagePicker from "expo-image-picker";
@@ -62,6 +62,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const { t } = useTranslation();
   const [receiptUri, setReceiptUri] = useState<string | null>(null);
   const [completing, setCompleting] = useState(false);
+  const [selectedTurns, setSelectedTurns] = useState<number[]>([]);
   const joinSan = useJoinSan();
   const paymentSan = usePaymentSan();
   const queryClient = useQueryClient();
@@ -84,6 +85,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     ? Math.round((amount - adminFeeAmount) * 100) / 100
     : null;
   const hasSpecialTerms = isJoin && (adminFeePercent > 0 || payoutKind === "goods");
+  const payableTurns = isJoin ? [] : sanDetail?.payablePositions ?? [];
+  const turnCount = isJoin ? 1 : payableTurns.length ? selectedTurns.length : 1;
+  const totalAmount = amount * turnCount;
+  const cycleTurn = sanDetail?.nextPaymentTurn ?? sanDetail?.currentTurn;
 
   useEffect(() => {
     if (!open) return;
@@ -93,12 +98,28 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
       referenceNumber: "",
     });
     setReceiptUri(null);
+    setSelectedTurns([]);
   }, [open, reset]);
 
   useEffect(() => {
+    if (!open || isJoin) return;
+    setSelectedTurns(payableTurns);
+  }, [open, isJoin, payableTurns.join(",")]);
+
+  useEffect(() => {
     if (!open || !sanRate) return;
-    setValue("amount", usdToBs(amount, sanRate));
-  }, [open, sanRate, amount, setValue]);
+    setValue("amount", usdToBs(totalAmount, sanRate));
+  }, [open, sanRate, totalAmount, setValue]);
+
+  const toggleTurn = (turn: number) => {
+    setSelectedTurns((current) => {
+      if (current.includes(turn)) {
+        if (current.length === 1) return current;
+        return current.filter((item) => item !== turn);
+      }
+      return [...current, turn].sort((left, right) => left - right);
+    });
+  };
 
   const copyAccountData = async (account: ReceivingAccount) => {
     if (bsAmount == null) {
@@ -170,8 +191,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     const payload = {
       san,
       bank: data.sourceBank,
-      amount,
+      amount: totalAmount,
       amountBs: Number(data.amount),
+      ...(!isJoin && selectedTurns.length ? { positions: selectedTurns } : {}),
       operationReference: data.referenceNumber,
       date: data.paymentDate.toLocaleDateString(),
       ...(receiptUri
@@ -224,6 +246,37 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
               <Text style={styles.dialogTitle}>
                 {isJoin ? t("Payment.joinTitle") : t("Payment.title")}
               </Text>
+              {!isJoin && payableTurns.length ? (
+                <View style={styles.turnsBlock}>
+                  <Text style={styles.turnsTitle}>{t("Payment.turnsTitle")}</Text>
+                  {cycleTurn ? (
+                    <Text style={styles.turnsHint}>
+                      {t("Payment.installmentCycle", { turn: cycleTurn })}
+                    </Text>
+                  ) : null}
+                  <Text style={styles.turnsHint}>{t("Payment.turnsHint")}</Text>
+                  {payableTurns.map((turn) => {
+                    const checked = selectedTurns.includes(turn);
+                    return (
+                      <Pressable
+                        key={turn}
+                        style={styles.turnRow}
+                        onPress={() => toggleTurn(turn)}
+                      >
+                        <Checkbox
+                          status={checked ? "checked" : "unchecked"}
+                          onPress={() => toggleTurn(turn)}
+                          color="#ff7f50"
+                          uncheckedColor="#888"
+                        />
+                        <Text style={styles.turnLabel}>
+                          {t("Payment.turnOption", { turn })}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : null}
               <ScrollView
                 style={[styles.scroll, { maxHeight: height * 0.58 }]}
                 contentContainerStyle={styles.scrollContent}
@@ -337,7 +390,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                           {t("Payment.installment")}:
                         </HelperText>
                         <HelperText type="info">
-                          {formatUsd(baseAmount ?? amount - lateFeeAmount)}
+                          {formatUsd((baseAmount ?? amount - lateFeeAmount) * turnCount)}
                         </HelperText>
                       </View>
                       <View style={styles.detailRow}>
@@ -346,7 +399,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                           {lateFeePercent ? ` (${lateFeePercent}%)` : ""}:
                         </HelperText>
                         <HelperText type="info">
-                          {formatUsd(lateFeeAmount)}
+                          {formatUsd(lateFeeAmount * turnCount)}
                         </HelperText>
                       </View>
                       <HelperText type="info">
@@ -359,7 +412,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                       {t("Payment.amountToPay")}:
                     </HelperText>
                     <Text style={styles.highlightAmount}>
-                      {formatUsd(amount)}
+                      {formatUsd(totalAmount)}
                     </Text>
                   </View>
                   {fxError ? (
@@ -537,7 +590,11 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
                   mode="contained"
                   onPress={handleSubmit(onSubmit)}
                   style={formStyles.confirmButton}
-                  disabled={isBusy || !sanRate}
+                  disabled={
+                    isBusy ||
+                    !sanRate ||
+                    (!isJoin && payableTurns.length > 0 && selectedTurns.length === 0)
+                  }
                 >
                   {isJoin
                     ? t("Payment.confirmJoin")
@@ -589,7 +646,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingHorizontal: 24,
     paddingTop: 20,
-    paddingBottom: 16,
+    paddingBottom: 8,
+  },
+  turnsBlock: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  turnsTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 4,
+  },
+  turnsHint: {
+    fontSize: 13,
+    color: "#666",
+    marginBottom: 4,
+  },
+  turnRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: -8,
+  },
+  turnLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
   },
   scroll: {
     flexGrow: 0,

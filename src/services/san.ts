@@ -23,9 +23,12 @@ async function postPaymentRequest(url: string, data: JoinSanRequest) {
 
   const formData = new FormData();
   Object.entries(payload).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
+    if (value === undefined || value === null) return;
+    if (Array.isArray(value)) {
+      formData.append(key, value.join(","));
+      return;
     }
+    formData.append(key, String(value));
   });
   formData.append("image", {
     uri: proofImage.uri,

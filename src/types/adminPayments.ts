@@ -28,6 +28,7 @@ export interface AdminPayment {
   lateFeePercent?: number;
   date: string;
   paymentDateIndex: number;
+  positions?: number[];
   operationReference: number;
   status: string;
   paymentStatus: string;

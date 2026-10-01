@@ -33,4 +33,5 @@ export interface NextPaymentProps {
   lateFeeAmount?: number;
   lateFeePercent?: number;
   membersPerSan?: number;
+  payablePositions?: number[];
 }

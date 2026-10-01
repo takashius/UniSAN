@@ -241,6 +241,7 @@ const SANDetails: React.FC = () => {
                     baseAmount={sanDetails.baseAmount}
                     lateFeeAmount={sanDetails.lateFeeAmount}
                     lateFeePercent={sanDetails.lateFeePercent}
+                    payablePositions={sanDetails.payablePositions}
                   />
                 </View>
               ) : null}
@@ -250,9 +251,9 @@ const SANDetails: React.FC = () => {
                   {t("SANDetails.membersTitle")}
                 </Text>
                 <View style={generalStyles.card}>
-                  {sanDetails.members.map((member) => (
+                  {sanDetails.members.map((member, index) => (
                     <View
-                      key={member.id}
+                      key={`${member.id}-${member.position}-${index}`}
                       style={[
                         styles.memberItem,
                         sanDetails.currentTurn != null &&

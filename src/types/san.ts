@@ -30,6 +30,8 @@ export interface SanDetail {
   currentTurn: number | null;
   nextPaymentTurn?: number | null;
   myTurn: number | null;
+  myTurns?: number[];
+  payablePositions?: number[];
   members: SanMember[];
   totalMembers: number;
   membersPerSan?: number;

@@ -163,6 +163,12 @@ const PendingPaymentDetailScreen = () => {
               label={t("PendingPayments.turn")}
               value={String(payment.paymentDateIndex + 1)}
             />
+            {payment.positions && payment.positions.length ? (
+              <Row
+                label={t("PendingPayments.seats")}
+                value={payment.positions.join(", ")}
+              />
+            ) : null}
             <Row
               label={t("PendingPayments.timing")}
               value={t(`Payment.${payment.paymentStatus}`, {

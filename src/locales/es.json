@@ -13,7 +13,9 @@
     "selectDate": "Selecciona la fecha",
     "selectADate": "Selecciona una fecha",
     "formSubmitted": "Formulario enviado exitosamente",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "viewFullImage": "Toca para ver la imagen completa"
   },
   "Update": {
     "storeTitle": "Nueva versión disponible",

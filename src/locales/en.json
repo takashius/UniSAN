@@ -13,7 +13,9 @@
     "selectDate": "Select the date",
     "selectADate": "Select a date",
     "formSubmitted": "Form successfully submitted",
-    "retry": "Try again"
+    "retry": "Try again",
+    "close": "Close",
+    "viewFullImage": "Tap to view the full image"
   },
   "Update": {
     "storeTitle": "New version available",

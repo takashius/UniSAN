@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   TextInput,
   Pressable,
 } from "react-native";
@@ -23,6 +22,7 @@ import {
 import { useUser } from "../../context/UserContext";
 import { canReviewPayments } from "../../utils/roles";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
+import ZoomableImage from "../../components/ui/ZoomableImage";
 import generalStyles from "../../styles/general";
 
 function personName(
@@ -182,8 +182,8 @@ const PendingPaymentDetailScreen = () => {
             {payment.operationImage ? (
               <View style={styles.imageWrap}>
                 <Text style={styles.label}>{t("PendingPayments.receipt")}</Text>
-                <Image
-                  source={{ uri: payment.operationImage }}
+                <ZoomableImage
+                  uri={payment.operationImage}
                   style={styles.receipt}
                 />
               </View>

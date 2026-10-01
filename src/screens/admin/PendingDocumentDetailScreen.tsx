@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   TextInput,
   Pressable,
 } from "react-native";
@@ -23,6 +22,7 @@ import {
 import { useUser } from "../../context/UserContext";
 import { isAdminRole } from "../../utils/roles";
 import FullScreenLoader from "../../components/ui/FullScreenLoader";
+import ZoomableImage from "../../components/ui/ZoomableImage";
 import generalStyles from "../../styles/general";
 
 function personName(
@@ -127,8 +127,8 @@ const PendingDocumentDetailScreen = () => {
             {document.imageDocumentId ? (
               <View style={styles.imageWrap}>
                 <Text style={styles.label}>{t("PendingDocuments.photo")}</Text>
-                <Image
-                  source={{ uri: document.imageDocumentId }}
+                <ZoomableImage
+                  uri={document.imageDocumentId}
                   style={styles.photo}
                 />
               </View>

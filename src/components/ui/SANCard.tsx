@@ -67,6 +67,8 @@ const SANCard: React.FC<SANCardProps> = ({
   const membersPerSan =
     membersPerSanProp || settings?.membersPerSan || DEFAULT_MEMBERS_PER_SAN;
   const isFreeJoin = joinMode === "free";
+  const isFull = membersPerSan > 0 && usersCount >= membersPerSan;
+  const canJoin = !external && !isFull;
   const hasSpecialTerms = adminFeePercent > 0 || payoutKind === "goods";
   const joinInstallment =
     typeof installmentAmount === "number" && installmentAmount > 0
@@ -174,33 +176,25 @@ const SANCard: React.FC<SANCardProps> = ({
         </View>
 
         <View style={styles.footer}>
-          {hasOpenSpot && !external ? (
+          {canJoin ? (
             <View style={styles.openSpot}>
               <Text style={styles.openSpotText}>{t("SANCard.openSpot")}</Text>
             </View>
+          ) : isFull && !hasOpenSpot ? (
+            <View style={styles.fullSpot}>
+              <Text style={styles.fullSpotText}>{t("SANCard.full")}</Text>
+            </View>
+          ) : !hasOpenSpot ? (
+            <View style={styles.waitingSpot}>
+              <Text style={styles.waitingSpotText}>
+                {t("SANCard.waitingForSlots")}
+              </Text>
+            </View>
           ) : (
-            <>
-              {!hasOpenSpot ? (
-                <View style={styles.waitingSpot}>
-                  <Text style={styles.waitingSpotText}>
-                    {t("SANCard.waitingForSlots")}
-                  </Text>
-                </View>
-              ) : (
-                <View style={{ height: 10 }}></View>
-              )}
-            </>
+            <View style={{ height: 10 }}></View>
           )}
 
-          {external ? (
-            <TouchableOpacity
-              style={styles.detailsLink}
-              onPress={openSanDetails}
-            >
-              <Text style={styles.linkText}>{t("SANCard.details")}</Text>
-              <ChevronRight size={16} color="#ff7f50" />
-            </TouchableOpacity>
-          ) : (
+          {canJoin ? (
             <TouchableOpacity
               style={styles.detailsLink}
               onPress={
@@ -216,6 +210,14 @@ const SANCard: React.FC<SANCardProps> = ({
                 {isFreeJoin ? t("SANCard.freeJoin") : t("SANCard.join")}
               </Text>
               <PlusCircle size={16} color="#ff7f50" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.detailsLink}
+              onPress={openSanDetails}
+            >
+              <Text style={styles.linkText}>{t("SANCard.details")}</Text>
+              <ChevronRight size={16} color="#ff7f50" />
             </TouchableOpacity>
           )}
         </View>
@@ -324,6 +326,17 @@ const styles = StyleSheet.create({
   },
   waitingSpotText: {
     color: "#D97706",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  fullSpot: {
+    backgroundColor: "#e5e7eb",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  fullSpotText: {
+    color: "#4b5563",
     fontSize: 12,
     fontWeight: "bold",
   },

@@ -75,6 +75,7 @@
     "details": "View details",
     "join": "Join",
     "waitingForSlots": "There are still places to fill.",
+    "full": "Group is full",
     "freeJoin": "Join without payment",
     "freeJoinBadge": "No initial payment",
     "freeJoinConfirmTitle": "Join this SAN",
